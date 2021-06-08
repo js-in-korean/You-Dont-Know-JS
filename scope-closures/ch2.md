@@ -1,26 +1,26 @@
 # You Don't Know JS Yet: Scope & Closures - 2nd Edition
-# Chapter 2: Illustrating Lexical Scope
+# 2장: 렉시컬 스코프<sub>Lexical Scope</sub> 살펴보기
 
-In Chapter 1, we explored how scope is determined during code compilation, a model called "lexical scope." The term "lexical" refers to the first stage of compilation (lexing/parsing).
+1장에서 스코프scope가 "렉시컬 스코프"라 부르는 모델로 어떻게 코드 컴파일 중에 결정되는지 살펴봤다. "렉시컬<sub>lexical</sub>" 용어는 컴파일(렉싱<sub>lexing</sub>/파싱<sub>parsing</sub>)의 첫번째 단계에 관련이 있다.
 
-To properly *reason* about our programs, it's important to have a solid conceptual foundation of how scope works. If we rely on guesses and intuition, we may accidentally get the right answers some of the time, but many other times we're far off. This isn't a recipe for success.
+프로그램에 대한 적절한 *근거*를 위해서는 스코프가 작동하는 방식에 대한 탄탄한 개념적 기반을 가지는 것이 중요하다. 만약 추측과 직관에 의지한다면 가끔은 뜻하지 않게 정답을 얻을 수도 있지만, 대부분 크게 벗어난다. 이는 성공을 위한 비법이 아니다.
 
-Like way back in grade school math class, getting the right answer isn't enough if we don't show the correct steps to get there! We need to build accurate and helpful mental models as foundation moving forward.
+초등학교 수학 수업에서처럼, 거기에 가기 위한 올바른 단계를 보여주지 않는다면 정답을 맞추는 것만으로는 충분하지 않다. 새로운 기반으로서 정확하고 도움이 되는 멘탈 모델<sub>mental models</sub>을 만들 필요가 있다.
 
-This chapter will illustrate *scope* with several metaphors. The goal here is to *think* about how your program is handled by the JS engine in ways that more closely align with how the JS engine actually works.
+이 장에서는 *스코프*를 몇 가지 메타포<sub>metaphors</sub>와 함께 보여줄 것이다. 여기서의 목표는 프로그램이 어떻게 JS 엔진에 의해 처리되는지에 대해 JS 엔진이 실제로 작동하는 방식에 더 밀접하게 맞추는 방식으로 *생각하는* 것이다.
 
-## Marbles, and Buckets, and Bubbles... Oh My!
+## 구슬과 양동이와 버블<sub>Bubbles</sub>... 이런!
 
-One metaphor I've found effective in understanding scope is sorting colored marbles into buckets of their matching color.
+스코프를 이해하는 데 효과적인 한 가지 메타포는 색깔있는 구슬을 같은 색을 가진 양동이에 넣어 분류하는 것이다.
 
-Imagine you come across a pile of marbles, and notice that all the marbles are colored red, blue, or green. Let's sort all the marbles, dropping the red ones into a red bucket, green into a green bucket, and blue into a blue bucket. After sorting, when you later need a green marble, you already know the green bucket is where to go to get it.
+우연히 구슬 더미를 발견했다고 상상해라. 그리고 모든 구슬이 빨강, 파랑 또는 초록색인 것을 주목해라. 모든 구슬을 빨간색 구슬은 빨간색 양동이에, 초록색 구슬은 초록색 양동이에 그리고 파란색 구슬은 파란색 양동이에 떨어트려서 분류하자. 분류 후에는, 나중에 초록색 구슬이 필요할 때 그것을 얻기 위해 갈 곳은 초록색 양동이라는 것을 이미 알게 된다.
 
-In this metaphor, the marbles are the variables in our program. The buckets are scopes (functions and blocks), which we just conceptually assign individual colors for our discussion purposes. The color of each marble is thus determined by which *color* scope we find the marble originally created in.
+이 메타포에서 구슬은 프로그램의 변수이다. 양동이는 스코프(함수와 블록)이다. 단지 개념적으로 논의 목적을 위해 개별 색상을 할당했다. 각 구슬의 색상은 이와 같이 본래 만들어진 구슬을 알게되는 *색상* 스코프에 의해서 밝혀진다.
 
-Let's annotate the running program example from Chapter 1 with scope color labels:
+1장의 실행 프로그램 예제에 스코프 색상 라벨로 주석을 달아보자.
 
 ```js
-// outer/global scope: RED
+// 외부/전역 스코프: 빨강
 
 var students = [
     { id: 14, name: "Kyle" },
@@ -30,10 +30,10 @@ var students = [
 ];
 
 function getStudentName(studentID) {
-    // function scope: BLUE
+    // 함수 스코프: 파랑
 
     for (let student of students) {
-        // loop scope: GREEN
+        // 반복문 스코프: 초록
 
         if (student.id == studentID) {
             return student.name;
@@ -45,56 +45,56 @@ var nextStudent = getStudentName(73);
 console.log(nextStudent);   // Suzy
 ```
 
-We've designated three scope colors with code comments: RED (outermost global scope), BLUE (scope of function `getStudentName(..)`), and GREEN (scope of/inside the `for` loop). But it still may be difficult to recognize the boundaries of these scope buckets when looking at a code listing.
+코드 주석을 가진 세 가지 스코프 색상을 지정했다. 빨강(가장 바깥 전역 스코프), 파랑(함수 `getStudentName(..)`의 스코프), 그리고 초록(`for` 반복문의/안의 스코프)이다. 그러나 나열된 코드를 볼 때 이러한 스코프 양동이의 경계를 인식하기는 여전히 어려울 수 있다.
 
-Figure 2 helps visualize the boundaries of the scopes by drawing colored bubbles (aka, buckets) around each:
+그림 2는 색깔있는 버블(일명 양동이)을 각각 둘러 그림으로써 스코프의 경계를 시각화하는 데 도움이 된다.
 
 <figure>
     <img src="images/fig2.png" width="500" alt="Colored Scope Bubbles" align="center">
-    <figcaption><em>Fig. 2: Colored Scope Bubbles</em></figcaption>
+    <figcaption><em>그림 2: 색깔있는 스코프 버블</em></figcaption>
 </figure>
 
-1. **Bubble 1** (RED) encompasses the global scope, which holds three identifiers/variables: `students` (line 1), `getStudentName` (line 8), and `nextStudent` (line 16).
+1. **거품 1** (빨강)은 세 개의 식별자/변수를 가지고 있는 전역 스코프를 둘러싼다: `students` (1행), `getStudentName` (8행)과 `nextStudent` (16행).
 
-2. **Bubble 2** (BLUE) encompasses the scope of the function `getStudentName(..)` (line 8), which holds just one identifier/variable: the parameter `studentID` (line 8).
+2. **거품 2** (파랑)은 단지 하나의 식별자/변수를 가지고 있는 함수 `getStudentName(..)` (8행)의 스코프를 둘러싼다: 매개변수 `studentID` (8행).
 
-3. **Bubble 3** (GREEN) encompasses the scope of the `for`-loop (line 9), which holds just one identifier/variable: `student` (line 9).
+3. **거품 3** (초록)은 단지 하나의 식별자/변수를 가지고 있는 `for` 반복문 (9행)의 스코프를 둘러싼다: `student` (9행).
 
-| NOTE: |
+| 비고: |
 | :--- |
-| Technically, the parameter `studentID` is not exactly in the BLUE(2) scope. We'll unwind that confusion in "Implied Scopes" in Appendix A. For now, it's close enough to label `studentID` a BLUE(2) marble. |
+| 기술적으로 매개변수 `studentID`는 정확히 파랑(2) 스코프에 있지 않다. 우리는 부록 A의 "암묵적 스코프"에서 이런 혼동을 풀 것이다. 지금은 `studentID`에 파랑(2) 구슬이라는 딱지를 붙이는 것으로 거의 충분하다. |
 
-Scope bubbles are determined during compilation based on where the functions/blocks of scope are written, the nesting inside each other, and so on. Each scope bubble is entirely contained within its parent scope bubble—a scope is never partially in two different outer scopes.
+스코프 버블은 스코프의 함수/블록이 작성되는 위치, 서로 중첩되는 위치 등에 따라 컴파일 중에 결정된다. 두 개의 다른 외부 스코프에 부분적으로 포함되지 않는 각 스코프 버블은 부모 스코프 버블 안에 완전히 포함된다.
 
-Each marble (variable/identifier) is colored based on which bubble (bucket) it's declared in, not the color of the scope it may be accessed from (e.g., `students` on line 9 and `studentID` on line 10).
+각 구슬(변수/식별자)은 어떤 버블(양동이)에서 선언되었는지에 따라 색상이 지정되며, 접근 가능할 수 있는 스코프의 색상이 아니다(예: 9행의 `students`와 10행의 `studentID`).
 
-| NOTE: |
+| 비고: |
 | :--- |
-| Remember we asserted in Chapter 1 that `id`, `name`, and `log` are all properties, not variables; in other words, they're not marbles in buckets, so they don't get colored based on any the rules we're discussing in this book. To understand how such property accesses are handled, see the third book in the series, *Objects & Classes*. |
+| 1장에서 `id`, `name`과 `log`는 모두 변수가 아닌 속성<sub>properties</sub>라고 주장한 것을 기억해라. 다른 말로 양동이 안의 구슬이 아니다. 그래서 이 책에서 논하는 어떤 규칙에 기초하여 색이 지정되지 않았다. 그러한 속성 접근이 어떻게 다뤄지는지 이해하기 위해서는 시리즈의 세번째 책 *Objects & Classes*를 보자. |
 
-As the JS engine processes a program (during compilation), and finds a declaration for a variable, it essentially asks, "Which *color* scope (bubble or bucket) am I currently in?" The variable is designated as that same *color*, meaning it belongs to that bucket/bubble.
+JS 엔진은 (컴파일 중에) 프로그램을 처리하고 변수 선언을 찾을 때, 근본적으로 "내가 현재 어떤 *색상* 스코프(버블 또는 양동이)에 있지?"라고 묻는다. 변수는 같은 *색상*으로 지정되며 이는 그 양동이/버블에 속함을 의미한다.
 
-The GREEN(3) bucket is wholly nested inside of the BLUE(2) bucket, and similarly the BLUE(2) bucket is wholly nested inside the RED(1) bucket. Scopes can nest inside each other as shown, to any depth of nesting as your program needs.
+초록(3) 양동이는 파랑(2) 양동이 안에 완전히 중첩되어 있다. 그리고 마찬가지로 파랑(2) 양동이는 빨강(1) 양동이 안에 완전히 중첩되어 있다. 스코프는 보여지는 대로 프로그램이 필요한 중첩의 깊이까지 각자 내부에 중첩될 수 있다.
 
-References (non-declarations) to variables/identifiers are allowed if there's a matching declaration either in the current scope, or any scope above/outside the current scope, but not with declarations from lower/nested scopes.
+변수/식별자에 대한 참조(선언이 아닌)는 만약 현재 스코프 또는 현재 스코프의 상위/외부 스코프에 일치하는 선언이 있다면 허용되지만, 하위/내부 스코프의 선언은 허용되지 않는다.
 
-An expression in the RED(1) bucket only has access to RED(1) marbles, **not** BLUE(2) or GREEN(3). An expression in the BLUE(2) bucket can reference either BLUE(2) or RED(1) marbles, **not** GREEN(3). And an expression in the GREEN(3) bucket has access to RED(1), BLUE(2), and GREEN(3) marbles.
+빨강(1) 양동이에 있는 표현식은 빨강(1) 구슬에만 접근 권한이 있다. 파랑(2)이나 초록(3) 구슬이 **아니다**. 파랑(2) 양동이에 있는 표현식은 파랑(2)이나 빨강(1) 구슬 둘다 참조할 수 있다. 초록(3) 구슬이 **아니다**. 그리고 초록(3) 양동이에 있는 표현식은 빨강(1), 파랑(2) 그리고 초록(3) 구슬에 접근 권한이 있다.
 
-We can conceptualize the process of determining these non-declaration marble colors during runtime as a lookup. Since the `students` variable reference in the `for`-loop statement on line 9 is not a declaration, it has no color. So we ask the current BLUE(2) scope bucket if it has a marble matching that name. Since it doesn't, the lookup continues with the next outer/containing scope: RED(1). The RED(1) bucket has a marble of the name `students`, so the loop-statement's `students` variable reference is determined to be a RED(1) marble.
+런타임<sub>runtime</sub> 중에 이런 선언이 아닌 구슬 색상을 결정하는 처리를 조회<sub>lookup</sub>로 개념화할 수 있다. 9행의 `for` 반복문에서 `students` 변수 참조는 선언이 아니기 때문에 색깔이 없다. 그래서 현재 파랑(2) 스코프 양동이에 일치하는 이름을 가진 구슬이 있는지 물어본다. 없기 때문에, 조회는 다음 외부/포함 스코프인 빨강(1)으로 계속 진행한다. 빨강(1) 양동이는 `students`라는 구슬을 가지고 있다. 그래서 반복문의 `students` 변수 참조는 빨강(1) 구슬로 결정된다.
 
-The `if (student.id == studentID)` statement on line 10 is similarly determined to reference a GREEN(3) marble named `student` and a BLUE(2) marble `studentID`.
+10행의 `if (student.id == studentID)` 구문은 마찬가지로 `student`라는 초록(3) 구슬과 `studentID`라는 파랑(3) 구슬을 참조하는 것으로 결정된다.
 
-| NOTE: |
+| 비고: |
 | :--- |
-| The JS engine doesn't generally determine these marble colors during runtime; the "lookup" here is a rhetorical device to help you understand the concepts. During compilation, most or all variable references will match already-known scope buckets, so their color is already determined, and stored with each marble reference to avoid unnecessary lookups as the program runs. More on this nuance in Chapter 3. |
+| JS 엔진은 일반적으로 런타임 중에 이런 구슬 색상을 결정하지 않는다. 여기서 "조회"는 여러분이 개념을 이해할 수 있도록 도와주는 수사적인 장치이다. 컴파일 중에 대부분 또는 모든 변수 참조는 이미 알려진 스코프 양동이에 일치할 것이다. 그래서 그 색상은 이미 결정되어 있으며 프로그램이 실행될 때 불필요한 조회를 피하기 위해 각 구슬 참조와 함께 저장된다. 3장에서 이 미묘한 차이에 대해 더 알아보자. |
 
-The key take-aways from marbles & buckets (and bubbles!):
+구슬과 양동이 (그리고 버블!)의 주요 요점 정리:
 
-* Variables are declared in specific scopes, which can be thought of as colored marbles from matching-color buckets.
+* 변수는 특정한 스코프에 선언되며, 이는 일치하는 색의 양동이로부터 온 색이 있는 구슬로써 간주될 수 있다.
 
-* Any variable reference that appears in the scope where it was declared, or appears in any deeper nested scopes, will be labeled a marble of that same color—unless an intervening scope "shadows" the variable declaration; see "Shadowing" in Chapter 3.
+* 선언된 스코프에 나타나거나 더 깊은 중첩 스코프에 나타나는 변수 참조는, 간섭 스코프가 변수 선언에 "그늘을 드리우"지 않는 한 같은 색상의 구슬로 지정될 것이다. 3장에서 "Shadowing"을 보자.
 
-* The determination of colored buckets, and the marbles they contain, happens during compilation. This information is used for variable (marble color) "lookups" during code execution.
+* 색이 있는 양동이와 거기 있는 구슬의 결정은 컴파일 중에 일어난다. 이 정보는 코드 실행<sub>execution</sub> 중에 변수(구슬 색상) "조회"에 사용된다.
 
 ## A Conversation Among Friends
 

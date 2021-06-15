@@ -136,79 +136,79 @@ console.log(nextStudent);
 
 JS가 어떻게 프로그램을 처리할 것인지, 구체적으로 첫번째 구문부터 조사하자. 배열과 그것의 내용은 단지 기본적인 JS 값 표현식이다(따라서 스코프 문제에는 영향을 받지 않음). 그래서 여기서의 초점은 `var students = [ .. ]` 선언과 초기 할당 부분이 될 것이다.
 
-We typically think of that as a single statement, but that's not how our friend *Engine* sees it. In fact, JS treats these as two distinct operations, one which *Compiler* will handle during compilation, and the other which *Engine* will handle during execution.
+우리는 일반적으로 단 하나의 구문으로서 생각하지만, 우리의 친구 *엔진*이 보는 방식은 아니다. 실제로 JS는 두 가지 개별 작업으로 취급한다. 하나는 *컴파일러*가 컴파일 중에 다룰 것이고 다른 하나는 *엔진*이 실행중에 다룰 것이다.
 
-The first thing *Compiler* will do with this program is perform lexing to break it down into tokens, which it will then parse into a tree (AST).
+이 프로그램을 가지고 *컴파일러*가 할 첫번째 것은 토큰으로 나누기위해 어휘 분석<sub>lexing</sub>를 수행하고 트리(AST)로 구문 분석한다.
 
-Once *Compiler* gets to code generation, there's more detail to consider than may be obvious. A reasonable assumption would be that *Compiler* will produce code for the first statement such as: "Allocate memory for a variable, label it `students`, then stick a reference to the array into that variable." But that's not the whole story.
+*컴파일러*가 코드 생성에 착수하면, 분명한 것보다 더 많은 세부 사항을 고려해야 한다. 합리적인 가정은 *컴파일러*가 "변수에 대한 메모리를 할당하고, `students` 레이블을 지정하고, 배열에 대한 참조를 이 변수에 붙인다"와 같은 첫 번째 구문에 대한 코드를 생성한다는 것이다. 하지만 이것이 전부는 아니다.
 
-Here's the steps *Compiler* will follow to handle that statement:
+*컴파일러*가 이 구문을 다루기 위해 전개되는 단계가 있다:
 
-1. Encountering `var students`, *Compiler* will ask *Scope Manager* to see if a variable named `students` already exists for that particular scope bucket. If so, *Compiler* would ignore this declaration and move on. Otherwise, *Compiler* will produce code that (at execution time) asks *Scope Manager* to create a new variable called `students` in that scope bucket.
+1. `var students`를 접하면 *컴파일러*는 *스코프 매니저*에게 특정 스코프 양동이에 `students`라는 변수가 이미 존재하는지 물을 것이다. 만약 그렇다면, *컴파일러*는 이 선언을 무시하고 이동한다. 그렇지 않으면 *컴파일러*는 (실행 타임에) 스코프 양동이에 `students`라 불리는 새 변수를 생성하도록 *스코프 매니저*에게 요청하는 코드를 생성할 것이다.
 
-2. *Compiler* then produces code for *Engine* to later execute, to handle the `students = []` assignment. The code *Engine* runs will first ask *Scope Manager* if there is a variable called `students` accessible in the current scope bucket. If not, *Engine* keeps looking elsewhere (see "Nested Scope" below). Once *Engine* finds a variable, it assigns the reference of the `[ .. ]` array to it.
+2. *컴파일러*는  `students = []` 할당을 다루기 위해 나중에 실행할 *엔진*을 위한 코드를 생성한다. *엔진*이 실행하는 코드는 먼저 *스코프 매니저*에게 현재 스코프 양동이에서 접근할 수 있는 `students`라는 변수가 있는지 물을 것이다. 그렇지 않다면 *엔진*은 계속 다는 곳을 찾는다(아래 "중첩 스코프" 참고). *엔진*이 변수를 찾으면 `[ .. ]` 배열의 참조를 할당한다.
 
-In conversational form, the first phase of compilation for the program might play out between *Compiler* and *Scope Manager* like this:
+대화 형식으로, 프로그램을 위한 컴파일의 첫번째 단계는 아래처럼 *컴파일러*와 *스코프 매니저* 사이에서 흐를지도 모른다:
 
-> ***Compiler***: Hey, *Scope Manager* (of the global scope), I found a formal declaration for an identifier called `students`, ever heard of it?
+> ***컴파일러***: 안녕, (전역 스코프의) *스코프 매니저*야. `students`라 부르는 식별자에 대한 공식적인 선언을 찾았는데, 들어본 적 있니?
 
-> ***(Global) Scope Manager***: Nope, never heard of it, so I just created it for you.
+> ***(전역) 스코프 매니저***: 아니, 들어본 적 없어서 지금 막 만들었어.
 
-> ***Compiler***: Hey, *Scope Manager*, I found a formal declaration for an identifier called `getStudentName`, ever heard of it?
+> ***컴파일러***: 안녕, *스코프 매니저*야. `getStudentName`이라 부르는 식별자에 대한 공식적인 선언을 찾았는데, 들어본 적 있니?
 
-> ***(Global) Scope Manager***: Nope, but I just created it for you.
+> ***(전역) 스코프 매니저***: 아니, 들어본 적 없어서 지금 막 만들었어.
 
-> ***Compiler***: Hey, *Scope Manager*, `getStudentName` points to a function, so we need a new scope bucket.
+> ***컴파일러***: 안녕, *스코프 매니저*야. `getStudentName`는 함수를 가리켜서 새 스코프 양동이가 필요해.
 
-> ***(Function) Scope Manager***: Got it, here's the scope bucket.
+> ***(함수) 스코프 매니저***: 알았어, 여기 스코프 양동이야.
 
-> ***Compiler***: Hey, *Scope Manager* (of the function), I found a formal parameter declaration for `studentID`, ever heard of it?
+> ***컴파일러***: 안녕, (함수의) *스코프 매니저*야. `studentID`이라 부르는 식별자에 대한 공식적인 선언을 찾았는데, 들어본 적 있니?
 
-> ***(Function) Scope Manager***: Nope, but now it's created in this scope.
+> ***(함수) 스코프 매니저***: 없어, 하지만 지금 이 스코프에 만들었어.
 
-> ***Compiler***: Hey, *Scope Manager* (of the function), I found a `for`-loop that will need its own scope bucket.
-
-> ...
-
-The conversation is a question-and-answer exchange, where **Compiler** asks the current *Scope Manager* if an encountered identifier declaration has already been encountered. If "no," *Scope Manager* creates that variable in that scope. If the answer is "yes," then it's effectively skipped over since there's nothing more for that *Scope Manager* to do.
-
-*Compiler* also signals when it runs across functions or block scopes, so that a new scope bucket and *Scope Manager* can be instantiated.
-
-Later, when it comes to execution of the program, the conversation will shift to *Engine* and *Scope Manager*, and might play out like this:
-
-> ***Engine***: Hey, *Scope Manager* (of the global scope), before we begin, can you look up the identifier `getStudentName` so I can assign this function to it?
-
-> ***(Global) Scope Manager***: Yep, here's the variable.
-
-> ***Engine***: Hey, *Scope Manager*, I found a *target* reference for `students`, ever heard of it?
-
-> ***(Global) Scope Manager***: Yes, it was formally declared for this scope, so here it is.
-
-> ***Engine***: Thanks, I'm initializing `students` to `undefined`, so it's ready to use.
-
-> Hey, *Scope Manager* (of the global scope), I found a *target* reference for `nextStudent`, ever heard of it?
-
-> ***(Global) Scope Manager***: Yes, it was formally declared for this scope, so here it is.
-
-> ***Engine***: Thanks, I'm initializing `nextStudent` to `undefined`, so it's ready to use.
-
-> Hey, *Scope Manager* (of the global scope), I found a *source* reference for `getStudentName`, ever heard of it?
-
-> ***(Global) Scope Manager***: Yes, it was formally declared for this scope. Here it is.
-
-> ***Engine***: Great, the value in `getStudentName` is a function, so I'm going to execute it.
-
-> ***Engine***: Hey, *Scope Manager*, now we need to instantiate the function's scope.
+> ***컴파일러***: 안녕, (함수의) *스코프 매니저*야. 스코프 양동이가 필요한 `for` 반복문을 찾았어.
 
 > ...
 
-This conversation is another question-and-answer exchange, where *Engine* first asks the current *Scope Manager* to look up the hoisted `getStudentName` identifier, so as to associate the function with it. *Engine* then proceeds to ask *Scope Manager* about the *target* reference for `students`, and so on.
+이 대화는 질의 응답 교환으로, **컴파일러**가 *스코프 매니저*에게 마주친 식별자 선언이 이미 발견되었는지 묻는다. "아니오"라면, *스코프 매니저*는 스코프에 변수를 생성한다. "예"라면, *스코프 매니저*가 더 이상 할 것이 없으므로 실질적으로 건너뛴다.
 
-To review and summarize how a statement like `var students = [ .. ]` is processed, in two distinct steps:
+*컴파일러*는 함수나 블록 스코프를 지나갈 때도 새 스코프 양동이와 *스코프 매니저*가 실체화 될 수 있는 신호를 보낸다.
 
-1. *Compiler* sets up the declaration of the scope variable (since it wasn't previously declared in the current scope).
+나중에 프로그램의 실행 단계에 왔을 때, 대화는 *엔진*과 *스코프 매니저*로 전환되고, 아래처럼 흐를지도 모른다:
 
-2. While *Engine* is executing, to process the assignment part of the statement, *Engine* asks *Scope Manager* to look up the variable, initializes it to `undefined` so it's ready to use, and then assigns the array value to it.
+> ***엔진***: 안녕, (전역 스코프의) *스코프 매니저*야. 시작하기 전에, 너는 식별자 `getStudentName`를 찾을 수 있니?(<-원문에 ?를 빼먹은 것 같음) 그렇다면 내가 그것에 함수를 할당할 수 있을까?
+
+> ***(전역) 스코프 매니저***: 응, 여기 변수가 있어.
+
+> ***엔진***: 안녕, *스코프 매니저*야. `students`에 대한 *타깃* 참조를 찾았는데, 들어본 적 있니?
+
+> ***(전역) 스코프 매니저***: 응, 이 스코프에서 공식적으로 선언됐어. 여기 있어.
+
+> ***엔진***: 고마워, `students`를 `undefined`로 초기화하는 중이야. 사용할 준비가 됐어.
+
+> 안녕, (전역 스코프의) *스코프 매니저*야. `nextStudent`에 대한 *타깃* 참조를 찾았는데, 들어본 적 있니?
+
+> ***(전역) 스코프 매니저***: 응, 이 스코프에서 공식적으로 선언됐어. 여기 있어.
+
+> ***엔진***: 고마워, `nextStudent`를 `undefined`로 초기화하는 중이야. 사용할 준비가 됐어.
+
+> 안녕, (전역 스코프의) *스코프 매니저*야. `getStudentName`에 대한 *소스* 참조를 찾았는데, 들어본 적 있니?
+
+> ***(전역) 스코프 매니저***: 응, 이 스코프에서 공식적으로 선언됐어. 여기 있어.
+
+> ***엔진***: 좋아, `getStudentName`의 값은 함수야. 이걸 실행할꺼야.
+
+> ***엔진***: 안녕, *스코프 매니저*야. 지금 우리는 이 함수의 스코프를 실체화할 필요가 있어.
+
+> ...
+
+이 대화는 다른 질의 응답 교환으로, *엔진*이 먼저 *스코프 매니저*에게 호이스트된<sub>hoisted</sub>`getStudentName` 식별자를 찾고 함수를 연관시키기 위해 묻는다. 그 다음에 *엔진*은 *스코프 매니저*에게 `students`에 대한 *타깃* 참조 등을 묻기 위해 나아간다.
+
+아래 두 가지 단계는 `var students = [ .. ]`같은 구문을 어떻게 처리되는지 검토하고 요약한다:
+
+1. *컴파일러*는 (현재 스코프에서 이전에 선언된 적이 없다면) 스코프 변수의 선언을 설정한다.
+
+2. *엔진*은 실행하는 동안, 구문의 할당 부분을 처리하고, *스코프 매니저*에게 변수 찾는 것을 요청하고, `undefined`로 초기화하여 사용할 준비를 한다. 그리고 배열 값을 할당한다.
 
 ## Nested Scope
 

@@ -96,21 +96,21 @@ JS 엔진은 (컴파일 중에) 프로그램을 처리하고 변수 선언을 �
 
 * 색이 있는 양동이와 거기 있는 구슬의 결정은 컴파일 중에 일어난다. 이 정보는 코드 실행<sub>execution</sub> 중에 변수(구슬 색상) "룩업"에 사용된다.
 
-## A Conversation Among Friends
+## 친구 사이의 대화
 
-Another useful metaphor for the process of analyzing variables and the scopes they come from is to imagine various conversations that occur inside the engine as code is processed and then executed. We can "listen in" on these conversations to get a better conceptual foundation for how scopes work.
+변수와 스코프가 어디서부터 왔는지 분석하는 과정을 위한 유용한 메타포는 코드가 처리되고 실행되는 동안에 엔진 안에서 일어나는 다양한 대화를 상상하는 것이다. 우리는 스코프가 어떻게 동작하는지 더 나은 개념적 기반을 얻기 위해 이 대화를 "엿듣을" 수 있다.
 
-Let's now meet the members of the JS engine that will have conversations as they process our program:
+프로그램을 처리하는 동안 대화를 할 JS 엔진의 구성원을 지금 만나보자:
 
-* *Engine*: responsible for start-to-finish compilation and execution of our JavaScript program.
+* *엔진*: JavaScript 프로그램의 시작부터 완료까지 컴파일과 실행을 담당한다.
 
-* *Compiler*: one of *Engine*'s friends; handles all the dirty work of parsing and code-generation (see previous section).
+* *컴파일러*: *엔진*의 친구 중 하나. 구문 분석과 코드 생성의 더러운 작업을 모두 처리한다(이전 섹션 참고).
 
-* *Scope Manager*: another friend of *Engine*; collects and maintains a lookup list of all the declared variables/identifiers, and enforces a set of rules as to how these are accessible to currently executing code.
+* *스코프 매니저*: *엔진*의 다른 친구. 선언된 모든 변수/식별자의 룩업 목록을 수집하고 유지하며, 현재 실행하는 코드에서 접근 가능한 방법에 대한 규칙 집합을 적용한다.
 
-For you to *fully understand* how JavaScript works, you need to begin to *think* like *Engine* (and friends) think, ask the questions they ask, and answer their questions likewise.
+JavaScript가 작동하는 방식을 *완전히 이해*하려면 *엔진*(및 친구)처럼 *생각*하는 것을 시작하고, 질문하고, 답할 필요가 있다.
 
-To explore these conversations, recall again our running program example:
+대화를 살펴보기 위해 실행 중인 프로그램 예제를 다시 한 번 상기하자:
 
 ```js
 var students = [
@@ -134,7 +134,7 @@ console.log(nextStudent);
 // Suzy
 ```
 
-Let's examine how JS is going to process that program, specifically starting with the first statement. The array and its contents are just basic JS value literals (and thus unaffected by any scoping concerns), so our focus here will be on the `var students = [ .. ]` declaration and initialization-assignment parts.
+JS가 어떻게 프로그램을 처리할 것인지, 구체적으로 첫번째 구문부터 조사하자. 배열과 그것의 내용은 단지 기본적인 JS 값 표현식이다(따라서 스코프 문제에는 영향을 받지 않음). 그래서 여기서의 초점은 `var students = [ .. ]` 선언과 초기 할당 부분이 될 것이다.
 
 We typically think of that as a single statement, but that's not how our friend *Engine* sees it. In fact, JS treats these as two distinct operations, one which *Compiler* will handle during compilation, and the other which *Engine* will handle during execution.
 

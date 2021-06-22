@@ -210,45 +210,45 @@ JS가 어떻게 프로그램을 처리할 것인지, 구체적으로 첫번째 �
 
 2. *엔진*은 실행하는 동안, 구문의 할당 부분을 처리하고, *스코프 매니저*에게 변수 찾는 것을 요청하고, `undefined`로 초기화하여 사용할 준비를 한다. 그리고 배열 값을 할당한다.
 
-## Nested Scope
+## 중첩 스코프
 
-When it comes time to execute the `getStudentName()` function, *Engine* asks for a *Scope Manager* instance for that function's scope, and it will then proceed to look up the parameter (`studentID`) to assign the `73` argument value to, and so on.
+`getStudentName()` 함수를 실행할 때가 되면, *엔진*은 이 함수 스코프에 대한 *스코프 매니저* 인스턴스를 요청하고, 그런 다음 매개변수(`studentID`)를 조회해서 인수값 `73`을 할당하고 기타 등등의 일을 진행할 것이다.
 
-The function scope for `getStudentName(..)` is nested inside the global scope. The block scope of the `for`-loop is similarly nested inside that function scope. Scopes can be lexically nested to any arbitrary depth as the program defines.
+`getStudentName(..)`에 대한 함수 스코프는 전역 스코프 안에 중첩되어 있다. `for` 반복문에 대한 블록 스코프는 비슷하게 함수 스코프 안에 중첩되어 있다. 스코프는 프로그램이 정의하는 대로 어떤 임의의 깊이에도 어휘적으로<sub>lexically</sub> 중첩될 수 있다.
 
-Each scope gets its own *Scope Manager* instance each time that scope is executed (one or more times). Each scope automatically has all its identifiers registered at the start of the scope being executed (this is called "variable hoisting"; see Chapter 5).
+각 스코프는 실행될 때 마다(한 번 이상) 자신만의 *스코프 매니저* 인스턴스를 가진다. 각 스코프는 실행되고 있는 스코프의 시작 지점에서 등록된 모든 식별자를 자동으로 가진다("변수 호이스팅"이라고 한다. 5장 참고).
 
-At the beginning of a scope, if any identifier came from a `function` declaration, that variable is automatically initialized to its associated function reference. And if any identifier came from a `var` declaration (as opposed to `let`/`const`), that variable is automatically initialized to `undefined` so that it can be used; otherwise, the variable remains uninitialized (aka, in its "TDZ," see Chapter 5) and cannot be used until its full declaration-and-initialization are executed.
+스코프의 시작 지점에서, 만약 어떤 식별자가 `함수` 선언에서 왔다면, 해당 변수는 연관된 함수 참조로 자동으로 초기화된다. 그리고 어떤 식별자가 `var` 선언(`let`/`const`가 아니라)에서 왔다면 해당 변수는 사용될 수 있도록 `undefined`로 자동으로 초기화된다. 그렇지 않으면, 해당 변수는 초기화되지 않은 상태("TDZ"로 알려진, 5장 참고)로 남겨지고 완전한 선언과 초기화가 실행될 때까지 사용될 수 없다.
 
-In the `for (let student of students) {` statement, `students` is a *source* reference that must be looked up. But how will that lookup be handled, since the scope of the function will not find such an identifier?
+`for (let student of students) {` 구문에서 `students`는 조회되어야만 하는 *소스* 참조이다. 하지만 함수의 스코프에서 이런 식별자를 찾지 못할 것이기 때문에, 이 조회 과정은 어떻게 처리 될까?
 
-To explain, let's imagine that bit of conversation playing out like this:
+설명하기 위해 다음과 같은 짧은 대화가 진행된다고 가정해보자:
 
-> ***Engine***: Hey, *Scope Manager* (for the function), I have a *source* reference for `students`, ever heard of it?
+> ***엔진***: 안녕, (함수를 위한) *스코프 매니저*야. 나는 `students`에 대한 *소스* 참조를 가지고 있어. 들어본 적 있니?
 
-> ***(Function) Scope Manager***: Nope, never heard of it. Try the next outer scope.
+> ***(함수) 스코프 매니저***: 아니, 전혀 들어본 적 없어. 바로 바깥의 스코프를 살펴보자.
 
-> ***Engine***: Hey, *Scope Manager* (for the global scope), I have a *source* reference for `students`, ever heard of it?
+> ***엔진***: 안녕, (전역 스코프를 위한) *스코프 매니저*야. 나는 `students`에 대한 *소스* 참조를 가지고 있어. 들어본 적 있니?
 
-> ***(Global) Scope Manager***: Yep, it was formally declared, here it is.
+> ***(전역) 스코프 매니저***: 응, 정식 선언되어 있어. 여기 있어.
 
 > ...
 
-One of the key aspects of lexical scope is that any time an identifier reference cannot be found in the current scope, the next outer scope in the nesting is consulted; that process is repeated until an answer is found or there are no more scopes to consult.
+렉시컬 스코프의 주요 측면 중 하나는 식별자 참조를 현재 스코프에서 찾을 수 없을 때마다, 중첩하고 있는 바로 바깥의 스코프가 참고된다. 이 과정은 답을 찾거나 참고할 스코프가 더 이상 없을 때까지 반복된다.
 
-### Lookup Failures
+### 룩업 실패
 
-When *Engine* exhausts all *lexically available* scopes (moving outward) and still cannot resolve the lookup of an identifier, an error condition then exists. However, depending on the mode of the program (strict-mode or not) and the role of the variable (i.e., *target* vs. *source*; see Chapter 1), this error condition will be handled differently.
+*엔진*이 *어휘적으로 사용 가능한* 스코프를 (바깥으로 이동하면서) 모두 소진했고 여전히 식별자 룩업을 해결할 수 없을 때, 에러 상태가 발생한다. 그러나 프로그램의 모드(엄격 모드인지 아닌지)와 변수의 역할(예: *타깃*과 *소스*, 1장 참고)에 따라, 이 에러 상태는 다르게 처리 될 것이다.
 
-#### Undefined Mess
+#### 엉망진창인 Undefined
 
-If the variable is a *source*, an unresolved identifier lookup is considered an undeclared (unknown, missing) variable, which always results in a `ReferenceError` being thrown. Also, if the variable is a *target*, and the code at that moment is running in strict-mode, the variable is considered undeclared and similarly throws a `ReferenceError`.
+만약 변수가 *소스*라면 해결되지 않은 식별자 룩업은 선언되지 않은(알 수 없는, 누락된) 변수로 간주되는데, 항상 `ReferenceError`가 발생한다. 또한 변수가 *타깃*이고 그 순간에 코드가 엄격 모드로 실행 중이라면 변수는 선언되지 않은 것으로 간주되고 마찬가지로 `ReferenceError`가 발생한다.
 
-The error message for an undeclared variable condition, in most JS environments, will look like, "Reference Error: XYZ is not defined." The phrase "not defined" seems almost identical to the word "undefined," as far as the English language goes. But these two are very different in JS, and this error message unfortunately creates a persistent confusion.
+선언되지 않은 변수 상태에 대한 에러 메시지는 대부분의 JS 환경에서 "Reference Error: XYZ is not defined."로 표시될 것이다. "not defined"라는 표현은 영어에 관한 한 "undefined"라는 단어와 거의 똑같은 것으로 보인다. 하지만 JS에서 이 두 가지는 전혀 다르고, 이 에러 메시지는 안타깝게도 지속적인 혼란을 야기한다.
 
-"Not defined" really means "not declared"—or, rather, "undeclared," as in a variable that has no matching formal declaration in any *lexically available* scope. By contrast, "undefined" really means a variable was found (declared), but the variable otherwise has no other value in it at the moment, so it defaults to the `undefined` value.
+"Not defined"는 실제로 *어휘적으로 사용 가능한* 스코프에서 일치하는 정식 선언이 없는 변수로서 "선언되지 않음"이거나 더 정확히 말하면 "비선언"을 의미한다. 반면에 "undefined"는 실제로 변수가 발견(선언)된 것을 의미하지만, 그 순간에 달리 다른 값이 없는 변수이고, `undefined`가 기본값이다.
 
-To perpetuate the confusion even further, JS's `typeof` operator returns the string `"undefined"` for variable references in either state:
+혼란을 더욱 더 지속시키는 것은, JS의 `typeof` 연산자는 다음 각각의 상태에서 변수 참조에 대해 문자열 `"undefined"`를 반환한다는 것이다:
 
 ```js
 var studentName;
@@ -257,64 +257,64 @@ typeof studentName;     // "undefined"
 typeof doesntExist;     // "undefined"
 ```
 
-These two variable references are in very different conditions, but JS sure does muddy the waters. The terminology mess is confusing and terribly unfortunate. Unfortunately, JS developers just have to pay close attention to not mix up *which kind* of "undefined" they're dealing with!
+두 변수 참조는 매우 다른 상황에 있지만 JS는 확실히 물을 흐리고 있다. 엉망진창인 용어는 혼란스럽고 끔찍하게 유감스럽다. 유감스럽게도 JS 개발자들은 다루고 있는 "undefined"가 *어떤 종류인지* 혼동하지 않도록 정확히 주의를 기울여야 한다.
 
-#### Global... What!?
+#### 전역... 뭐라고!?
 
-If the variable is a *target* and strict-mode is not in effect, a confusing and surprising legacy behavior kicks in. The troublesome outcome is that the global scope's *Scope Manager* will just create an **accidental global variable** to fulfill that target assignment!
+만약 변수가 *타깃*이고 엄격 모드가 적용되지 않는다면, 혼란스럽고 놀라운 레거시 동작이 시작된다. 골칫거리인 결과는 전역 스코프의 *스코프 매니저*가 타깃 할당을 수행하기 위해 **우발적인 전역 변수**를 그냥 생성할 것이라는 것이다.
 
-Consider:
+아래를 자세히 보자:
 
 ```js
 function getStudentName() {
-    // assignment to an undeclared variable :(
+    // 선언되지 않은 변수에 할당 :(
     nextStudent = "Suzy";
 }
 
 getStudentName();
 
 console.log(nextStudent);
-// "Suzy" -- oops, an accidental-global variable!
+// "Suzy" -- 이런, 우발적인 전역 변수다!
 ```
 
-Here's how that *conversation* will proceed:
+*대화*가 진행될 방식은 다음과 같다:
 
-> ***Engine***: Hey, *Scope Manager* (for the function), I have a *target* reference for `nextStudent`, ever heard of it?
+> ***엔진***: 안녕, (함수를 위한) *스코프 매니저*야. 나는 `nextStudent`에 대한 *타깃* 참조를 가지고 있어. 들어본 적 있니?
 
-> ***(Function) Scope Manager***: Nope, never heard of it. Try the next outer scope.
+> ***(함수) 스코프 매니저***: 아니, 전혀 들어본 적 없어. 바로 바깥의 스코프를 살펴보자.
 
-> ***Engine***: Hey, *Scope Manager* (for the global scope), I have a *target* reference for `nextStudent`, ever heard of it?
+> ***엔진***: 안녕, (전역 스코프를 위한) *스코프 매니저*야. 나는 `nextStudent`에 대한 *타깃* 참조를 가지고 있어. 들어본 적 있니?
 
-> ***(Global) Scope Manager***: Nope, but since we're in non-strict-mode, I helped you out and just created a global variable for you, here it is!
+> ***(전역) 스코프 매니저***: 아니, 하지만 비엄격 모드에 있기 때문에 너를 도와줬고 지금 막 전역 변수를 생성했어. 여기 있어!
 
-Yuck.
+우웩.
 
-This sort of accident (almost certain to lead to bugs eventually) is a great example of the beneficial protections offered by strict-mode, and why it's such a bad idea *not* to be using strict-mode. In strict-mode, the ***Global Scope Manager*** would instead have responded:
+이런 류의 사고(결국 버그로 이어질 것이 거의 확실한)는 엄격 모드에 의해 제공되는 이로운 보호 기능의 아주 좋은 예이고, 엄격 모드를 사용하지 *않는* 것이 얼마나 나쁜 생각인지 보여주는 이유이다. 엄격 모드에서 ***전역 스코프 매니저***는 다음과 같이 응답한다:
 
-> ***(Global) Scope Manager***: Nope, never heard of it. Sorry, I've got to throw a `ReferenceError`.
+> ***(전역) 스코프 매니저***: 아니, 전혀 들어본 적 없어. 미안해, `ReferenceError`를 던져야해.
 
-Assigning to a never-declared variable *is* an error, so it's right that we would receive a `ReferenceError` here.
+한번도 선언되지 않은 변수에 할당하는 것은 에러*다*. 그래서 여기서 `ReferenceError`를 받는 것이 옳다.
 
-Never rely on accidental global variables. Always use strict-mode, and always formally declare your variables. You'll then get a helpful `ReferenceError` if you ever mistakenly try to assign to a not-declared variable.
+우발적인 전역 변수에 의존하지 말아라. 항상 엄격 모드를 사용하고, 항상 정식으로 변수를 선언해라. 실수로 선언되지 않은 변수에 할당하려는 시도를 한다면 도움이 되는 `ReferenceError`를 얻을 것이다.
 
-### Building On Metaphors
+### 비유에 기반한 빌딩
 
-To visualize nested scope resolution, I prefer yet another metaphor, an office building, as in Figure 3:
+중첩된 스코프 해상도를 시각화하기 위해서, 그림 3과 같은 또 다른 비유인 회사 빌딩을 선호한다:
 
 <figure>
-    <img src="images/fig3.png" width="250" alt="Scope &quot;Building&quot;" align="center">
-    <figcaption><em>Fig. 3: Scope "Building"</em></figcaption>
+    <img src="images/fig3.png" width="250" alt="스코프 &quot;빌딩&quot;" align="center">
+    <figcaption><em>그림 3: 스코프 "빌딩"</em></figcaption>
     <br><br>
 </figure>
 
-The building represents our program's nested scope collection. The first floor of the building represents the currently executing scope. The top level of the building is the global scope.
+이 빌딩은 우리 프로그램의 중첩된 스코프 수집품을 나타낸다. 빌딩의 1층은 현재 실행 중인 스코프를 나타낸다. 빌딩의 최상층은 전역 스코프이다.
 
-You resolve a *target* or *source* variable reference by first looking on the current floor, and if you don't find it, taking the elevator to the next floor (i.e., an outer scope), looking there, then the next, and so on. Once you get to the top floor (the global scope), you either find what you're looking for, or you don't. But you have to stop regardless.
+먼저 현재 층에서 보는 것으로 *타깃*이나 *소스* 변수 참조를 해결한다. 그리고 찾을 수 없다면, 다음 층(예: 바깥 스코프)으로 가기 위해 엘리베이터 타기, 거기서 보기, 그리고 나서 다음 층, 등등. 최상층(전역 스코프)에 도달하면, 찾던지 못찾던지 둘 중 하나다. 하지만 상관없이 멈춰야만 한다.
 
-## Continue the Conversation
+## 대화 계속하기
 
-By this point, you should be developing richer mental models for what scope is and how the JS engine determines and uses it from your code.
+이 시점에서, 스코프가 무엇이고 JS 엔진이 코드를 결정하고 사용하는 방법에 대한 더 풍부한 멘탈 모델을 개발해야 한다.
 
-Before *continuing*, go find some code in one of your projects and run through these conversations. Seriously, actually speak out loud. Find a friend and practice each role with them. If either of you find yourself confused or tripped up, spend more time reviewing this material.
+"계속하기" 전에, 당신의 프로젝트 중 하나에서 코드를 찾고 이런 대화를 진행해라. 진지하게, 정말로 큰소리로 말해라. 친구를 찾아서 그들과 함께 각 역할을 연습해라. 둘 중 누구라도 혼란스럽거나 잘못된 것을 발견한다면, 이 자료를 복습하는 것에 더 시간을 써라.
 
-As we move (up) to the next (outer) chapter, we'll explore how the lexical scopes of a program are connected in a chain.
+바로 다음 (바깥의) 장으로 넘어(위로)가면서는, 프로그램의 렉시컬 스코프가 체인으로 연결되는 방법을 알아볼 것이다. 

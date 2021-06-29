@@ -47,17 +47,17 @@
 
 2장의 "룩업 실패" 섹션은 참조가 실행되는 순간까지도 여전히 구슬에 색이 없는 경우에 어떤 일이 일어나는지를 다루고 있다.
 
-## Shadowing
+## 섀도잉<sub>Shadowing</sub>
 
-"Shadowing" might sound mysterious and a little bit sketchy. But don't worry, it's completely legit!
+"섀도잉"은 신비롭고 약간 모호하게 들릴 수 있다. 하지만 걱정하지 마라. 완전히 맞는 말이다!
 
-Our running example for these chapters uses different variable names across the scope boundaries. Since they all have unique names, in a way it wouldn't matter if all of them were just stored in one bucket (like RED(1)).
+이 장의 실행 예제에서는 스코프의 경계에 걸쳐 서로 다른 변수명을 사용한다. 모두 고유한 이름을 갖고 있기 때문에, 어떻게 보면 모든 변수를 하나의 (빨강(1)같은)양동이에 넣어도 문제가 없을 것 같다.
 
-Where having different lexical scope buckets starts to matter more is when you have two or more variables, each in different scopes, with the same lexical names. A single scope cannot have two or more variables with the same name; such multiple references would be assumed as just one variable.
+서로 다른 렉시컬 스코프 양동이를 갖는 것이 더 중요해지는 순간은 각각 다른 스코프에서 어휘적으로 동일한 이름을 가진 변수를 2개 이상 갖기 시작했을 때이다. 하나의 스코프에서는 같은 이름의 변수를 두 개 이상 가질 수 없다. 이런 다중 참조는 하나의 변수로 가정할 것이다.
 
-So if you need to maintain two or more variables of the same name, you must use separate (often nested) scopes. And in that case, it's very relevant how the different scope buckets are laid out.
+그래서 동일한 이름의 변수를 두 개 이상 유지해야 한다면, 별도의 (가끔씩 중첩된)스코프를 이용해야만 한다. 그리고 이 경우 다른 스코프 양동이가 배치되는 방법과 매우 관련이 있다.
 
-Consider:
+아래를 자세히 보자:
 
 ```js
 var studentName = "Suzy";
@@ -77,7 +77,7 @@ console.log(studentName);
 // Suzy
 ```
 
-| TIP: |
+| 팁: |
 | :--- |
 | Before you move on, take some time to analyze this code using the various techniques/metaphors we've covered in the book. In particular, make sure to identify the marble/bubble colors in this snippet. It's good practice! |
 

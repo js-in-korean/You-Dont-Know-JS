@@ -79,29 +79,29 @@ console.log(studentName);
 
 | 팁: |
 | :--- |
-| Before you move on, take some time to analyze this code using the various techniques/metaphors we've covered in the book. In particular, make sure to identify the marble/bubble colors in this snippet. It's good practice! |
+| 넘어가기 전에, 이 책에서 다룬 다양한 기법과 비유로 잠시 위 코드를 분석하라. 특히 이 코드에서 구슬과 버블을 확실히 구분하라. 좋은 연습이 될 것이다. |
 
-The `studentName` variable on line 1 (the `var studentName = ..` statement) creates a RED(1) marble. The same named variable is declared as a BLUE(2) marble on line 3, the parameter in the `printStudent(..)` function definition.
+1행의 `studentName` 변수(`var studentName = ..` 구문)는  빨강(1) 구슬을 생성한다. 함수 `printStudent(..)` 정의에 같은 이름의 변수가 3행에 파란(2)구슬로 선언 되어 있다.
 
-What color marble will `studentName` be in the `studentName = studentName.toUpperCase()` assignment statement and the `console.log(studentName)` statement? All three `studentName` references will be BLUE(2).
+`studentName = studentName.toUpperCase()` 할당 구문과 `console.log(studentName)` 구문에서 `studentName` 은 어떤 색상의 구슬일까? 세 개의 `studentName` 참조 모두는 파랑(2)일 것이다.
 
-With the conceptual notion of the "lookup," we asserted that it starts with the current scope and works its way outward/upward, stopping as soon as a matching variable is found. The BLUE(2) `studentName` is found right away. The RED(1) `studentName` is never even considered.
+"룩업"이라는 개념을 이용해, 현재 스코프부터 출발해서 위/바깥쪽으로 이동하면서 알맞은 변수가 나올 때 중지하면 된다고 앞서 이야기했다. 위 구문에서는 파랑(2) `studentName`을 바로 찾을 수 있으므로 빨강(1) `studentName`는 고려하지 않아도 된다.
 
-This is a key aspect of lexical scope behavior, called *shadowing*. The BLUE(2) `studentName` variable (parameter) shadows the RED(1) `studentName`. So, the parameter is shadowing the (shadowed) global variable. Repeat that sentence to yourself a few times to make sure you have the terminology straight!
+이것이 "섀도잉"이라고 부르는 렉시컬 스코프 동작의 핵심적인 측면이다. 파랑(2) `studentName` (매개)변수가 빨강 `studentName`을 가리고 있다. 그래서 이 매개 변수가 전역 변수를 '섀도잉'한다고 볼 수 있다. 위 문장을 스스로 반복해 읽으면서 용어를 제대로 이해했는지 확인하라.
 
-That's why the re-assignment of `studentName` affects only the inner (parameter) variable: the BLUE(2) `studentName`, not the global RED(1) `studentName`.
+그래서 `studentName`에 새 값을 할당하더라도 전역의 빨강(1) `studentName`이 아닌 파랑(2) `studentName`에만 영향을 준다.
 
-When you choose to shadow a variable from an outer scope, one direct impact is that from that scope inward/downward (through any nested scopes) it's now impossible for any marble to be colored as the shadowed variable—(RED(1), in this case). In other words, any `studentName` identifier reference will correspond to that parameter variable, never the global `studentName` variable. It's lexically impossible to reference the global `studentName` anywhere inside of the `printStudent(..)` function (or from any nested scopes).
+외부 스코프로부터 내부의 변수를 섀도잉하려고 할 때, 한 가지 직접적인 영향은 (중첩된 스코프를 통한) 안/아래쪽 스코프에서는 어떤 구슬이라도 섀도잉으로 가려진 변수(이 경우, 빨강(1))로 색칠할 수 없다는 것이다. 다시 말해, 모든 `studentName` 식별자 참조는 그 매개변수와 일치하겠지만, 전역 `studentName` 변수와는 일치하지 않을 것이다. `printStudent(..)` 함수 (또는 중첩된 스코프 내부에 있는) 어떤 것이라도 전역의 `studentName`을 참조하는 것은 어휘적으로 불가능하다. 
 
-### Global Unshadowing Trick
+### 전역 섀도잉을 무시하는 방법
 
-Please beware: leveraging the technique I'm about to describe is not very good practice, as it's limited in utility, confusing for readers of your code, and likely to invite bugs to your program. I'm covering it only because you may run across this behavior in existing programs, and understanding what's happening is critical to not getting tripped up.
+주의하라: 이제부터 설명할 기법을 활용하는것은 그다지 유용하지 않고 코드를 읽는 사람에게 혼란을 줄 수도 있으며 프로그램에 버그를 발생시킬 수도 있기 때문에 그다지 좋은 방법이 아니다. 단지 당신이 실제 프로그램에서 이런 동작을 우연히 발견할 수도 있고, 어떤 일이 벌어지는지를 이해하는 것이 실수를 방지하기 위해 필요하기 때문에 이 기법을 다루는 것이다. 
 
-It *is* possible to access a global variable from a scope where that variable has been shadowed, but not through a typical lexical identifier reference.
+섀도잉으로 가려진 변수가 있는 스코프로부터 전역 변수에 접근할 수 *있다.* 하지만, 일반적인 어휘적 식별자 참조를 통해 접근하는 것은 아니다.
 
-In the global scope (RED(1)), `var` declarations and `function` declarations also expose themselves as properties (of the same name as the identifier) on the *global object*—essentially an object representation of the global scope. If you've written JS for a browser environment, you probably recognize the global object as `window`. That's not *entirely* accurate, but it's good enough for our discussion. In the next chapter, we'll explore the global scope/object topic more.
+전역 스코프(빨강(1))에서 `var` 선언과 `function` 선언 또한 *전역 객체*(—기본적으로 전역 스코프를 나타내는 객체를 표현)의 (식별자와 동일한 이름의)속성으로 그들 자신을 나타낸다. 만약 당신이 브라우저 환경에서 JS를 작성했다면 전역 객체는 `window`로 인식하게 될 것이다. *완전히* 정확한 말은 아니지만, 논의하기에는 충분하다. 다음 장에서 전역 스코프/객체에 대해 더 알아볼 것이다.
 
-Consider this program, specifically executed as a standalone .js file in a browser environment:
+이 프로그램을 자세히 살펴보자. 특별히 브라우저 환경에서 독립적으로 실행되고 있다.
 
 ```js
 var studentName = "Suzy";

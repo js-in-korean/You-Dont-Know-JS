@@ -116,17 +116,18 @@ printStudent("Frank");
 // "Suzy"
 ```
 
-Notice the `window.studentName` reference? This expression is accessing the global variable `studentName` as a property on `window` (which we're pretending for now is synonymous with the global object). That's the only way to access a shadowed variable from inside a scope where the shadowing variable is present.
+`window.studentName` 참조가 보이는가?  이 표현식은 전역 변수 `studentName`를 (지금은 전역 객체와 같은 척 하고 있는)`window`의 속성으로 접근하고 있다. 이것이 섀도잉한 변수가 있는 스코프 내부에서 섀도잉으로 가린 변수에 접근할 수 있는 유일한 방법이다.
 
-The `window.studentName` is a mirror of the global `studentName` variable, not a separate snapshot copy. Changes to one are still seen from the other, in either direction. You can think of `window.studentName` as a getter/setter that accesses the actual `studentName` variable. As a matter of fact, you can even *add* a variable to the global scope by creating/setting a property on the global object.
 
-| WARNING: |
+ `window.studentName`는 별도의 스냅샷 사본이 아니라 전역 `studentName` 변수의 거울이다. 한 쪽에 변화가 생기면 다른 쪽에서도 같은 변화를 볼 수 있다. 어느쪽이든 마찬가지이다. `window.studentName`를 실제 `studentName` 변수에 접근하는 getter/setter로 생각할 수도 있다. 사실은, 전역 객체에 속성을 생성하거나 설정하여 전역 스코프에 변수를 *추가*할 수도 있다.
+
+| 주의: |
 | :--- |
-| Remember: just because you *can* doesn't mean you *should*. Don't shadow a global variable that you need to access, and conversely, avoid using this trick to access a global variable that you've shadowed. And definitely don't confuse readers of your code by creating global variables as `window` properties instead of with formal declarations! |
+| 기억하라: 단지 *할 수 있다*는 것은 *해야 한다*는 의미가 아니다. 접근해야 하는 전역 변수는 섀도잉하지 말아야 하고, 반대로 이미 섀도잉으로 가린 전역 변수에 접근하기 위해 이 방법을 사용하지도 말아야 한다. 그리고 일반적인 선언문이 아니라 `window`의 속성을 이용해 전역 변수를 만들어서 코드를 읽는 사람들을 절대로 혼란스럽게 하지 말아라! |
 
-This little "trick" only works for accessing a global scope variable (not a shadowed variable from a nested scope), and even then, only one that was declared with `var` or `function`.
+이 작은 "속임수"는 (중첩된 스코프에서 섀도잉으로 가려진 변수가 아니라)전역 스코프의 변수에 접근할 때에만 사용할 수 있고, `var` 또는 `function`으로 선언된 변수이어야만 한다.
 
-Other forms of global scope declarations do not create mirrored global object properties:
+전역 스코프에서 하게되는 선언의 또 다른 형태는 전역 객체에 속성을 생성하지 않는다.
 
 ```js
 var one = 1;
@@ -140,7 +141,7 @@ console.log(window.notTwo);    // undefined
 console.log(window.notThree);  // undefined
 ```
 
-Variables (no matter how they're declared!) that exist in any other scope than the global scope are completely inaccessible from a scope where they've been shadowed:
+전역 스코프가 아닌 다른 스코프에 있는 변수는 어떤 형태로 선언을 하더라도 섀도잉을 사용한 스코프에서 절대로 접근할 수 없습니다.
 
 ```js
 var special = 42;
@@ -164,7 +165,7 @@ lookingFor(112358132134);
 // 42
 ```
 
-The global RED(1) `special` is shadowed by the BLUE(2) `special` (parameter), and the BLUE(2) `special` is itself shadowed by the GREEN(3) `special` inside `keepLooking()`. We can still access the RED(1) `special` using the indirect reference `window.special`. But there's no way for `keepLooking()` to access the BLUE(2) `special` that holds the number `112358132134`.
+전역의 빨강(1) `special` 변수는 파랑(2) `special` 변수의 섀도잉으로 가려지고, 파랑(2) `special` 자신도 `keepLooking()` 내부의 초록(3) `special`의 섀도잉으로 가려지게 된다. 간접적인 참조 `window.special`를 사용하면, 여전히 빨강(1) `special`에 접근할 수 있다. 그러나 `keepLooking()`에서 번호 `112358132134`를 갖고 있는 파랑(2) `special`에는 접근할 수 있는 방법이 없다.
 
 ### Copying Is Not Accessing
 

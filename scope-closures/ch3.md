@@ -118,7 +118,6 @@ printStudent("Frank");
 
 `window.studentName` 참조가 보이는가?  이 표현식은 전역 변수 `studentName`를 (지금은 전역 객체와 같은 척 하고 있는)`window`의 속성으로 접근하고 있다. 이것이 섀도잉한 변수가 있는 스코프 내부에서 섀도잉으로 가린 변수에 접근할 수 있는 유일한 방법이다.
 
-
  `window.studentName`는 별도의 스냅샷 사본이 아니라 전역 `studentName` 변수의 거울이다. 한 쪽에 변화가 생기면 다른 쪽에서도 같은 변화를 볼 수 있다. 어느쪽이든 마찬가지이다. `window.studentName`를 실제 `studentName` 변수에 접근하는 getter/setter로 생각할 수도 있다. 사실은, 전역 객체에 속성을 생성하거나 설정하여 전역 스코프에 변수를 *추가*할 수도 있다.
 
 | 주의: |
@@ -147,9 +146,9 @@ console.log(window.notThree);  // undefined
 var special = 42;
 
 function lookingFor(special) {
-    // The identifier `special` (parameter) in this
-    // scope is shadowed inside keepLooking(), and
-    // is thus inaccessible from that scope.
+    // 이 스코프 내부의 `special` (매개변수)식별자는
+    // keepLooking() 내부에서 섀도잉으로 가려진다.
+    // 그래서 해당 스코프에서는 접근할 수 없다.
 
     function keepLooking() {
         var special = 3.141592;
@@ -167,9 +166,9 @@ lookingFor(112358132134);
 
 전역의 빨강(1) `special` 변수는 파랑(2) `special` 변수의 섀도잉으로 가려지고, 파랑(2) `special` 자신도 `keepLooking()` 내부의 초록(3) `special`의 섀도잉으로 가려지게 된다. 간접적인 참조 `window.special`를 사용하면, 여전히 빨강(1) `special`에 접근할 수 있다. 그러나 `keepLooking()`에서 번호 `112358132134`를 갖고 있는 파랑(2) `special`에는 접근할 수 있는 방법이 없다.
 
-### Copying Is Not Accessing
+### 복사해놓은 것은 접근한 것이 아니다
 
-I've been asked the following "But what about...?" question dozens of times. Consider:
+"그런데, 이런 경우는...?" 이라는 질문을 수도 없이 받았다.  다음을 자세히 보자:
 
 ```js
 var special = 42;
@@ -182,7 +181,7 @@ function lookingFor(special) {
     function keepLooking() {
         var special = 3.141592;
         console.log(special);
-        console.log(another.special);  // Ooo, tricky!
+        console.log(another.special);  // 아주 교묘하다!
         console.log(window.special);
     }
 
@@ -195,13 +194,13 @@ lookingFor(112358132134);
 // 42
 ```
 
-Oh! So does this `another` object technique disprove my claim that the `special` parameter is "completely inaccessible" from inside `keepLooking()`? No, the claim is still correct.
+앗! 그렇다면 `another` 객체 기법은 `special` 매개변수가 `keepLooking()`내부에서는 "절대로 접근할 수 없다"는 위 주장을 반증하는 것일까? 아니다. 위 주장은 아직도 틀리지 않다.
 
-`special: special` is copying the value of the `special` parameter variable into another container (a property of the same name). Of course, if you put a value in another container, shadowing no longer applies (unless `another` was shadowed, too!). But that doesn't mean we're accessing the parameter `special`; it means we're accessing the copy of the value it had at that moment, by way of *another* container (object property). We cannot reassign the BLUE(2) `special` parameter to a different value from inside `keepLooking()`.
+`special: special`은 `special` 매개변수의 값을 다른 컨테이너에 (같은 이름의 속성으로) 복사한 것이다. 당연히 이 값을 다른 컨테이너에 붙여 넣으면 (`another`도 섀도잉하지 않는 이상) 섀도잉이 적용되지 않는다. 하지만 그렇다고 해서 `special` 매개변수에 접근했다는 것을 의미하진 않는다. 이것은 `another` 컨테이너의 형태(객체의 속성)로 복사한 값에 접근했다는 것을 의미한다. 여전히 `keepLooking()` 내부에서 파랑(2) `special` 매개변수에 다른 값을 할당할 수는 없다.
 
-Another "But...!?" you may be about to raise: what if I'd used objects or arrays as the values instead of the numbers (`112358132134`, etc.)? Would us having references to objects instead of copies of primitive values "fix" the inaccessibility?
+다음과 같은 상황을 들며 "그런데, 이런 경우는...?"라고 말해볼 수 있다: `112358132134` 같은 수 타입 값이 아니라 배열이나 객체를 대신 사용했다면 어떨까? 원시 값의 복사본 대신 객체에 대한 참조 값이 있으면 접근 불가한 값을 "수정"할 수 도 있지 않을까?
 
-No. Mutating the contents of the object value via a reference copy is **not** the same thing as lexically accessing the variable itself. We still can't reassign the BLUE(2) `special` parameter.
+안된다. 참조를 통해 객체 값의 내용을 변조하는 것은 어휘적으로 변수 자체에 접근하는 것이 *아니다.* 여전히 파랑(2) `special` 매개변수에 다른 값을 할당할 수는 없다.
 
 ### Illegal Shadowing
 

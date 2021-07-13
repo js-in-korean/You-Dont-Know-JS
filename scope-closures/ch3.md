@@ -7,7 +7,7 @@
 
 이제 요점을 파헤칠 시간이다. 지금부터는 좀 더 자세한 내용을 살펴볼 것이다. 그래도 위 방법을 계속 사용해보라. 위와 같은(these) 토론은 우리가 아직 스코프<sub>scope</sub>에 대해 얼마나 모르는지를 확실히 알려줄 것이기 때문이다. 이 글(이 글이 어떤 내용인지 모르겠음)과 코드를 시간을 내서 읽어보아라.
 
-실행중인 예제의 컨텍스트를 새로 고치기 위해 2장, 그림 2의 중첩 된 스코프 버블 그림을 다시 살펴보자.
+실행 예제의 문맥을 상기하기 위해 2장, 그림 2의 중첩 된 스코프 버블 그림을 살펴보자.
 
 <figure>
     <img src="images/fig2.png" width="500" alt="Colored Scope Bubbles" align="center">
@@ -202,16 +202,16 @@ lookingFor(112358132134);
 
 안된다. 참조를 통해 객체 값의 내용을 변조하는 것은 어휘적으로 변수 자체에 접근하는 것이 *아니다.* 여전히 파랑(2) `special` 매개변수에 다른 값을 할당할 수는 없다.
 
-### Illegal Shadowing
+### 잘못된 섀도잉
 
-Not all combinations of declaration shadowing are allowed. `let` can shadow `var`, but `var` cannot shadow `let`:
+선언으로 섀도잉을 할 때, 모든 선언의 조합이 허용되는 것은 아니다. `let`은 `var`를 섀도잉 할 수 있지만, `var`는 `let`을 섀도잉할 수 없다:
 
 ```js
 function something() {
     var special = "JavaScript";
 
     {
-        let special = 42;   // totally fine shadowing
+        let special = 42;   // 제대로 된 섀도잉
 
         // ..
     }
@@ -233,13 +233,13 @@ function another() {
 }
 ```
 
-Notice in the `another()` function, the inner `var special` declaration is attempting to declare a function-wide `special`, which in and of itself is fine (as shown by the `something()` function).
+`another()`함수를 보면, 안쪽에 있는 `var special` 선언이 함수 전체의 `special`을 선언하려고 시도하며, (`something()`함수에서 했던 것처럼)그 자체로는 괜찮다.
 
-The syntax error description in this case indicates that `special` has already been defined, but that error message is a little misleading—again, no such error happens in `something()`, as shadowing is generally allowed just fine.
+이 경우 syntax error의 설명은 `special`이 이미 정의되어 있다고 나오는데, 이 에러 메시지는 약간 오해의 소지가 있다. 일반적으로 섀도잉을 허용하기 때문에 `something()`에서는 일어나지 않는 일이기 때문이다.
 
-The real reason it's raised as a `SyntaxError` is because the `var` is basically trying to "cross the boundary" of (or hop over) the `let` declaration of the same name, which is not allowed.
+`SyntaxError`가 발생하는 진짜 이유는 기본적으로 `var`가 동일한 이름으로 한 `let` 선언의 "경계를 넘어 가려고" (또는 뛰어 넘으려고) 시도하기 때문이다. 이런 경우는 허용되지 않는다.
 
-That boundary-crossing prohibition effectively stops at each function boundary, so this variant raises no exception:
+경계를 넘어가면 안된다는 규칙이 각 함수의 경계를 확실히 지키고 있으므로, 아래와 같은 경우에도 예외없이 적용할 수 있다.:
 
 ```js
 function another() {
@@ -249,7 +249,7 @@ function another() {
         let special = "JavaScript";
 
         ajax("https://some.url",function callback(){
-            // totally fine shadowing
+            // 제대로 된 섀도잉
             var special = "JavaScript";
 
             // ..
@@ -258,11 +258,11 @@ function another() {
 }
 ```
 
-Summary: `let` (in an inner scope) can always shadow an outer scope's `var`. `var` (in an inner scope) can only shadow an outer scope's `let` if there is a function boundary in between.
+요약: (내부 스코프의) `let`은 언제나 외부 스코프의 `var`를 섀도잉 할 수 있다. (내부 스코프의) `var`는 함수 경계가 사이에 있을 때만 외부 스코프의 `let`을 섀도잉 할 수 있다.
 
-## Function Name Scope
+## 함수 이름 스코프
 
-As you've seen by now, a `function` declaration looks like this:
+지금 본 것처럼 `function` 선언은 이렇게 한다:
 
 ```js
 function askQuestion() {
@@ -270,9 +270,9 @@ function askQuestion() {
 }
 ```
 
-And as discussed in Chapters 1 and 2, such a `function` declaration will create an identifier in the enclosing scope (in this case, the global scope) named `askQuestion`.
+그리고 1장과 2장에서 다룬 것처럼, 이런 `function` 선언은 선언이 된 스코프 안에 (위의 경우, 전역 스코프에서)  `askQuestion`이라는 식별자를 생성할 것이다.
 
-What about this program?
+이 프로그램은 어떨까?
 
 ```js
 var askQuestion = function(){
@@ -280,9 +280,9 @@ var askQuestion = function(){
 };
 ```
 
-The same is true for the variable `askQuestion` being created. But since it's a `function` expression—a function definition used as value instead of a standalone declaration—the function itself will not "hoist" (see Chapter 5).
+`askQuestion` 변수가 생성된다는 점은 동일하다. 하지만, 독립적인 선언이 아니라 값으로 사용할 함수를 정의하는 `function` 선언이므로 함수 자체가 "호이스팅"되지 않을 것이다.(5장 참고)
 
-One major difference between `function` declarations and `function` expressions is what happens to the name identifier of the function. Consider a named `function` expression:
+`function` 선언과 `function` 표현식의 한 가지 주요 차이점은 함수의 이름 식별자에 어떤 일이 발생하는지이다. 이름이 있는 `function` 표현식을 보자.
 
 ```js
 var askQuestion = function ofTheTeacher(){
@@ -290,7 +290,7 @@ var askQuestion = function ofTheTeacher(){
 };
 ```
 
-We know `askQuestion` ends up in the outer scope. But what about the `ofTheTeacher` identifier? For formal `function` declarations, the name identifier ends up in the outer/enclosing scope, so it may be reasonable to assume that's the case here. But `ofTheTeacher` is declared as an identifier **inside the function itself**:
+우리는 `askQuestion`가 외부 스코프에 머무른다는 것을 알고 있다. 하지만 `ofTheTeacher` 식별자는 어떨까? 공식적인 `function` 선언의 경우, 이름 식별자는 외부/둘러싸는 스코프에 포함되고, 이렇게 가정하는 것이 합리적일 수 있다. 하지만 `ofTheTeacher`는 **함수 자체의 내부**에서 식별자로 선언되었다.
 
 ```js
 var askQuestion = function ofTheTeacher() {
@@ -304,11 +304,11 @@ console.log(ofTheTeacher);
 // ReferenceError: ofTheTeacher is not defined
 ```
 
-| NOTE: |
+| 비고: |
 | :--- |
-| Actually, `ofTheTeacher` is not exactly *in the scope of the function*. Appendix A, "Implied Scopes" will explain further. |
+| 사실, `ofTheTeacher`가 정확하게 *함수 스코프의 내부*에 있는 것은 아니다. 부록 A, "암시적 스코프"에서 자세히 설명할 것이다. |
 
-Not only is `ofTheTeacher` declared inside the function rather than outside, but it's also defined as read-only:
+`ofTheTeacher`는 외부가 아닌 함수 내부에서 선언되기만 할 뿐만이 아니라 수정할 수 없는 변수로도 정의된다:
 
 ```js
 var askQuestion = function ofTheTeacher() {
@@ -322,9 +322,9 @@ askQuestion();
 // TypeError
 ```
 
-Because we used strict-mode, the assignment failure is reported as a `TypeError`; in non-strict-mode, such an assignment fails silently with no exception.
+엄격 모드를 적용했기 때문에, 값을 할당하는 데에 실패한 오류가 `TypeError`로 나온 것이다. 엄격 모드를 사용하지 않으면, 아무런 예외 없이 조용히 할당이 실패한다.
 
-What about when a `function` expression has no name identifier?
+`function` 표현식에 이름 식별자가 없으면 어떻게 될까?
 
 ```js
 var askQuestion = function(){
@@ -332,15 +332,16 @@ var askQuestion = function(){
 };
 ```
 
-A `function` expression with a name identifier is referred to as a "named function expression," but one without a name identifier is referred to as an "anonymous function expression." Anonymous function expressions clearly have no name identifier that affects either scope.
+이름 식별자가 있는 `function` 표현식은 "기명 함수 표현식"이라 하고, 이름 식별자가 없는 것은 "익명 함수 표현식"이라고 한다. 익명 함수 표현식은 두 스코프에 영향을 주는 이름 식별자가 명확하게 없다.
 
-| NOTE: |
+| 비고: |
 | :--- |
-| We'll discuss named vs. anonymous `function` expressions in much more detail, including what factors affect the decision to use one or the other, in Appendix A. |
+| 기명 vs 익명 `function` 표현식에 대해, 부록 A에서는 위의 두 표현식 중 어떤 것을 사용할지 결정하는데 영향을 미치는 요인을 포함한 내용으로 훨씬 더 자세히 알아볼 것이다. |
 
-## Arrow Functions
+## 화살표 함수
 
-ES6 added an additional `function` expression form to the language, called "arrow functions":
+ES6에서 "화살표 함수"라고 하는 추가적인 `function` 표현식이 언어에 추가되었다.
+ added an additional `function` expression form to the language, called "arrow functions":
 
 ```js
 var askQuestion = () => {
@@ -348,13 +349,13 @@ var askQuestion = () => {
 };
 ```
 
-The `=>` arrow function doesn't require the word `function` to define it. Also, the `( .. )` around the parameter list is optional in some simple cases. Likewise, the `{ .. }` around the function body is optional in some cases. And when the `{ .. }` are omitted, a return value is sent out without using a `return` keyword.
+화살표 함수 `=>`는 `function`이라는 단어를 사용해서 정의하지 않아도 된다. 또한, 매개변수를 감싸는 `( .. )`도 어떤 간단한 상황에서 생략할 수 있다. 마찬가지로, 함수의 몸체를 감싸는 `{ .. }`도 특정한 경우에는 생략할 수 있다. 그리고 `{ .. }`를 생략하면 반환 값을 `return` 키워드 없이 내보낼 수 있다.
 
-| NOTE: |
+| 비고: |
 | :--- |
-| The attractiveness of `=>` arrow functions is often sold as "shorter syntax," and that's claimed to equate to objectively more readable code. This claim is dubious at best, and I believe outright misguided. We'll dig into the "readability" of various function forms in Appendix A. |
+| 화살표 함수 `=>`의 매력은 보통 "간결한 구문"으로 알려져 있고, 객관적으로 더 읽기 쉬운 코드와 동일하다는 주장도 있다. 하지만, 이런 주장은 아무리 해도 확실한 것이 아니고, 완전히 잘못 파악한 결과라고 생각한다. 부록 A에서 다양한 함수 형태의 "가독성"에 대해 파헤쳐볼 것이다. |
 
-Arrow functions are lexically anonymous, meaning they have no directly related identifier that references the function. The assignment to `askQuestion` creates an inferred name of "askQuestion", but that's **not the same thing as being non-anonymous**:
+화살표 함수는 어휘적으로 익명이다. 함수를 참조하는 직접적인 식별자가 없음을 의미한다. `askQuestion`에 할당하면 "askQuestion"이라는 이름을 유추하여 생성하긴 하지만, **익명이 아닐 때와 동일하지는 않다.**
 
 ```js
 var askQuestion = () => {
@@ -364,7 +365,7 @@ var askQuestion = () => {
 askQuestion.name;   // askQuestion
 ```
 
-Arrow functions achieve their syntactic brevity at the expense of having to mentally juggle a bunch of variations for different forms/conditions. Just a few, for example:
+화살표 함수는 다양한 형태/조건에 대한 많은 변형을 머릿속으로 굴려봐야 할 필요성을 댓가로 구문의 간결함을 달성한다. 몇 가지 예를 들면 다음과 같다:
 
 ```js
 () => 42;
@@ -378,16 +379,16 @@ id => id.toUpperCase();
 };
 ```
 
-The real reason I bring up arrow functions is because of the common but incorrect claim that arrow functions somehow behave differently with respect to lexical scope from standard `function` functions.
+화살표 함수를 언급하게 된 진짜 이유는 화살표 함수가 `function`으로 선언한 함수와는 렉시컬 스코프에 대한 부분이 어떻게든 다르게 동작한다고 하는 흔하지만 잘못된 주장 때문이다.
 
-This is incorrect.
+이 주장은 잘못되었다.
 
-Other than being anonymous (and having no declarative form), `=>` arrow functions have the same lexical scope rules as `function` functions do. An arrow function, with or without `{ .. }` around its body, still creates a separate, inner nested bucket of scope. Variable declarations inside this nested scope bucket behave the same as in a `function` scope.
+익명이라는 점(그리고 선언적인 형태가 없는 것)을 제외하고, 화살표 함수 `=>` 는 `function` 함수와 같은 동일한 렉시컬 스코프 규칙을 갖는다. 화살표 함수는 몸체에 `{ .. }`가 있든 분리되고 내부 중첩된 스코프의 양동이를 생성한다. 이 중첩된 스코프 양동이 내에 선언한 변수는 `function` 스코프에서와 동일하게 작동한다.
 
-## Backing Out
+## 마무리
 
-When a function (declaration or expression) is defined, a new scope is created. The positioning of scopes nested inside one another creates a natural scope hierarchy throughout the program, called the scope chain. The scope chain controls variable access, directionally oriented upward and outward.
+함수(선언이나 표현식)가 정의되면 새 스코프가 생성된다. 내부에서 서로 중첩된 스코프의 위치는 프로그램 전체에서 자연스러운 스코프 계층 구조를 형성한다. 이를 스코프 체인이라 한다. 스코프 체인은 위/바깥쪽 방향의 변수에 접근하는 것을 제어한다.
 
-Each new scope offers a clean slate, a space to hold its own set of variables. When a variable name is repeated at different levels of the scope chain, shadowing occurs, which prevents access to the outer variable from that point inward.
+각각의 새 스코프는 자체 변수 세트를 저장할 수 있는 공간으로 깨끗한 슬레이트를 제공한다. 스코프 체인의 다른 수준에서 변수명이 중복되면, 섀도잉이 발생하고, 해당하는 내부 지점에서 외부의 변수에 접근하는 것을 차단합니다.
 
-As we step back out from these finer details, the next chapter shifts focus to the primary scope all JS programs include: the global scope.
+지금까지 다루었던 세부 사항을 마무리하고, 다음 장에선 모든 JS 프로그램이 갖고 있는 주요 스코프(전역 스코프)로 초점을 옮길 것이다.

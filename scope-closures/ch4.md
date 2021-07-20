@@ -1,25 +1,25 @@
 # You Don't Know JS Yet: Scope & Closures - 2nd Edition
-# Chapter 4: Around the Global Scope
+# Chapter 4: 전역 스코프<sub>Global Scope</sub>에 대하여
 
-Chapter 3 mentioned the "global scope" several times, but you may still be wondering why a program's outermost scope is all that important in modern JS. The vast majority of work is now done inside of functions and modules rather than globally.
+챕터 3에서는 "전역 스코프"에 대해 여러 번 언급했지만, 여전히 모던 JS에서 프로그램의 가장 바깥쪽 범위가 왜 그렇게 중요한지 궁금할 수 있다. 이제는 대부분의 작업이 전역이 아닌 함수 및 모듈 내부에서 이루어고 있다.
 
-Is it good enough to just assert, "Avoid using the global scope," and be done with it?
+"전역 스코프 사용을 피하라"는 것으로 충분한가?
 
-The global scope of a JS program is a rich topic, with much more utility and nuance than you would likely assume. This chapter first explores how the global scope is (still) useful and relevant to writing JS programs today, then looks at differences in where and *how to access* the global scope in different JS environments.
+JS 프로그램의 전역 스코프는 여러분이 상상하는 것보다 훨씬 더 많은 효용과 뉘앙스를 가진 풍부한 주제이다. 이 장에서는 먼저 전역 스코프가 현재 JS 프로그램 작성에 얼마나 유용하고 관련성이 있는지 살펴본 다음, 다양한 JS 환경에서 전역 스코프에 액세스하는 위치와 *방법*의 차이점에 대해 살펴볼 것이다.
 
-Fully understanding the global scope is critical in your mastery of using lexical scope to structure your programs.
+렉시컬 스코프를 사용하여 프로그램을 구성하는 데 있어 전역 스코프를 완전히 이해하는 것은 매우 중요하다.
 
-## Why Global Scope?
+## 왜 전역 스코프가 중요할까?
 
-It's likely no surprise to readers that most applications are composed of multiple (sometimes many!) individual JS files. So how exactly do all those separate files get stitched together in a single runtime context by the JS engine?
+대부분의 응용프로그램이 여러 개의 개별 JS 파일로 구성된 것은 독자들에게 놀라운 일이 아닐 것이다. 그렇다면 JS 엔진을 통해 단일 런타임 컨텍스트에서 모든 개별 파일을 정확히 어떻게 연결할 수 있을까?
 
-With respect to browser-executed applications, there are three main ways.
+브라우저에서 실행되는 응용 프로그램에 대해서는 크게 세 가지 방법이 있다.
 
-First, if you're directly using ES modules (not transpiling them into some other module-bundle format), these files are loaded individually by the JS environment. Each module then `import`s references to whichever other modules it needs to access. The separate module files cooperate with each other exclusively through these shared imports, without needing any shared outer scope.
+첫째, ES 모듈을 직접 사용하는 경우(다른 모듈 번들 형식으로 변환하지 않음), 이러한 파일은 JS 환경에 의해 개별적으로 로드된다. 그런 다음 각 모듈들은 액세스해야 하는 다른 모듈을 'import'한다. 분리된 모듈 파일들은 공유된 외부 스코프없이 이러한 import를 통해 하나처럼 작동하게 된다.
 
-Second, if you're using a bundler in your build process, all the files are typically concatenated together before delivery to the browser and JS engine, which then only processes one big file. Even with all the pieces of the application co-located in a single file, some mechanism is necessary for each piece to register a *name* to be referred to by other pieces, as well as some facility for that access to occur.
+둘째, 빌드 프로세스에서 번들러를 사용하는 경우 일반적으로 브라우저와 JS 엔진으로 전송하기 전에 모든 파일이 연결되고, 그 결과 브라우저와 JS엔진은 하나의 큰 파일만 처리한다. 애플리케이션의 모든 부분이 단일 파일에 함께 위치하더라도 각 부분이 다른 부분에서 참조할 *이름*을(를) 등록하는 메커니즘과 해당 액세스가 가능하도록 하기 위한 기능이 필요하다.
 
-In some build setups, the entire contents of the file are wrapped in a single enclosing scope, such as a wrapper function, universal module (UMD—see Appendix A), etc. Each piece can register itself for access from other pieces by way of local variables in that shared scope. For example:
+일부 빌드 설정에서는 파일의 전체 내용이 wrapper 함수, 범용 모듈(UMD—부록 A 참조) 등과 같은 하나의 닫힌 스코프(enclosing scope)로 래핑됩니다. 각 부분은 해당 공유 범위에서 로컬 변수를 사용하여 다른 피스에서 액세스할 수 있도록 스스로를 등록할 수 있다. 예를 들어, 다음과 같다.
 
 ```js
 (function wrappingOuterScope(){
@@ -39,13 +39,13 @@ In some build setups, the entire contents of the file are wrapped in a single en
 })();
 ```
 
-As shown, the `moduleOne` and `moduleTwo` local variables inside the `wrappingOuterScope()` function scope are declared so that these modules can access each other for their cooperation.
+위와 같이 `wrappingOuterScope()` 기능 범위 내 `moduleOne`과 `moduleTwo` 지역 변수를 선언하여 상호 협력을 위해 접근할 수 있도록 했다.
 
-While the scope of `wrappingOuterScope()` is a function and not the full environment global scope, it does act as a sort of "application-wide scope," a bucket where all the top-level identifiers can be stored, though not in the real global scope. It's kind of like a stand-in for the global scope in that respect.
+`wrappingOuterScope()`의 범위는 전체 환경 전역 스코프가 아니라 함수이지만, 최상위 식별자를 모두 저장할 수 있는 버킷으로 작동하며(실제로는 전역 스코프에 저장하는 것은 아니지만) "응용 프로그램 스코프(application-wide scope)" 역할을 합니다. 그런 점에서 전역 스코프를 대신하는 역할을 한다.
 
-And finally, the third way: whether a bundler tool is used for an application, or whether the (non-ES module) files are simply loaded in the browser individually (via `<script>` tags or other dynamic JS resource loading), if there is no single surrounding scope encompassing all these pieces, the **global scope** is the only way for them to cooperate with each other:
+번들러 도구가 애플리케이션에 사용되지 않거나, (ES 모듈이 아닌) 파일이 단순히 브라우저에 개별적으로 로드되지 않('스크립트' 태그 또는 기타 동적 JS 리소스 로딩을 통해), 마지막으로 이러한 모든 요소를 포함하는 단일 주변 범위가 없으면  **글로벌 범위*가 유일한 협력 방법입니다.
 
-A bundled file of this sort often looks something like this:
+이러한 종류의 번들 파일은 종종 다음과 같다.:
 
 ```js
 var moduleOne = (function one(){
@@ -62,7 +62,7 @@ var moduleTwo = (function two(){
 })();
 ```
 
-Here, since there is no surrounding function scope, these `moduleOne` and `moduleTwo` declarations are simply dropped into the global scope. This is effectively the same as if the files hadn't been concatenated, but loaded separately:
+여기서는 둘러싸고 있는 function 범위가 없기 때문에 이 `moduleOne`과 `moduleTwo` 선언은 단순히 글로벌 범위에 포함된다. 이는 파일이 연결되어 있지 않고 개별적으로 로드된 경우 동일하다:
 
 module1.js:
 
@@ -86,11 +86,12 @@ var moduleTwo = (function two(){
 })();
 ```
 
-If these files are loaded separately as normal standalone .js files in a browser environment, each top-level variable declaration will end up as a global variable, since the global scope is the only shared resource between these two separate files—they're independent programs, from the perspective of the JS engine.
+이러한 파일들이 브라우저 환경에서 일반 독립 실행형 .js 파일로 별도로 로드되는 경우, 각 파일들의 최상위 변수 선언이 전역 변수가 된다. 왜냐하면 JS엔진에서는 전역 스코프만이 별개의 파일들(-독립적인 프로그램들)이 공유하는 유일한 리소스이기 떄문이다.
 
-In addition to (potentially) accounting for where an application's code resides during runtime, and how each piece is able to access the other pieces to cooperate, the global scope is also where:
+전역 스코프가 실행 시간 동안 응용프로그램의 코드가 존재하는 위치와 각 작업물이 다른 작업에 액세스하여 협력할 수 있는 방법을 설명하는 것 외에도  전역 스코프는 다음에도 존재한다:
 
-* JS exposes its built-ins:
+
+* JS가 제공하는 built-ins:
 
     - primitives: `undefined`, `null`, `Infinity`, `NaN`
     - natives: `Date()`, `Object()`, `String()`, etc.
@@ -98,20 +99,20 @@ In addition to (potentially) accounting for where an application's code resides 
     - namespaces: `Math`, `Atomics`, `JSON`
     - friends of JS: `Intl`, `WebAssembly`
 
-* The environment hosting the JS engine exposes its own built-ins:
+* JS을 호스팅하는 환경에서 제공하는 built-ins:
 
     - `console` (and its methods)
     - the DOM (`window`, `document`, etc)
     - timers (`setTimeout(..)`, etc)
     - web platform APIs: `navigator`, `history`, geolocation, WebRTC, etc.
 
-These are just some of the many *globals* your programs will interact with.
+이는 여러분의 프로그램이 상호작용할 수많은 *글로벌* 중 일부에 불과하다.
 
 | NOTE: |
 | :--- |
-| Node also exposes several elements "globally," but they're technically not in the `global` scope: `require()`, `__dirname`, `module`, `URL`, and so on. |
+| 노드도 "전역적으로" 여러 요소를 노출하지만 기술적으로는 `전역(global)` 스코프에 있지는 않다. : `require()`, `__dirname`, `module`, `URL`, 등등. |
 
-Most developers agree that the global scope shouldn't just be a dumping ground for every variable in your application. That's a mess of bugs just waiting to happen. But it's also undeniable that the global scope is an important *glue* for practically every JS application.
+대부분의 개발자들은 전역 스코프가 단순히 응용프로그램의 모든 변수에 대한 덤핑장이 되어서는 안 된다는 데 동의합니다. 엉망징창의 버그들이 기다리고 있다. 그러나 전역 스코프가 실질적으로 모든 JS 애플리케이션에 중요한 *접착제*라는 사실도 부인할 수 없다.
 
 ## Where Exactly is this Global Scope?
 

@@ -140,7 +140,7 @@ hello();
 
 이 코드는 인라인 '<script> 태그나, 마크업에 있는 스크립트 태그 '<script src=...>' 또는 동적으로 생성되는 `<script>` DOM 엘리먼트를 통해 로드될 수 있다. 이 세 가지 경우 모두에서, `studentName`과 `hello` 식별자는 전역 스코프에서 선언된다.
 
-즉, 전역 개체(일반적으로 브라우저의 `window`)에 접근하면 다음과 같은 이름의 속성이 표시된다.
+즉, 전역 개체(일반적으로 브라우저의 `window`)에 접근하면 거기에서 같은 이름을 가진 프로퍼티를 찾을 수 있다.
 
 ```js
 var studentName = "Kyle";
@@ -153,9 +153,9 @@ window.hello();
 // Hello, Kyle!
 ```
 
-이는 JS 스펙을 읽었을 때 예상되는 기본 동작입니다. 바깥 스코프는 *전역 범위*이며 스펙에 따라 'studentName'은 전역 변수로 생성됩니다.
+이는 JS 스펙을 읽었을 때 예상되는 기본 동작이다. 바깥 스코프는 *전역 범위*이며 스펙에 따라 'studentName'은 전역 변수로 생성된다.
 
-그게 바로 여기서 말하는 *완전*의 의미다. 그러나 안타깝게도 이러한 상황이 모든 JS 환경에 적용되는 것은 아니며, 그래서 JS 개발자들에게는 종종 놀라게 한다..
+그게 바로 여기서 말하는 *완전*의 의미다. 그러나 안타깝게도 이러한 상황이 모든 JS 환경에 적용되는 것은 아니며, 그래서 JS 개발자들에게는 종종 놀라게 한다.
 
 #### 전역을 섀도잉하는 전역
 
@@ -175,17 +175,19 @@ console.log(window.something);
 // 42
 ```
 
-`let` 선언은 `어떤` 전역 변수를 추가하지 전역 객체 속성은 추가하지 않는다(3장 참조). 그 효과는  `어떤` 렉시컬 식별자가 `어떤` 전역 객체 속성을 섀도잉하는 것이다..
+`let` 선언은 `어떤` 전역 변수를 추가하지 전역 객체 속성은 추가하지 않는다(3장 참조). 그 효과는  `어떤` 렉시컬 식별자가 `어떤` 전역 객체 속성을 섀도잉하는 것이다.
 
 전역 객체와 전역 범위 간의 차이를 만드는 것은 확실히 좋지 않은 생각이다. 코드를 읽는 사람들은 거의 틀림없이 실수할 것이다.
 
 전역 선언을 통해 이러한 상황을 피할 수 있는 간단한 방법은 전역에 항상 'var'를 사용하는 것이다. 블록 스코프에서는 'let'과 'conston'을 사용해라(6장의 "블록 스코프 지정" 참조).
 
-#### DOM Globals
+#### DOM 전역
 
 I asserted that a browser-hosted JS environment has the most *pure* global scope behavior we'll see. However, it's not entirely *pure*.
+브라우저가 호스팅하는 JS 환경은 가장 *완전*한 전역 스코프 동작들을 가진다고 말했다. 그러나 완벽하게 *완전*한 것은 아니다.
 
 One surprising behavior in the global scope you may encounter with browser-based JS applications: a DOM element with an `id` attribute automatically creates a global variable that references it.
+브라우저 기반 JS 응용 프로그램에서 발생할 수 있는 한 가지 놀라운 동작: 'id' 속성을 가진 DOM 요소는 이를 참조하는 전역 변수를 자동으로 생성합니다.
 
 Consider this markup:
 

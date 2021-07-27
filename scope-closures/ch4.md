@@ -114,17 +114,18 @@ var moduleTwo = (function two(){
 
 대부분의 개발자는 전역 스코프가 단순히 애플리케이션의 모든 변수를 떠넘기는 장소가 되어서는 안 된다는 데 동의한다. 엉망진창의 버그들이 기다리고 있다. 그러나 전역 스코프가 실질적으로 모든 JS 애플리케이션에 중요한 *접착제*라는 사실도 부인할 수 없다.
 
-## Where Exactly is this Global Scope?
+## 전역 스코프는 정확히 어디에 존재하는가?
 
-It might seem obvious that the global scope is located in the outermost portion of a file; that is, not inside any function or other block. But it's not quite as simple as that.
+전역 스코프가 파일의 가장 바깥쪽 부분, 즉 함수나 다른 블록 내부에 있지 않는 것 처럼 보일 수 있다. 하지만 그렇게 간단하지는 않다.
 
-Different JS environments handle the scopes of your programs, especially the global scope, differently. It's quite common for JS developers to harbor misconceptions without even realizing it.
+JS 환경마다 프로그램의 스코프, 특히 글로벌 스코프를 다르게 처리한다. JS 개발자이 자신도 모르는 사이에 잘못된 개념을 가지고 있는 것은 매우 흔한 일이다.
 
-### Browser "Window"
+### 브라우저 "Window" 
 
-With respect to treatment of the global scope, the most *pure* environment JS can be run in is as a standalone .js file loaded in a web page environment in a browser. I don't mean "pure" as in nothing automatically added—lots may be added!—but rather in terms of minimal intrusion on the code or interference with its expected global scope behavior.
+전역 스코프 처리와 관련하여, JS를 실행할 수 있는 가장 *완전한(pure)* 환경은 브라우저의 웹 페이지 환경에 로드된 독립 실행형 .js 파일이다. 자동으로 아무것도 추가되지 않는다는 의미에서 "완전(pure)"하다고 말한 것은 아니다-많은 항목이 추가될 수 있다! 그보다는 코드에 대한 최소한의 침입이나 예상되는 전역 스코프 동작에 대한 간섭을 나타내기 위해서다.
 
-Consider this .js file:
+
+아래의 .js file을 살펴보자:
 
 ```js
 var studentName = "Kyle";
@@ -137,9 +138,9 @@ hello();
 // Hello, Kyle!
 ```
 
-This code may be loaded in a web page environment using an inline `<script>` tag, a `<script src=..>` script tag in the markup, or even a dynamically created `<script>` DOM element. In all three cases, the `studentName` and `hello` identifiers are declared in the global scope.
+이 코드는 인라인 '<script> 태그나, 마크업에 있는 스크립트 태그 '<script src=...>' 또는 동적으로 생성되는 `<script>` DOM 엘리먼트를 통해 로드될 수 있다. 이 세 가지 경우 모두에서, `studentName`과 `hello` 식별자는 전역 스코프에서 선언된다.
 
-That means if you access the global object (commonly, `window` in the browser), you'll find properties of those same names there:
+즉, 전역 개체(일반적으로 브라우저의 `window`)에 접근하면 다음과 같은 이름의 속성이 표시된다.
 
 ```js
 var studentName = "Kyle";
@@ -152,15 +153,15 @@ window.hello();
 // Hello, Kyle!
 ```
 
-That's the default behavior one would expect from a reading of the JS specification: the outer scope *is* the global scope and `studentName` is legitimately created as global variable.
+이는 JS 스펙을 읽었을 때 예상되는 기본 동작입니다. 바깥 스코프는 *전역 범위*이며 스펙에 따라 'studentName'은 전역 변수로 생성됩니다.
 
-That's what I mean by *pure*. But unfortunately, that won't always be true of all JS environments you encounter, and that's often surprising to JS developers.
+그게 바로 여기서 말하는 *완전*의 의미다. 그러나 안타깝게도 이러한 상황이 모든 JS 환경에 적용되는 것은 아니며, 그래서 JS 개발자들에게는 종종 놀라게 한다..
 
-#### Globals Shadowing Globals
+#### 전역을 섀도잉하는 전역
 
-Recall the discussion of shadowing (and global unshadowing) from Chapter 3, where one variable declaration can override and prevent access to a declaration of the same name from an outer scope.
+3장의 섀도잉(및 전역 언섀도잉)에 대한 내용을 떠올려보자. 하나의 변수 선언이 바깥 스코프에서 동일한 이름의 선언에 대한 접근을 재정의하고 차단할 수 있었다.
 
-An unusual consequence of the difference between a global variable and a global property of the same name is that, within just the global scope itself, a global object property can be shadowed by a global variable:
+전역 변수와 동일한 이름의 전역 속성 간의 차이로 인해 발생하는 비정상적인 결과는 전역 스코프 자체 내에서 전역 개체 속성이 전역 변수에 의해 가려질 수 있다는 것이다.
 
 ```js
 window.something = 42;
@@ -174,11 +175,11 @@ console.log(window.something);
 // 42
 ```
 
-The `let` declaration adds a `something` global variable but not a global object property (see Chapter 3). The effect then is that the `something` lexical identifier shadows the `something` global object property.
+`let` 선언은 `어떤` 전역 변수를 추가하지 전역 객체 속성은 추가하지 않는다(3장 참조). 그 효과는  `어떤` 렉시컬 식별자가 `어떤` 전역 객체 속성을 섀도잉하는 것이다..
 
-It's almost certainly a bad idea to create a divergence between the global object and the global scope. Readers of your code will almost certainly be tripped up.
+전역 객체와 전역 범위 간의 차이를 만드는 것은 확실히 좋지 않은 생각이다. 코드를 읽는 사람들은 거의 틀림없이 실수할 것이다.
 
-A simple way to avoid this gotcha with global declarations: always use `var` for globals. Reserve `let` and `const` for block scopes (see "Scoping with Blocks" in Chapter 6).
+전역 선언을 통해 이러한 상황을 피할 수 있는 간단한 방법은 전역에 항상 'var'를 사용하는 것이다. 블록 스코프에서는 'let'과 'conston'을 사용해라(6장의 "블록 스코프 지정" 참조).
 
 #### DOM Globals
 

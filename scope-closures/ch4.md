@@ -108,8 +108,7 @@ var moduleTwo = (function two(){
 
 이는 여러분의 프로그램이 상호작용할 수많은 *글로벌* 중 일부에 불과하다.
 
-| : |
-| :--- |
+| 비고: |
 | Node도 "전역적으로" 여러 요소를 노출하지만 기술적으로는 `전역(global)` 스코프에 있지는 않다. : `require()`, `__dirname`, `module`, `URL`, 등등. |
 
 대부분의 개발자는 전역 스코프가 단순히 애플리케이션의 모든 변수를 떠넘기는 장소가 되어서는 안 된다는 데 동의한다. 엉망진창의 버그들이 기다리고 있다. 그러나 전역 스코프가 실질적으로 모든 JS 애플리케이션에 중요한 *접착제*라는 사실도 부인할 수 없다.
@@ -123,7 +122,6 @@ JS 환경마다 프로그램의 스코프, 특히 글로벌 스코프를 다르�
 ### 브라우저 "Window" 
 
 전역 스코프 처리와 관련하여, JS를 실행할 수 있는 가장 *완전한(pure)* 환경은 브라우저의 웹 페이지 환경에 로드된 독립 실행형 .js 파일이다. 자동으로 아무것도 추가되지 않는다는 의미에서 "완전(pure)"하다고 말한 것은 아니다-많은 항목이 추가될 수 있다! 그보다는 코드에 대한 최소한의 침입이나 예상되는 전역 스코프 동작에 대한 간섭을 나타내기 위해서다.
-
 
 아래의 .js file을 살펴보자:
 
@@ -183,13 +181,11 @@ console.log(window.something);
 
 #### DOM 전역
 
-I asserted that a browser-hosted JS environment has the most *pure* global scope behavior we'll see. However, it's not entirely *pure*.
 브라우저가 호스팅하는 JS 환경은 가장 *완전*한 전역 스코프 동작들을 가진다고 말했다. 그러나 완벽하게 *완전*한 것은 아니다.
 
-One surprising behavior in the global scope you may encounter with browser-based JS applications: a DOM element with an `id` attribute automatically creates a global variable that references it.
-브라우저 기반 JS 응용 프로그램에서 발생할 수 있는 한 가지 놀라운 동작: 'id' 속성을 가진 DOM 요소는 이를 참조하는 전역 변수를 자동으로 생성합니다.
+브라우저 기반 JS  애플리케이션에서 발생할 수 있는 한 가지 놀라운 동작: 'id' 속성을 가진 DOM 요소는 이를 참조하는 전역 변수를 자동으로 생성한다.
 
-Consider this markup:
+아래 마크업을 살펴보자:    
 
 ```text
 <ul id="my-todo-list">
@@ -198,7 +194,7 @@ Consider this markup:
 </ul>
 ```
 
-And the JS for that page could include:
+그리고 그 페이지의 JS는 다음을 포함한다:    
 
 ```js
 first;
@@ -208,13 +204,13 @@ window["my-todo-list"];
 // <ul id="my-todo-list">..</ul>
 ```
 
-If the `id` value is a valid lexical name (like `first`), the lexical variable is created. If not, the only way to access that global is through the global object (`window[..]`).
+`id` 값이 유효한 렉시컬 이름(`first`와 같이)이면 렉시컬 변수가 생성햔다. 그렇지 않은 경우 전역 개체를 통해서만 전역에 전근할할 수 있다(`window[..]`).    
 
-The auto-registration of all `id`-bearing DOM elements as global variables is an old legacy browser behavior that nevertheless must remain because so many old sites still rely on it. My advice is never to use these global variables, even though they will always be silently created.
+모든 `id`가 포함된 DOM 요소를 전역 변수로 자동 등록하는 것은 오래된 브라우저 레거시에며, 그럼에도 불구하고 많은 오래된 사이트들이 여전히 이 요소에 의존하고 있기 때문에 유지되어야 한다. 이러한 전역 변수가 생성되어있더라도 절대 사용하지 않는 것이 좋다.    
 
-#### What's in a (Window) Name?
+#### (Window) Name 안에는 무엇이 있나?
 
-Another global scope oddity in browser-based JS:
+브라우저 기반 JS의 또 다른 전역 특이성:
 
 ```js
 var name = 42;
@@ -223,23 +219,23 @@ console.log(name, typeof name);
 // "42" string
 ```
 
-`window.name` is a pre-defined "global" in a browser context; it's a property on the global object, so it seems like a normal global variable (yet it's anything but "normal").
+`window.name`은 브라우저 컨텍스트에서 미리 정의된 "전역"이며 전역 객체의 속성이기 때문에 일반적인 전역 변수처럼 보인다.(그러나 "일반"이 아니다).
+    
+선언에 'var'를 사용했는데, 사전 정의된 `name` 전역 속성을 ** 가리지 ** 않는다. 즉, 'var' 선언은 무시된다. 해당 이름의 전역 스코프 객체 속성이 이미 있기 때문이다. 앞서 논의했듯이 `let name`을 사용했다면 `window.name`에 별도의 전역 `name` 변수로 객체 속성을 가렸을 것이다.
 
-We used `var` for our declaration, which **does not** shadow the pre-defined `name` global property. That means, effectively, the `var` declaration is ignored, since there's already a global scope object property of that name. As we discussed earlier, had we used `let name`, we would have shadowed `window.name` with a separate global `name` variable.
+그런데 정말 놀라운 동작은 `42`라는 숫자를 `name`(따라서 `window.name`)에 붙였음에도 불구하고 그 값을 회수하면 `"42"`라는 문자열이 붙는다는 것이다. 이는 `window` 객체에 미리 정의된 getter/setter가 그 값을 string으로 만들기 때문이다. 으악!    
+    
+DOM 엘리먼트 ID 및 `window.name`과 같은 일부 드문 경우를 제외하고, 브라우저 페이지에서 독립 실행형 파일로 실행되는 JS는 가장 *와전한* 전역 스코프 동작을 수행한다.    
 
-But the truly surprising behavior is that even though we assigned the number `42` to `name` (and thus `window.name`), when we then retrieve its value, it's a string `"42"`! In this case, the weirdness is because `name` is actually a pre-defined getter/setter on the `window` object, which insists on its value being a string value. Yikes!
+### 웹 워커
 
-With the exception of some rare corner cases like DOM element ID's and `window.name`, JS running as a standalone file in a browser page has some of the most *pure* global scope behavior we will encounter.
+웹 워커는 기본 JS 프로그램을 실행하는 스레드와 완전히 다른 스레드(운영 체제 기준)에서 JS 파일을 실행할 수 있는 브라우저-JS 동작 위에 있는 웹 플랫폼 익스텐선이다.    
 
-### Web Workers
+이러한 웹 워커 프로그램은 별도의 스레드에서 실행되기 때문에 애플리케이션의 메인 스레드와의 통신에서 제한되어 경합 조건 및 기타 문제를 방지/제한한다. 예를 들어 웹 워커 코드는 DOM에 대한 접근 권한이 없다. 그러나 `navigator`와 같이 일부 웹 API는 워커가 사용할 수 있다.    
 
-Web Workers are a web platform extension on top of browser-JS behavior, which allows a JS file to run in a completely separate thread (operating system wise) from the thread that's running the main JS program.
+웹 워커는 완전히 별개의 프로그램으로 취급되기 때문에 메인 JS 프로그램과 전역 스코프를 공유하지 않는다. 그러나 브라우저의 JS 엔진에서 여전히 코드가 실행 중이므로 전역 스코프 동작에 대해 유사한 *완전함*을 기대할 수 있다. DOM 접근이 없기 때문에 전역 스코프에 대한 `window` 별칭이 없다.    
 
-Since these Web Worker programs run on a separate thread, they're restricted in their communications with the main application thread, to avoid/limit race conditions and other complications. Web Worker code does not have access to the DOM, for example. Some web APIs are, however, made available to the worker, such as `navigator`.
-
-Since a Web Worker is treated as a wholly separate program, it does not share the global scope with the main JS program. However, the browser's JS engine is still running the code, so we can expect similar *purity* of its global scope behavior. Since there is no DOM access, the `window` alias for the global scope doesn't exist.
-
-In a Web Worker, the global object reference is typically made using `self`:
+웹 워커에서 전역 객체 참조는 일반적으로 'self'를 사용하여 이루어진다:  
 
 ```js
 var studentName = "Kyle";
@@ -256,33 +252,33 @@ self.studentID;
 // undefined
 ```
 
-Just as with main JS programs, `var` and `function` declarations create mirrored properties on the global object (aka, `self`), where other declarations (`let`, etc) do not.
+주요 JS 프로그램과 마찬가지로 'var' 및 'function' 선언은 글로벌 객체(일명 `self`)에 미러링된 속성을 생성한다. 다른 선언들(`let`, etc)은 그렇게 하지 못한다.   
 
-So again, the global scope behavior we're seeing here is about as *pure* as it gets for running JS programs; perhaps it's even more *pure* since there's no DOM to muck things up!
+여기서 확인한 전역 스코프 동작은 JS 프로그램을 실행할 때 만큼 *완전*하다: 문제를 해결할 DOM이 없기 때문에 더 **할 수 있다.
 
-### Developer Tools Console/REPL
+### 개발자 도구 Console/REPL    
 
-Recall from Chapter 1 in *Get Started* that Developer Tools don't create a completely adherent JS environment. They do process JS code, but they also lean in favor of the UX interaction being most friendly to developers (aka, developer experience, or DX).
+1장에서 개발자 도구가 완전히 종속된 JS 환경을 만들지 않는다는 점을 기억해라. 이들은 JS 코드를 처리하지만, 또한 UX 인터렉션이 개발자에게 가장 친숙하도록(일명 개발자 경험 또는 DX)하는 것을 지향한다.    
 
-In some cases, favoring DX when typing in short JS snippets, over the normal strict steps expected for processing a full JS program, produces observable differences in code behavior between programs and tools. For example, certain error conditions applicable to a JS program may be relaxed and not displayed when the code is entered into a developer tool.
+경우에 따라 전체 JS 프로그램을 처리하는 데 필요한 일반적인 엄격한 단계보다 짧은 JS 스니펫으로 입력할 때 DX를 선호하면 프로그램과 도구 간에 코드 동작에서 관찰 가능한 차이가 발생한다. 예를 들어, 개발 도구에 코드를 입력할 때 JS 프로그램에 적용되는 특정 오류 조건이 완화되어 표시되지 않을 수 있다.    
 
-With respect to our discussions here about scope, such observable differences in behavior may include:
+위에서 말한 스코프와 관련하여 관찰할 수 있는 동작의 차이는 다음과 같다.    
 
-* The behavior of the global scope
+* 전역 스코프의 동작    
 
-* Hoisting (see Chapter 5)
+* 호이스팅 (5장 참고)
 
-* Block-scoping declarators (`let` / `const`, see Chapter 6) when used in the outermost scope
+* 가장 바깥 스코프에서 사용될 때 Block-scoping 선언 (`let` / `const`, 6장 참고)
 
-Although it might seem, while using the console/REPL, that statements entered in the outermost scope are being processed in the real global scope, that's not quite accurate. Such tools typically emulate the global scope position to an extent; it's emulation, not strict adherence. These tool environments prioritize developer convenience, which means that at times (such as with our current discussions regarding scope), observed behavior may deviate from the JS specification.
+console/REPL을 사용할 때 가장 바깥쪽 스코프의 입력문이 실제 전역 스코프위에서 처리되고 있는 것처럼 보일 수 있지만, 이는 정확하지는 않다. 이러한 툴은 일반적으로 엄격한 준수가 아닌 에뮬레이션의 전역 스코프 위치를 어느 정도 에뮬레이션합니다. 이러한 툴 환경은 개발자 편의성을 우선시하며, 이는 (스코프에 대한 현재 논의와 같이) 관찰된 동작이 JS 스펙에서 벗어날 수 있음을 의미한다.    
 
-The take-away is that Developer Tools, while optimized to be convenient and useful for a variety of developer activities, are **not** suitable environments to determine or verify explicit and nuanced behaviors of an actual JS program context.
+단점은 개발자 도구는 다양한 개발자 활동에 편리하고 유용하도록 최적화되었지만 실제 JS 프로그램 컨텍스트의 명시적이고 미묘한 동작을 확인하기에 ** 적합한 환경은 아니라는 점이다.    
 
 ### ES Modules (ESM)
 
-ES6 introduced first-class support for the module pattern (covered in Chapter 8). One of the most obvious impacts of using ESM is how it changes the behavior of the observably top-level scope in a file.
+ES6는 모듈 패턴에 대한 first-class 지원을 도입했다(8장에서 다룬다). ESM 사용의 가장 분명한 영향 중 하나는 파일에서 관측 가능한 최상위 스코프의 동작을 변경하는 방법이다.    
 
-Recall this code snippet from earlier (which we'll adjust to ESM format by using the `export` keyword):
+이전 버전의 이 코드 스니펫을 기억해봐라(`export` 키워드를 사용하여 ESM 형식으로 조정할 예정이다):    
 
 ```js
 var studentName = "Kyle";
@@ -297,17 +293,17 @@ hello();
 export hello;
 ```
 
-If that code is in a file that's loaded as an ES module, it will still run exactly the same. However, the observable effects, from the overall application perspective, will be different.
+ES 모듈로 로드된 파일에 해당 코드가 있으면 그대로 실행. 그러나 전체적인 적용 관점에서 관측 가능한 효과는 다를 것다.
+    
+(모듈) 파일의 최상위 수준에서 선언되더라도 가장 바깥쪽의 명백한 스코프의 `studentName`과 `hello`는 전역 스코프가 아니다. 대신 모듈 와이드<sub>module-wid</sub>의 또는 "module-global"이다.    
 
-Despite being declared at the top level of the (module) file, in the outermost obvious scope, `studentName` and `hello` are not global variables. Instead, they are module-wide, or if you prefer, "module-global."
+그러나 모듈에는 선언이 비모듈 JS 파일의 최상위 수준에 나타나는 것처럼 이러한 최상위 선언을 속성으로 추가할 내포된 "모듈 와이드 스코프 개체"가 없습니다. 전역 변수가 존재하거나 이러한 프로그램에 접근 할 수 없다는 뜻은 아니다. 단지 모듈의 최상위 범위에서 변수를 선언한다고 전역 변수가 *생성*되는 것은 아니다.    
 
-However, in a module there's no implicit "module-wide scope object" for these top-level declarations to be added to as properties, as there is when declarations appear in the top-level of non-module JS files. This is not to say that global variables cannot exist or be accessed in such programs. It's just that global variables don't get *created* by declaring variables in the top-level scope of a module.
+모듈의 최상위 스코프는 전역 스코프에서 내려온 것으로, 모듈의 전체 내용이 함수에 싸여 있는 것처럼 보인다. 따라서 전역 스코프에 존재하는 모든 변수(전역 객체에 있든 없든)는 모듈의 범위 내에서 렉시컬 식별자로 사용할 수 있다.    
 
-The module's top-level scope is descended from the global scope, almost as if the entire contents of the module were wrapped in a function. Thus, all variables that exist in the global scope (whether they're on the global object or not!) are available as lexical identifiers from inside the module's scope.
+ESM은 현재 모듈이 작동하는 데 필요한 모든 모듈을 가져올 수 있는 글로벌 범위에 대한 의존도를 최소화할 것을 권장한다. 따라서 전역 스코프 또는 전역  개체의 사용 빈도가 낮아진다.    
 
-ESM encourages a minimization of reliance on the global scope, where you import whatever modules you may need for the current module to operate. As such, you less often see usage of the global scope or its global object.
-
-However, as noted earlier, there are still plenty of JS and web globals that you will continue to access from the global scope, whether you realize it or not!
+그러나 앞에서 언급한 바와 같이 대다수의 JS와 웹 전역은 여전히 전역 스코프에서 계속 액세스할 수 있다.    
 
 ### Node
 

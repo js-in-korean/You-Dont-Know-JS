@@ -308,8 +308,10 @@ ESM은 현재 모듈이 작동하는 데 필요한 모든 모듈을 가져올 �
 ### Node
 
 One aspect of Node that often catches JS developers off-guard is that Node treats every single .js file that it loads, including the main one you start the Node process with, as a *module* (ES module or CommonJS module, see Chapter 8). The practical effect is that the top level of your Node programs **is never actually the global scope**, the way it is when loading a non-module file in the browser.
+JS 개발자의 허를 찌르는 Node의 한 가지 측면은 Node 프로세스를 시작하는 기본 파일을 포함하여 로드되는 모든 .js 파일을 *module*(ES 또는 CommonJS 모듈, 8장 참조)로 처리한다는 것이다. 실제적인 효과는 브라우저에서 모듈이 아닌 파일을 로드할 때처럼 Node 프로그램의 최상위 레벨이 실제로는 **전역 스코프**가 아니라는 것이다.    
 
 As of time of this writing, Node has recently added support for ES modules. But additionally, Node has from its beginning supported a module format referred to as "CommonJS", which looks like this:
+Node의는 최근 ES 모듈 지원을 추가했다. 그러나 Node는 처음부터 "CommonJS"라고 하는 모듈 형식을 지원했으며, 다음과 같다.
 
 ```js
 var studentName = "Kyle";
@@ -325,8 +327,10 @@ module.exports.hello = hello;
 ```
 
 Before processing, Node effectively wraps such code in a function, so that the `var` and `function` declarations are contained in that wrapping function's scope, **not** treated as global variables.
+프로세싱 전에, Node는 이러한 코드를 함수에 효과적으로 감싸서 'var' 및 'function' 선언이 전역 변수로 처리되지 않는 함수의 범위에 포함되도록 한다.    
 
 Envision the preceding code as being seen by Node as this (illustrative, not actual):
+Node에서 이전 코드는 다음과 같은 모습을 가진다(실제가 아니라 설명을 위한 것이다):    
 
 ```js
 function Module(module,require,__dirname,...) {
@@ -344,13 +348,17 @@ function Module(module,require,__dirname,...) {
 ```
 
 Node then essentially invokes the added `Module(..)` function to run your module. You can clearly see here why `studentName` and `hello` identifiers are not global, but rather declared in the module scope.
+그런 다음 Node는 기본적으로 추가된 `Module(..)` 기능을 호출하여 모듈을 실행한다. `studentName`과 `hello` 식별자가 전역이 아닌 모듈 스코프에서 선언되는 이유를 여기서 명확히 알 수 있다.    
 
 As noted earlier, Node defines a number of "globals" like `require()`, but they're not actually identifiers in the global scope (nor properties of the global object). They're injected in the scope of every module, essentially a bit like the parameters listed in the `Module(..)` function declaration.
+앞에서 설명한 것처럼 Node는 'require()'와 같은 여러 "전역"을 정의하지만 실제로는 전역 스코프(전역 객체의 속성도 아님)에서 식별자가 아니다. 이것들은 모든 모듈의 스코프에 주입됩니다. 기본적으로 `Module(..)` 함수 선언에 나열된 매개 변수와 약간 유사하다.    
 
 So how do you define actual global variables in Node? The only way to do so is to add properties to another of Node's automatically provided "globals," which is ironically called `global`. `global` is a reference to the real global scope object, somewhat like using `window` in a browser JS environment.
+그러면 Node의 실제 전역 변수는 어떻게 정의해야 할까? 유일한 방법은 자동으로 제공되는 Node 중 다른 "전역"에 속성을 추가하는 것인데, 이는 아이러니하게도 `global`이라고 불린다. `global`은 브라우저 JS 환경에서 `window`를 사용하는 것처럼 실제 전역 스코프 객체를 가리키는 말이다.    
 
 Consider:
-
+살펴보자:
+    
 ```js
 global.studentName = "Kyle";
 
@@ -365,14 +373,18 @@ module.exports.hello = hello;
 ```
 
 Here we add `studentName` as a property on the `global` object, and then in the `console.log(..)` statement we're able to access `studentName` as a normal global variable.
+여기서 `studentName`을 `global` 객체의 속성으로 추가한 다음 `console.log(..)`에서 정상적인 전역 변수로 '`studentName`에 접근할 수 있다.    
 
 Remember, the identifier `global` is not defined by JS; it's specifically defined by Node.
+식별자 `global`은 JS에 의해 정의되지 않으며 Node에 의해 특별히 정의된다.    
 
 ## Global This
 
 Reviewing the JS environments we've looked at so far, a program may or may not:
+지금까지 살펴본 JS 환경을 살펴보면, 프로그램은 거의 다음과 같이 동작한다.   
 
 * Declare a global variable in the top-level scope with `var` or `function` declarations—or `let`, `const`, and `class`.
+* `var` 또는 `function` 선언으로 최상위 범위에 글로벌 변수를 선언하거나, 'let', 'const', 'class'로 선언합니다.
 
 * Also add global variables declarations as properties of the global scope object if `var` or `function` are used for the declaration.
 

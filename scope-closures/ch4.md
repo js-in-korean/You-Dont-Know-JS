@@ -307,11 +307,9 @@ ESM은 현재 모듈이 작동하는 데 필요한 모든 모듈을 가져올 �
 
 ### Node
 
-One aspect of Node that often catches JS developers off-guard is that Node treats every single .js file that it loads, including the main one you start the Node process with, as a *module* (ES module or CommonJS module, see Chapter 8). The practical effect is that the top level of your Node programs **is never actually the global scope**, the way it is when loading a non-module file in the browser.
-JS 개발자의 허를 찌르는 Node의 한 가지 측면은 Node 프로세스를 시작하는 기본 파일을 포함하여 로드되는 모든 .js 파일을 *module*(ES 또는 CommonJS 모듈, 8장 참조)로 처리한다는 것이다. 실제적인 효과는 브라우저에서 모듈이 아닌 파일을 로드할 때처럼 Node 프로그램의 최상위 레벨이 실제로는 **전역 스코프**가 아니라는 것이다.    
+JS 개발자의 허를 찌르는 Node의 한 가지 측면은 Node 프로세스를 시작하는 기본 파일을 포함하여 로드되는 모든 .js 파일을 *module*(ES 또는 CommonJS 모듈, 8장 참조)로 처리한다는 것이다. 실제적인 효과는 브라우저에서 모듈이 아닌 파일을 로드할 때처럼 Node 프로그램의 최상위 레벨이 **전역 스코프**가 되는 것이 아니라는 것이다.    
 
-As of time of this writing, Node has recently added support for ES modules. But additionally, Node has from its beginning supported a module format referred to as "CommonJS", which looks like this:
-Node의는 최근 ES 모듈 지원을 추가했다. 그러나 Node는 처음부터 "CommonJS"라고 하는 모듈 형식을 지원했으며, 다음과 같다.
+Node는 최근 ES 모듈 지원을 추가했다. 그러나 Node는 처음부터 "CommonJS"라고 하는 모듈 형식을 지원했으며, 다음과 같다.
 
 ```js
 var studentName = "Kyle";
@@ -326,10 +324,8 @@ hello();
 module.exports.hello = hello;
 ```
 
-Before processing, Node effectively wraps such code in a function, so that the `var` and `function` declarations are contained in that wrapping function's scope, **not** treated as global variables.
 프로세싱 전에, Node는 이러한 코드를 함수에 효과적으로 감싸서 'var' 및 'function' 선언이 전역 변수로 처리되지 않는 함수의 범위에 포함되도록 한다.    
 
-Envision the preceding code as being seen by Node as this (illustrative, not actual):
 Node에서 이전 코드는 다음과 같은 모습을 가진다(실제가 아니라 설명을 위한 것이다):    
 
 ```js
@@ -347,17 +343,13 @@ function Module(module,require,__dirname,...) {
 }
 ```
 
-Node then essentially invokes the added `Module(..)` function to run your module. You can clearly see here why `studentName` and `hello` identifiers are not global, but rather declared in the module scope.
 그런 다음 Node는 기본적으로 추가된 `Module(..)` 기능을 호출하여 모듈을 실행한다. `studentName`과 `hello` 식별자가 전역이 아닌 모듈 스코프에서 선언되는 이유를 여기서 명확히 알 수 있다.    
 
-As noted earlier, Node defines a number of "globals" like `require()`, but they're not actually identifiers in the global scope (nor properties of the global object). They're injected in the scope of every module, essentially a bit like the parameters listed in the `Module(..)` function declaration.
-앞에서 설명한 것처럼 Node는 'require()'와 같은 여러 "전역"을 정의하지만 실제로는 전역 스코프(전역 객체의 속성도 아님)에서 식별자가 아니다. 이것들은 모든 모듈의 스코프에 주입됩니다. 기본적으로 `Module(..)` 함수 선언에 나열된 매개 변수와 약간 유사하다.    
+앞에서 설명한 것처럼 Node는 'require()'와 같은 여러 "전역"을 정의하지만 실제로는 전역 스코프(전역 객체의 속성도 아님)의 식별자가 아니다. 이것들은 모든 모듈의 스코프에 주입된다. 기본적으로 `Module(..)` 함수 선언에 나열된 매개 변수와 약간 유사하다.    
 
-So how do you define actual global variables in Node? The only way to do so is to add properties to another of Node's automatically provided "globals," which is ironically called `global`. `global` is a reference to the real global scope object, somewhat like using `window` in a browser JS environment.
-그러면 Node의 실제 전역 변수는 어떻게 정의해야 할까? 유일한 방법은 자동으로 제공되는 Node 중 다른 "전역"에 속성을 추가하는 것인데, 이는 아이러니하게도 `global`이라고 불린다. `global`은 브라우저 JS 환경에서 `window`를 사용하는 것처럼 실제 전역 스코프 객체를 가리키는 말이다.    
+그러면 Node의 실제 전역 변수는 어떻게 정의해야 할까? 유일한 방법은 자동으로 제공되는 Node의 다른 "전역"에 속성을 추가하는 것인데, 이는 아이러니하게도 `global`이라고 불린다. `global`은 브라우저 JS 환경에서 `window`를 사용하는 것처럼 실제 전역 스코프 객체를 가리키는 말이다.    
 
-Consider:
-살펴보자:
+다음 코드를 살펴보자:
     
 ```js
 global.studentName = "Kyle";
@@ -372,55 +364,40 @@ hello();
 module.exports.hello = hello;
 ```
 
-Here we add `studentName` as a property on the `global` object, and then in the `console.log(..)` statement we're able to access `studentName` as a normal global variable.
 여기서 `studentName`을 `global` 객체의 속성으로 추가한 다음 `console.log(..)`에서 정상적인 전역 변수로 '`studentName`에 접근할 수 있다.    
 
-Remember, the identifier `global` is not defined by JS; it's specifically defined by Node.
 식별자 `global`은 JS에 의해 정의되지 않으며 Node에 의해 특별히 정의된다.    
 
-## Global This
+## 전역 This
 
-Reviewing the JS environments we've looked at so far, a program may or may not:
 지금까지 살펴본 JS 환경을 살펴보면, 프로그램은 거의 다음과 같이 동작한다.   
 
-* Declare a global variable in the top-level scope with `var` or `function` declarations—or `let`, `const`, and `class`.
-* `var` 또는 `function` 선언으로 최상위 범위에 전역 변수를 선언하거나, 'let', 'const', 'class'로 선언합니다.
+* `var` 또는 `function` 선언으로 최상위 범위에 전역 변수를 선언하거나, `let`, `const`, `class`로 선언한다.
 
-* Also add global variables declarations as properties of the global scope object if `var` or `function` are used for the declaration.
-* 선언에 `var` 또는 `function`이 사용되는 경우 전역 변수 선언을 전역 범위 개체의 속성으로 추가한다.
+* 선언에 `var` 또는 `function`이 사용되는 경우 전역 변수 선언을 전역 범위 객체의 속성으로 추가한다.
 
-* Refer to the global scope object (for adding or retrieving global variables, as properties) with `window`, `self`, or `global`.
-* `window`, `self` 또는 `global`이 있는 전역 스코프 객체(글로벌 변수를 속성으로 추가하거나 검색하기 위해)를 참조한다.
+* `window`, `self` 또는 `global`로 전역 스코프 객체(글로벌 변수를 속성으로 추가하거나 검색하기 위해)를 참조한다.
 
-I think it's fair to say that global scope access and behavior is more complicated than most developers assume, as the preceding sections have illustrated. But the complexity is never more obvious than in trying to nail down a universally applicable reference to the global scope object.
 앞서 설명한 것처럼 전역 스코프 접근과 동작은 대부분의 개발자가 생각하는 것보다 더 복잡하다. 그러나 어디서나 사용가능한 참조를 전역 스코프 객체라고 한정하는 것보다는 명백하다.
 
-Yet another "trick" for obtaining a reference to the global scope object looks like:
-그러나 전역 스코프 객체에 대한 참조를 얻기 위한 또 다른 "트릭"은 다음과 같다:
+전역 스코프 객체에 대한 참조를 얻기 위한 또 다른 "트릭"은 다음과 같다:
 
 ```js
 const theGlobalScopeObject =
     (new Function("return this"))();
 ```
 
-| NOTE: |
-| :--- |
-| A function can be dynamically constructed from code stored in a string value with the `Function()` constructor, similar to `eval(..)` (see "Cheating: Runtime Scope Modifications" in Chapter 1). Such a function will automatically be run in non-strict-mode (for legacy reasons) when invoked with the normal `()` function invocation as shown; its `this` will point at the global object. See the third book in the series, *Objects & Classes*, for more information on determining `this` bindings. |
 | 비고: |
 | :--- |
 | `Function()` constructor는 `eval(..)`과 유사하게 문자열 값에 저장된 코드로 동적으로 구성할 수 있다(1장의 "속임수: 런타임 스코프 수정"을 참고). 이러한 함수는 그림과 같이 일반적인 `()` 함수 호출과 함께 호출될 때 비엄격 모드로 자동 실행되며(legacy 로써), 이것의 `this`은 전역 객체를 가리킨다. `this` 바인딩 결정에 대한 자세한 내용은 시리즈의 세 번째 책인 *Objects & Classes*를 참조해라. |
 
-So, we have `window`, `self`, `global`, and this ugly `new Function(..)` trick. That's a lot of different ways to try to get at this global object. Each has its pros and cons.
 그래서 우리는 `window`, `self`, `global`, 그리고 이 추악한 `new Function(..)` 트릭을 가지고 있다. 전역 객체를 얻기 위한 많은 다른 방법들이 있고, 각자 장단점이 있다.
 
-Why not introduce yet another!?!?
 왜 아직 다른 것들을 소개하지 않냐고!?!?
 
-As of ES2020, JS has finally defined a standardized reference to the global scope object, called `globalThis`. So, subject to the recency of the JS engines your code runs in, you can use `globalThis` in place of any of those other approaches.
 ES2020을 기준으로, JS는 최종적으로 `globalThis`이라는 전역 스코프 객체에 대한 표준화된 참조를 정의했다. 따라서 코드가 실행되는 JS 엔진의 최신 상태에 따라 다른 접근법을 대신하여 `globalThis`을 사용할 수 있다.
-
-We could even attempt to define a cross-environment polyfill that's safer across pre-`globalThis` JS environments, such as:
-우리는 심지어 `globalThis` 이전의 JS 환경 전반적으로 안전하게 사용할 수 있는 교차 환경 폴리필을 정의하려고 시도할 수도 있다:
+    
+우리는 심지어 `globalThis` 이전의 JS 환경 전반적으로 안전하게 사용할 수 있는 교차 환경 폴리필을 정의 할 수도 있다:
 
 ```js
 const theGlobalScopeObject =
@@ -431,19 +408,14 @@ const theGlobalScopeObject =
     (new Function("return this"))();
 ```
 
-Phew! That's certainly not ideal, but it works if you find yourself needing a reliable global scope reference.
 휴! 이상적이진 않지만 신뢰할 수 있는 전역 객체 참조가 필요한 경우 유용하다.
 
-(The proposed name `globalThis` was fairly controversial while the feature was being added to JS. Specifically, I and many others felt the "this" reference in its name was misleading, since the reason you reference this object is to access to the global scope, never to access some sort of global/default `this` binding. There were many other names considered, but for a variety of reasons ruled out. Unfortunately, the name chosen ended up as a last resort. If you plan to interact with the global scope object in your programs, to reduce confusion, I strongly recommend choosing a better name, such as (the laughably long but accurate!) `theGlobalScopeObject` used here.)
-(제안된 이름 `globalThis`는 JS에 추가되는 동안 상당히 논란이 되었다. 특히, 당신이 이 객체를 참조하는 이유는 전역 스코프에 접근하기 위한 것이지 글로벌/기본적인 `this` 바인딩에 접근하기 위한 것이 아니기 때문에 나와 다른 많은 사람들은 그 이름에 있는 "this" 참조가 오해의 소지가 있다고 느꼈다. 다른 많은 이름들이 고려되었지만, 여러 가지 이유로 제외되었다. 불행하게도, 선택된 이름은 최후의 수단이 되었다. 프로그램에서 전역 스코프 객체와 상호 작용할 계획이라면 혼란을 줄이기 위해 더 나은 이름을 선택할 것을 강력히 권장다. 여기서 (웃길 정도로 길지만 정확한!)'GlobalScopeObject'가 사용되었다.)
+(제안된 이름 `globalThis`는 JS에 추가되는 동안 상당히 논란이 되었다. 특히, 당신이 이 객체를 참조하는 이유는 전역 스코프에 접근하기 위한 것이지 전역의/기본적인 `this` 바인딩에 접근하기 위한 것이 아니기 때문에 나와 다른 많은 사람들은 그 이름에 있는 "this" 참조가 오해의 소지가 있다고 느꼈다. 다른 많은 이름들이 고려되었지만, 여러 가지 이유로 제외되었다. 불행하게도, 선택된 이름은 최후의 수단이 되었다. 프로그램에서 전역 스코프 객체와 상호 작용할 계획이라면 혼란을 줄이기 위해 더 나은 이름을 선택할 것을 강력히 권장다. 여기서 (웃길 정도로 길지만 정확한!)'GlobalScopeObject'가 사용되었다.)
 
-## Globally Aware
+## 전역에 대한 이해
 
-The global scope is present and relevant in every JS program, even though modern patterns for organizing code into modules de-emphasizes much of the reliance on storing identifiers in that namespace.
 모든 JS 프로그램에 전역 스코프가 존재하며, 비록 코드를 모듈로 구성하기 위한 현대적 패턴이 해당 네임스페이스에 식별자를 저장하는 것에 대한 의존도를 크게 낮췄지만, 모든 JS 프로그램에 관련성이 있다.
 
-Still, as our code proliferates more and more beyond the confines of the browser, it's especially important we have a solid grasp on the differences in how the global scope (and global scope object!) behave across different JS environments.
 하지만, 브라우저의 한계를 넘어 코드가 점점 더 확산됨에 따라, 전역 스코프(및 전역 스코프 객체!)가 서로 다른 JS 환경에서 어떻게 동작하는지에 대한 차이를 확실하게 파악하는 것이 특히 중요하다.
 
-With the big picture of global scope now sharper in focus, the next chapter again descends into the deeper details of lexical scope, examining how and when variables can be used.
-이제 전역 스코프의 큰 그림이 더욱 세밀해짐에 따라, 다음 장은 변수를 언제 어떻게 사용할 수 있는지 검토하면서 다시 레시컬 스코프의 더 깊은 세부사항을 다룰 것이다.
+이제 전역 스코프의 큰 그림이 더욱 세밀해짐에 따라, 다음 장은 변수를 언제 어떻게 사용할 수 있는지 검토하면서 다시 렉시컬 스코프의 더 깊은 세부사항을 다룰 것이다.

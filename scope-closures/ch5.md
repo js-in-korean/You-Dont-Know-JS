@@ -1,15 +1,21 @@
 # You Don't Know JS Yet: Scope & Closures - 2nd Edition
 # Chapter 5: The (Not So) Secret Lifecycle of Variables
+# 5장: 변수의 비밀 라이프사이클
 
 By now you should have a decent grasp of the nesting of scopes, from the global scope downward—called a program's scope chain.
+이제 여러분은 전역 스코프에서 하위의 프로그램의 스코프를 호출하는  스코프들의 중첩에 대해 이제 어느정도 이해하고 있을 것이다.
 
 But just knowing which scope a variable comes from is only part of the story. If a variable declaration appears past the first statement of a scope, how will any references to that identifier *before* the declaration behave? What happens if you try to declare the same variable twice in a scope?
+그러나 변수가 어떤 스코프로 부터 오는지에 대해서는 잘 모를 것이다. 만약 변수 선언이 스코프 첫 번째 문<sub>statement</sub> 이후에 선언되었다면, 선언 전에 해당 식별자에 대한 참조는 어떻게 동작할까? 만약 동일한 변수를 스코프안에 두 번 선언한 경우는?
 
 JS's particular flavor of lexical scope is rich with nuance in how and when variables come into existence and become available to the program.
+JS의 렉시컬 스코프에 대한 특별한 특징은 어떻게 그리고 언제 변수가 프로그램에 존재하게 되고 사용가능한지에 대한 다양한 뉘앙스를 가진다.
 
 ## When Can I Use a Variable?
+## 언제 변수를 사용할 수 있을까?
 
 At what point does a variable become available to use within its scope? There may seem to be an obvious answer: *after* the variable has been declared/created. Right? Not quite.
+변수는 언제 그것의 스코프 내에서 사용할 수 있게 될까? 명백한 답이 있는 것 같기도 하다: 변수가 *선언/작성된 후* 말이다. 그럴까? 하지만 이것은 충분한 답변이 아니다.
 
 Consider:
 

@@ -18,6 +18,7 @@ At what point does a variable become available to use within its scope? There ma
 변수는 언제 그것의 스코프 내에서 사용할 수 있게 될까? 명백한 답이 있는 것 같기도 하다: 변수가 *선언/작성된 후* 말이다. 그럴까? 하지만 이것은 충분한 답변이 아니다.
 
 Consider:
+다음 코드를 살펴보자:
 
 ```js
 greeting();
@@ -29,12 +30,16 @@ function greeting() {
 ```
 
 This code works fine. You may have seen or even written code like it before. But did you ever wonder how or why it works? Specifically, why can you access the identifier `greeting` from line 1 (to retrieve and execute a function reference), even though the `greeting()` function declaration doesn't occur until line 4?
+이 코드는 잘 작동한다. 전에도 이런 코드를 보거나 작성해 본 적이 있을 것이다. 하지만 그게 어떻게, 왜 작동하는지 궁금해 한 적 있는가? 구체적으로, 4행까지는 `greeting` 함수 선언이 일어나지 않는데 왜 1행(함수 참조 검색 및 실행)에서 `greeting` 식별자에 접근할 수 있는가?
 
 Recall Chapter 1 points out that all identifiers are registered to their respective scopes during compile time. Moreover, every identifier is *created* at the beginning of the scope it belongs to, **every time that scope is entered**.
+1장에서 설명했듯이 컴파일 시간 동안 모든 식별자가 해당 범위에 등록된다. 또한 모든 식별자는 **자신이 속한 스코프가 시작 될때마다** 해당 스코프의 시작 부분에 *만들어진다*.
 
 The term most commonly used for a variable being visible from the beginning of its enclosing scope, even though its declaration may appear further down in the scope, is called **hoisting**.
+변수 선언이 스코프 내에서 더 아래쪽으로 나타나더라도 변수를 해당 스코프의 처음부터 볼 수 있는 경우를 주로 **호이스팅<sub></sub>**라고 명칭한다.
 
 But hoisting alone doesn't fully answer the question. We can see an identifier called `greeting` from the beginning of the scope, but why can we **call** the `greeting()` function before it's been declared?
+하지만 게양만으로는 질문에 충분한 답이 되지 않는다. 우리는 처음부터 '인사'라는 식별자를 볼 수 있는데, 왜 우리는 '인사' 기능이 선언되기 전에 '인사' 기능을 ** 호출할 수 있다.
 
 In other words, how does the variable `greeting` have any value (the function reference) assigned to it, from the moment the scope starts running? The answer is a special characteristic of formal `function` declarations, called *function hoisting*. When a `function` declaration's name identifier is registered at the top of its scope, it's additionally auto-initialized to that function's reference. That's why the function can be called throughout the entire scope!
 

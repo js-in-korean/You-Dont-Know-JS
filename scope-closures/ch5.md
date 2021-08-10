@@ -39,15 +39,20 @@ The term most commonly used for a variable being visible from the beginning of i
 변수 선언이 스코프 내에서 더 아래쪽으로 나타나더라도 변수를 해당 스코프의 처음부터 볼 수 있는 경우를 주로 **호이스팅<sub></sub>**라고 명칭한다.
 
 But hoisting alone doesn't fully answer the question. We can see an identifier called `greeting` from the beginning of the scope, but why can we **call** the `greeting()` function before it's been declared?
-하지만 게양만으로는 질문에 충분한 답이 되지 않는다. 우리는 처음부터 '인사'라는 식별자를 볼 수 있는데, 왜 우리는 '인사' 기능이 선언되기 전에 '인사' 기능을 ** 호출할 수 있다.
+하지만 호이스팅만으로는 질문에 충분한 답이 되지 않는다. 우리는 스코프 처음부터 `greeting`라는 식별자를 볼 수 있는데, 왜 우리는 `greeting` 함수가 선언되기 전에 `greeting`' 함수 **호출**할 수 있을까?
 
 In other words, how does the variable `greeting` have any value (the function reference) assigned to it, from the moment the scope starts running? The answer is a special characteristic of formal `function` declarations, called *function hoisting*. When a `function` declaration's name identifier is registered at the top of its scope, it's additionally auto-initialized to that function's reference. That's why the function can be called throughout the entire scope!
+다시 말해, 스코프가 실행되기 시작하는 순간부터, 어떻게 변수 `greeting`는 어떤 값(함수 참조)을 가지게 될까? 정답은 *함수 호이스팅*이라는 공식`function` 선언의 특수한 특성때문이다. `function` 선언의 이름 식별자가 해당 범위의 맨 위에 등록되면 해당 함수 참조값으로 자동 초기화된다. 그렇기 때문에 기능을 전체 범위에서 호출할 수 있다!
 
 One key detail is that both *function hoisting* and `var`-flavored *variable hoisting* attach their name identifiers to the nearest enclosing **function scope** (or, if none, the global scope), not a block scope.
+한 가지 중요한 세부 사항은 *함수 호이스팅*과 `var` 가 취하는 *변수 호이스팅* 모두 이름 식별자를 블록 스코프가 아닌 가장 가까운 **함수 스코프**(또는 없는 경우 스코프 범위)에 부착한다는 것이다.
 
 | NOTE: |
 | :--- |
 | Declarations with `let` and `const` still hoist (see the TDZ discussion later in this chapter). But these two declaration forms attach to their enclosing block rather than just an enclosing function as with `var` and `function` declarations. See "Scoping with Blocks" in Chapter 6 for more information. |
+| 비고: |
+| :--- |
+| `let`과 `const`가 포함된 선언문은 여전히 호이스트(이 장 뒷부분의 TDZ 설명 참조)를 수행한다. 그러나 이 두 가지 선언 양식은 단순히 `var`와 `function` 선언처럼 이를 싸는 함수가 아닌 감싸는 블록에 부착된다. 자세한 내용은 6장의 "블록으로 범위 지정"을 참조해라. |
 
 ### Hoisting: Declaration vs. Expression
 

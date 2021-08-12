@@ -1,23 +1,16 @@
 # You Don't Know JS Yet: Scope & Closures - 2nd Edition
-# Chapter 5: The (Not So) Secret Lifecycle of Variables
 # 5장: 변수의 비밀 라이프사이클
 
-By now you should have a decent grasp of the nesting of scopes, from the global scope downward—called a program's scope chain.
-이제 여러분은 전역 스코프에서 하위의 프로그램의 스코프를 호출하는  스코프들의 중첩에 대해 이제 어느정도 이해하고 있을 것이다.
+이제 여러분은 전역 스코프에서 하위의 프로그램의 스코프를 호출하는 스코프들의 중첩에 대해 이제 어느정도 이해하고 있을 것이다.
 
-But just knowing which scope a variable comes from is only part of the story. If a variable declaration appears past the first statement of a scope, how will any references to that identifier *before* the declaration behave? What happens if you try to declare the same variable twice in a scope?
-그러나 변수가 어떤 스코프로 부터 오는지에 대해서는 잘 모를 것이다. 만약 변수 선언이 스코프 첫 번째 문<sub>statement</sub> 이후에 선언되었다면, 선언 전에 해당 식별자에 대한 참조는 어떻게 동작할까? 만약 동일한 변수를 스코프안에 두 번 선언한 경우는?
+그러나 변수가 어떤 스코프로부터 오는지에 대해서는 잘 모를 것이다. 만약 변수 선언이 스코프 첫 번째 문<sub>statement</sub> 이후에 선언되었다면, 선언 전에 해당 식별자에 대한 참조는 어떻게 동작할까? 만약 동일한 변수를 스코프안에 두 번 선언한 경우는?
 
-JS's particular flavor of lexical scope is rich with nuance in how and when variables come into existence and become available to the program.
 JS의 렉시컬 스코프에 대한 특별한 특징은 어떻게 그리고 언제 변수가 프로그램에 존재하게 되고 사용가능한지에 대한 다양한 뉘앙스를 가진다.
 
-## When Can I Use a Variable?
 ## 언제 변수를 사용할 수 있을까?
 
-At what point does a variable become available to use within its scope? There may seem to be an obvious answer: *after* the variable has been declared/created. Right? Not quite.
 변수는 언제 그것의 스코프 내에서 사용할 수 있게 될까? 명백한 답이 있는 것 같기도 하다: 변수가 *선언/작성된 후* 말이다. 그럴까? 하지만 이것은 충분한 답변이 아니다.
 
-Consider:
 다음 코드를 살펴보자:
 
 ```js
@@ -29,34 +22,25 @@ function greeting() {
 }
 ```
 
-This code works fine. You may have seen or even written code like it before. But did you ever wonder how or why it works? Specifically, why can you access the identifier `greeting` from line 1 (to retrieve and execute a function reference), even though the `greeting()` function declaration doesn't occur until line 4?
 이 코드는 잘 작동한다. 전에도 이런 코드를 보거나 작성해 본 적이 있을 것이다. 하지만 그게 어떻게, 왜 작동하는지 궁금해 한 적 있는가? 구체적으로, 4행까지는 `greeting` 함수 선언이 일어나지 않는데 왜 1행(함수 참조 검색 및 실행)에서 `greeting` 식별자에 접근할 수 있는가?
 
-Recall Chapter 1 points out that all identifiers are registered to their respective scopes during compile time. Moreover, every identifier is *created* at the beginning of the scope it belongs to, **every time that scope is entered**.
 1장에서 설명했듯이 컴파일 시간 동안 모든 식별자가 해당 범위에 등록된다. 또한 모든 식별자는 **자신이 속한 스코프가 시작 될때마다** 해당 스코프의 시작 부분에 *만들어진다*.
 
-The term most commonly used for a variable being visible from the beginning of its enclosing scope, even though its declaration may appear further down in the scope, is called **hoisting**.
 변수 선언이 스코프 내에서 더 아래쪽으로 나타나더라도 변수를 해당 스코프의 처음부터 볼 수 있는 경우를 주로 **호이스팅<sub></sub>**라고 명칭한다.
 
-But hoisting alone doesn't fully answer the question. We can see an identifier called `greeting` from the beginning of the scope, but why can we **call** the `greeting()` function before it's been declared?
 하지만 호이스팅만으로는 질문에 충분한 답이 되지 않는다. 우리는 스코프 처음부터 `greeting`라는 식별자를 볼 수 있는데, 왜 우리는 `greeting` 함수가 선언되기 전에 `greeting`' 함수 **호출**할 수 있을까?
 
-In other words, how does the variable `greeting` have any value (the function reference) assigned to it, from the moment the scope starts running? The answer is a special characteristic of formal `function` declarations, called *function hoisting*. When a `function` declaration's name identifier is registered at the top of its scope, it's additionally auto-initialized to that function's reference. That's why the function can be called throughout the entire scope!
-다시 말해, 스코프가 실행되기 시작하는 순간부터, 어떻게 변수 `greeting`는 어떤 값(함수 참조)을 가지게 될까? 정답은 *함수 호이스팅*이라는 공식`function` 선언의 특수한 특성때문이다. `function` 선언의 이름 식별자가 해당 범위의 맨 위에 등록되면 해당 함수 참조값으로 자동 초기화된다. 그렇기 때문에 기능을 전체 범위에서 호출할 수 있다!
+다시 말해, 스코프가 실행되기 시작하는 순간부터, 어떻게 변수 `greeting`는 어떤 값(함수 참조)을 가지게 될까? 정답은 *함수 호이스팅*이라는 공식`function` 선언의 특수한 특성 때문이다. `function` 선언의 이름 식별자가 해당 범위의 맨 위에 등록되면 해당 함수 참조값으로 자동 초기화된다. 그렇기 때문에 기능을 전체 범위에서 호출할 수 있다!
 
-One key detail is that both *function hoisting* and `var`-flavored *variable hoisting* attach their name identifiers to the nearest enclosing **function scope** (or, if none, the global scope), not a block scope.
-한 가지 중요한 세부 사항은 *함수 호이스팅*과 `var` 가 취하는 *변수 호이스팅* 모두 이름 식별자를 블록 스코프가 아닌 가장 가까운 **함수 스코프**(또는 없는 경우 스코프 범위)에 부착한다는 것이다.
+한 가지 중요한 세부 사항은 *함수 호이스팅*과 `var` 가 취하는 *변수 호이스팅* 모두 이름 식별자를 블록 스코프가 아닌 가장 가까운 **함수 스코프**(이것이 없는 경우는 스코프 범위)에 부착한다는 것이다.
 
-| NOTE: |
-| :--- |
-| Declarations with `let` and `const` still hoist (see the TDZ discussion later in this chapter). But these two declaration forms attach to their enclosing block rather than just an enclosing function as with `var` and `function` declarations. See "Scoping with Blocks" in Chapter 6 for more information. |
 | 비고: |
 | :--- |
-| `let`과 `const`가 포함된 선언문은 여전히 호이스트(이 장 뒷부분의 TDZ 설명 참조)를 수행한다. 그러나 이 두 가지 선언 양식은 단순히 `var`와 `function` 선언처럼 이를 싸는 함수가 아닌 감싸는 블록에 부착된다. 자세한 내용은 6장의 "블록으로 범위 지정"을 참조해라. |
+| `let`과 `const`가 포함된 선언문은 여전히 호이스트(이 장 뒷부분의 TDZ 설명 참조)를 수행한다. 그러나 이 두 가지 선언 양식은 단순히 `var`와 `function` 선언처럼 이를 감싸는 함수가 아닌 감싸는 블록에 부착된다. 자세한 내용은 6장의 "블록으로 범위 지정"을 참조해라. |
 
-### Hoisting: Declaration vs. Expression
+### 호이스팅: 선언 vs. 표현식
 
-*Function hoisting* only applies to formal `function` declarations (specifically those which appear outside of blocks—see "FiB" in Chapter 6), not to `function` expression assignments. Consider:
+*함수 호이스팅*은 공식 `function` 선언(특히 함수 선언이 있는 블록 "Fib"(6장 참고) 외부에 나타나는)에만 적용되며, `function` 표현식 할당에는 적용되지 않는다. 다음 코드를 살펴보자:
 
 ```js
 greeting();
@@ -67,23 +51,23 @@ var greeting = function greeting() {
 };
 ```
 
-Line 1 (`greeting();`) throws an error. But the *kind* of error thrown is very important to notice. A `TypeError` means we're trying to do something with a value that is not allowed. Depending on your JS environment, the error message would say something like, "'undefined' is not a function," or more helpfully, "'greeting' is not a function."
+1행(`greeting();`)는 오류를 발생시킨다. 그러나 발생한 오류의 *종류*는 매우 중요하다. `TypeError`는 허용되지 않는 값을 사용하여 작업을 시도하고 있음을 의미한다. JS 환경에 따라 "'undefined'는 함수가 아니다" 또는 더욱 자세히 "'greeting'"는 함수가 아니다."와 같은 오류 메시지가 표시된다.
 
-Notice that the error is **not** a `ReferenceError`. JS isn't telling us that it couldn't find `greeting` as an identifier in the scope. It's telling us that `greeting` was found but doesn't hold a function reference at that moment. Only functions can be invoked, so attempting to invoke some non-function value results in an error.
+위의 오류는  `ReferenceError`가 *아니다*. JS는 스코프에서 식별자로서의 `greeting`를 찾지 못했다고 말하지 않고 있다. `greeting`이 발견됐지만 그 시점에 함수 참조가 없다는 얘기다. 함수만 호출할 수 있으므로 일부 비함수 값을 호출하려고 하면 오류가 발생한다.
 
-But what does `greeting` hold, if not the function reference?
+함수 참조가 아니라면, `greeting`이 가진 값은 무엇일까?
 
-In addition to being hoisted, variables declared with `var` are also automatically initialized to `undefined` at the beginning of their scope—again, the nearest enclosing function, or the global. Once initialized, they're available to be used (assigned to, retrieved from, etc.) throughout the whole scope.
+호이스팅 외에도, `var`로 선언된 변수도 스코프,가장 가까운 감싸는 함수 또는 전역의 시작에서 자동으로 `undefined`으로 초기화된다. 초기화되면 전체 범위에서 사용할 수 있다(할당, 검색 등).
 
-So on that first line, `greeting` exists, but it holds only the default `undefined` value. It's not until line 4 that `greeting` gets assigned the function reference.
+즉 첫 번째 줄에 `greeting`가 존재하지만, 이것은 기본 '`undefined` 값만 가지고 있다. 4행에서야 `greeting`'가 기능 참조를 할당받는다.
 
-Pay close attention to the distinction here. A `function` declaration is hoisted **and initialized to its function value** (again, called *function hoisting*). A `var` variable is also hoisted, and then auto-initialized to `undefined`. Any subsequent `function` expression assignments to that variable don't happen until that assignment is processed during runtime execution.
+여기에서 구별에 주의하라. `function` 선언은 호이스팅되고 **해당 함수 값으로 초기화**된다(*함수 호이스팅*이라고 함). 'var' 변수도 호이스트된 다음 `undefined`으로 자동 초기화된다. 런타임 실행 중에 할당이 처리되기 전에는 해당 변수에 대한 후속 `function` 식 할당이 수행되지 않는다.
 
-In both cases, the name of the identifier is hoisted. But the function reference association isn't handled at initialization time (beginning of the scope) unless the identifier was created in a formal `function` declaration.
+두 경우 모두 식별자의 이름이 호이스트된다. 그러나 식별자가 공식 `function` 선언에서 생성되지 않는 한 함수 참조 연결은 초기화 시(스코프 시작) 처리되지 않는다.
 
-### Variable Hoisting
+### 변수 호이스팅
 
-Let's look at another example of *variable hoisting*:
+*변수 호이스팅*의 다른 예를 살펴보자.
 
 ```js
 greeting = "Hello!";
@@ -93,22 +77,22 @@ console.log(greeting);
 var greeting = "Howdy!";
 ```
 
-Though `greeting` isn't declared until line 5, it's available to be assigned to as early as line 1. Why?
+5행까지는 `greeting`가 선언되지 않지만, 1행에서 할당이 가능하다. 그 이유는 무엇일까?
 
-There's two necessary parts to the explanation:
+설명에는 두 가지 필요한 부분이 있다.
 
-* the identifier is hoisted,
-* **and** it's automatically initialized to the value `undefined` from the top of the scope.
+* 식별자가 호이스트 되었다.
+* ** 그리고 *** 식별자는 스코프의 최상단에서 `undefined`으로 초기화되었다.
 
-| NOTE: |
+| 비고: |
 | :--- |
-| Using *variable hoisting* of this sort probably feels unnatural, and many readers might rightly want to avoid relying on it in their programs. But should all hoisting (including *function hoisting*) be avoided? We'll explore these different perspectives on hoisting in more detail in Appendix A. |
+| 이러한 종류의 *변수 호이스팅*를 사용하는 것은 아마도 부자연스럽게 느껴질 것이고, 여러분들은 당연히 그들의 프로그램에서 그것에 의존하는 것을 피하고 싶어할 것이다. 그러나 모든 호이스팅(*함수 호스팅* 포함)은 피해야 할까? 우리는 호이스팅에 대한 이러한 다양한 관점에 대해 부록 A에서 자세히 살펴볼 것이다. |
 
-## Hoisting: Yet Another Metaphor
+## 호이드스팅: 또다른 비유
 
-Chapter 2 was full of metaphors (to illustrate scope), but here we are faced with yet another: hoisting itself. Rather than hoisting being a concrete execution step the JS engine performs, it's more useful to think of hoisting as a visualization of various actions JS takes in setting up the program **before execution**.
+제2장은 비유들로 가득 차 있었지만(스코프를 설명하기 위해서), 여기서 우리는 또 다른 비유에 마주하게 되었다: 호이스팅 그 자체말이다. 호이스팅은 JS 엔진이 수행하는 구체적인 실행 단계이기보다는 프로그램 ** 실행 전**을 설정하기 위해 JS가 수행하는 다양한 작업의 시각화라고 생각하면 더 유용할 것이다.
 
-The typical assertion of what hoisting means: *lifting*—like lifting a heavy weight upward—any identifiers all the way to the top of a scope. The explanation often asserted is that the JS engine will actually *rewrite* that program before execution, so that it looks more like this:
+호이스팅의 의미에 대한 일반적인 주장: 식별자를 *리프팅*-무거운 중량을 위로 들어올리는 것)- 하여 스코프의 맨 위까지 올린다. 종종 JS 엔진이 실행 전에 해당 프로그램을 실제로 *재작성*하므로 다음과 더 비슷해 보인다는 주장이 제기되기도 한다.
 
 ```js
 var greeting;           // hoisted declaration
@@ -117,7 +101,7 @@ console.log(greeting);  // Hello!
 greeting = "Howdy!";    // `var` is gone!
 ```
 
-The hoisting (metaphor) proposes that JS pre-processes the original program and re-arranges it a bit, so that all the declarations have been moved to the top of their respective scopes, before execution. Moreover, the hoisting metaphor asserts that `function` declarations are, in their entirety, hoisted to the top of each scope. Consider:
+호이스팅(비유)은 실행 전에 모든 선언이 각각의 범위의 맨 위로 이동되도록 원래 프로그램을 사전 처리하고 약간 다시 정렬할 것을 제안한다. 게다가, `function` 선언 전체가 각 범위의 최상위에 올려져 있다고 호스팅 비유는 주장한다. 다음을 살펴보자:
 
 ```js
 studentName = "Suzy";
@@ -130,7 +114,7 @@ function greeting() {
 var studentName;
 ```
 
-The "rule" of the hoisting metaphor is that function declarations are hoisted first, then variables are hoisted immediately after all the functions. Thus, the hoisting story suggests that program is *re-arranged* by the JS engine to look like this:
+호이스팅 비유의 "규칙"은 함수 선언을 먼저 올린 다음 변수를 모든 함수 뒤에 바로 올리는 것입니다. 따라서, 호이스팅 사례는 다음과 같이 보이는 JS 엔진에 의해 프로그램이 *재편성*되었음을 시사한다.
 
 ```js
 function greeting() {
@@ -143,23 +127,24 @@ greeting();
 // Hello Suzy!
 ```
 
-This hoisting metaphor is convenient. Its benefit is allowing us to hand wave over the magical look-ahead pre-processing necessary to find all these declarations buried deep in scopes and somehow move (hoist) them to the top; we can just think about the program as if it's executed by the JS engine in a **single pass**, top-down.
+이 호이스팅 비유법은 편리하다. 그 이점은 스코프 깊숙이 파묻혀 있는 모든 선언을 찾아 어떻게든 상단으로 이동(호이스트)하는 데 필요한 전 처리를 마법처럼 미리 보는 것으로 쉽게 이해시킨다. 프로그램을 **단일 패스**, 하향식으로 실행하는 것처럼 생각하면 된다.
 
-Single-pass definitely seems more straightforward than Chapter 1's assertion of a two-phase processing.
+1장의 2단계 처리 방식 보다 단일 패스가 더 간단해 보인다.
 
-Hoisting as a mechanism for re-ordering code may be an attractive simplification, but it's not accurate. The JS engine doesn't actually re-arrange the code. It can't magically look ahead and find declarations; the only way to accurately find them, as well as all the scope boundaries in the program, would be to fully parse the code.
+코드 순서 재조정 메커니즘으로 호스팅하는 것이 간단하다는 점에서 매력적일 수는 있지만 정확하지는 않을 수 있다. JS 엔진은 실제로 코드를 다시 정렬하지 않는다. 마술적으로 선언을 미리 보고 찾을 수는 없다. 코드를 파싱하는 것이 선언을 정확히 찾는 유일한 방법이다.
 
-Guess what parsing is? The first phase of the two-phase processing! There's no magical mental gymnastics that gets around that fact.
+파싱이 뭔지 아는가? 2단계 처리의 첫 번째 단계! 그 사실을 피할 수 있는 마법의 멘탈 체조는 없다.
 
-So if the hoisting metaphor is (at best) inaccurate, what should we do with the term? I think it's still useful—indeed, even members of TC39 regularly use it!—but I don't think we should claim it's an actual re-arrangement of source code.
+그렇다면 만약 호이스틍 비유가 (기껏해야) 부정확하다면, 우리는 이 용어를 어떻게 해야 할까? 나는 그것이 여전히 유용하다고 생각한다. 실제로 TC39의 회원들도 정기적으로 사용하고 있다!—하지만 소스 코드를 실제로 다시 배열한 것이라고 주장할 필요는 없다고 생각한다.
 
-| WARNING: |
+| 주의: |
 | :--- |
-| Incorrect or incomplete mental models often still seem sufficient because they can occasionally lead to accidental right answers. But in the long run it's harder to accurately analyze and predict outcomes if your thinking isn't particularly aligned with how the JS engine works. |
+| 부정확하거나 불완전한 멘탈 모델은 종종 우연한 정답으로 이어질 수 있기 때문에 여전히 충분해 보인다. 그러나 장기적으로는 여러분의 생각이 JS 엔진의 작동 방식과 특별히 일치하지 않을 경우 결과를 정확하게 분석하고 예측하는 것이 더 어렵다. |
 
-I assert that hoisting *should* be used to refer to the **compile-time operation** of generating runtime instructions for the automatic registration of a variable at the beginning of its scope, each time that scope is entered.
 
-That's a subtle but important shift, from hoisting as a runtime behavior to its proper place among compile-time tasks.
+나는 호이스팅을 **꼭** 사용하여 해당 스코프가 시작될 때마다 해당 스코프 시작 시 변수의 자동 등록을 위한 런타임 명령을 생성하는 **컴파일 시간 작업**을(를) 참조해야 한다고 주장한다.
+
+이는 런타임 동작으로서의 호이스팅에서 컴파일 시간 작업 사이의 적절한 위치로 미묘하지만 중요한 전환이다.
 
 ## Re-declaration?
 

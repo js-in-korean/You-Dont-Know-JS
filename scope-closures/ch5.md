@@ -141,14 +141,15 @@ greeting();
 | :--- |
 | 부정확하거나 불완전한 멘탈 모델은 종종 우연한 정답으로 이어질 수 있기 때문에 여전히 충분해 보인다. 그러나 장기적으로는 여러분의 생각이 JS 엔진의 작동 방식과 특별히 일치하지 않을 경우 결과를 정확하게 분석하고 예측하는 것이 더 어렵다. |
 
-
 나는 호이스팅을 **꼭** 사용하여 해당 스코프가 시작될 때마다 해당 스코프 시작 시 변수의 자동 등록을 위한 런타임 명령을 생성하는 **컴파일 시간 작업**을(를) 나타내야 한다고 주장한다.
 
 이는 런타임 동작으로서의 호이스팅에서 컴파일 시간 작업 사이의 적절한 위치로 미묘하지만 중요한 전환이다.
 
 ## Re-declaration?
+## 재선언?
 
 What do you think happens when a variable is declared more than once in the same scope? Consider:
+변수가 동일한 스코프에서 두 번 이상 선언되면 어떻게 된다고 생각하는가? 다음을 살펴보자:
 
 ```js
 var studentName = "Frank";
@@ -160,10 +161,13 @@ console.log(studentName);   // ???
 ```
 
 What do you expect to be printed for that second message? Many believe the second `var studentName` has re-declared the variable (and thus "reset" it), so they expect `undefined` to be printed.
+두 번째 메시지는 무엇을 출력할까? 대부분은 두 번째 `var studentName`이 변수를 다시 선언(따라서 '재설정')했다고 생각하기 때문에 `undefined`이 출력될 것으로 예상할 것이다.
 
 But is there such a thing as a variable being "re-declared" in the same scope? No.
+하지만 변수가 같은 스코프에서 "재선언"될 수 있을까? 아니다.
 
 If you consider this program from the perspective of the hoisting metaphor, the code would be re-arranged like this for execution purposes:
+호스팅 비유법 관점에서 이 프로그램을 고려할 경우, 코드는 실행 목적으로 다음과 같이 다시 배열된다.
 
 ```js
 var studentName;
@@ -178,12 +182,16 @@ console.log(studentName);
 ```
 
 Since hoisting is actually about registering a variable at the beginning of a scope, there's nothing to be done in the middle of the scope where the original program actually had the second `var studentName` statement. It's just a no-op(eration), a pointless statement.
+실제로 호스팅은 범위의 시작 부분에 변수를 등록하는 것이기 때문에 원래 프로그램이 두 번째 'var studentname' 문구를 가지고 있던 범위 중간에 수행할 수 있는 작업이 없습니다. 그것은 단지 작전 금지, 무의미한 진술일 뿐이다.
 
 | TIP: |
 | :--- |
-| In the style of the conversation narrative from Chapter 2, *Compiler* would find the second `var` declaration statement and ask the *Scope Manager* if it had already seen a `studentName` identifier; since it had, there wouldn't be anything else to do. |
+| In the style of the conversation narrative from Chapter 2, *Compiler* would find the second `var` declaration statement and ask the *Scope Manager* if it had already seen a `studentName` identifier; since it had, there wouldn't be anything else to do. 
+2장의 대화 서술 방식으로 설명하자면, *컴파일러*는 두 번째 `var` 선언문을 찾아 *스코프 매니저*에게 `studentName` 식별자를 이미 보았는지 물어본다; 스코프 매니저를 보았기 때문에 더이상 할 것은 없다.
+|
 
 It's also important to point out that `var studentName;` doesn't mean `var studentName = undefined;`, as most assume. Let's prove they're different by considering this variation of the program:
+대부분이 생각하는 것처럼 `var studentName;`이  `var studentName = undefined`을 의미하는 것은 아니라는 점도 중요하다. 프로그램의 이러한 변형을 고려하여 이 둘이 다르다는 것을 증명해 보자.
 
 ```js
 var studentName = "Frank";
@@ -198,8 +206,10 @@ console.log(studentName);   // undefined <--- see!?
 ```
 
 See how the explicit `= undefined` initialization produces a different outcome than assuming it happens implicitly when omitted? In the next section, we'll revisit this topic of initialization of variables from their declarations.
+명시적으로 `= undefined` 초기화가 이것이 암묵적으로 생략되었을 때와 어떻게 다른 결과를 낳을까? 다음 섹션에서는 선언에서의 변수 초기화 주제를 다시 살펴보자.
 
 A repeated `var` declaration of the same identifier name in a scope is effectively a do-nothing operation. Here's another illustration, this time across a function of the same name:
+스코프에서 동일한 식별자 이름을 반복적으로 'var' 선언하는 것은 사실상 아무것도 하지 않는 작업이다. 다음은 같은 이름의 함수가 반복될 때에 대한 설명이다.
 
 ```js
 var greeting;
@@ -219,10 +229,13 @@ typeof greeting;        // "string"
 ```
 
 The first `greeting` declaration registers the identifier to the scope, and because it's a `var` the auto-initialization will be `undefined`. The `function` declaration doesn't need to re-register the identifier, but because of *function hoisting* it overrides the auto-initialization to use the function reference. The second `var greeting` by itself doesn't do anything since `greeting` is already an identifier and *function hoisting* already took precedence for the auto-initialization.
+첫 번째 `greeting` 선언은 식별자를 스코프에 등록하며, `var`이기 때문에 자동 초기화는 `undefined`을 할당한다. `function` 선언은 식별자를 다시 등록할 필요가 없지만 *함수 호이스팅* 때문에 함수 참조를 사용하도록 자동 초기화를 재정한다. 이미 `greeting`이 식별자이고 자동초기화에는 *함수 호이스팅*이 우선이었기 때문에 두 번째 `greeting`만으로는 아무것도 할 수 없다.
 
 Actually assigning `"Hello!"` to `greeting` changes its value from the initial function `greeting()` to the string; `var` itself doesn't have any effect.
+실제로 '`"Hello!"`을 `greeting`에 할당하면 첫 함수인 `greeting()`에서 문자열로 값이 바뀌지만, `var` 자체는 아무런 효과가 없다.
 
 What about repeating a declaration within a scope using `let` or `const`?
+스코프 내에서 `let`이나 `const`를 이용해 선언을 반복하는 것은 어떨까.
 
 ```js
 let studentName = "Frank";
@@ -233,8 +246,11 @@ let studentName = "Suzy";
 ```
 
 This program will not execute, but instead immediately throw a `SyntaxError`. Depending on your JS environment, the error message will indicate something like: "studentName has already been declared." In other words, this is a case where attempted "re-declaration" is explicitly not allowed!
+이 프로그램은 실행되지 않고 즉시 `SyntaxError`를 발생시킨다. JS 환경에 따라 "studentName이(가) 이미 선언되었습니다."와 같은 오류 메시지가 표시된다. 즉, 시도된 "재선언"이 명시적으로 허용되지 않는 경우이다!
+
 
 It's not just that two declarations involving `let` will throw this error. If either declaration uses `let`, the other can be either `let` or `var`, and the error will still occur, as illustrated with these two variations:
+단순히 `let`을 포함한 이 두 선언이 이런 오류를 낳는 것은 아니다. 두 선언 중 하나가 `let`을 사용할 경우 다른 선언은 `let` 또는 `var`가 될 수 있으며, 다음 두 변형에서 볼 수 있듯이 오류가 계속 발생한다.
 
 ```js
 var studentName = "Frank";
@@ -242,7 +258,7 @@ var studentName = "Frank";
 let studentName = "Suzy";
 ```
 
-and:
+그리고:
 
 ```js
 let studentName = "Frank";
@@ -251,16 +267,23 @@ var studentName = "Suzy";
 ```
 
 In both cases, a `SyntaxError` is thrown on the *second* declaration. In other words, the only way to "re-declare" a variable is to use `var` for all (two or more) of its declarations.
+두 경우 모두 *두 번째* 선언에 `SyntaxError`가 발생한다. 즉, 변수를 '재선언'하는 유일한 방법은 선언의 전부(2개 이상)에 'var'를 사용하는 것이다.
 
 But why disallow it? The reason for the error is not technical per se, as `var` "re-declaration" has always been allowed; clearly, the same allowance could have been made for `let`.
+그런데 왜 그걸 허용하지 않을까? 오류의 원인은 기술적인 것이 아니라 `var` "재선언"이 항상 허용되어 왔기 때문이다. `let`은 허용되지 않는다.
 
 It's really more of a "social engineering" issue. "Re-declaration" of variables is seen by some, including many on the TC39 body, as a bad habit that can lead to program bugs. So when ES6 introduced `let`, they decided to prevent "re-declaration" with an error.
+이것은 정말로 "사회 공학"에 더 가까운 문제이다. TC39 본문 등 일부에서는 변수 "재선언"이 프로그램 버그로 이어질 수 있는 악습으로 보고 있다. 그래서 ES6는 `let`을 도입할 때 오류로 "재선언"을 막기로 했다.
 
 | NOTE: |
 | :--- |
 | This is of course a stylistic opinion, not really a technical argument. Many developers agree with the position, and that's probably in part why TC39 included the error (as well as `let` conforming to `const`). But a reasonable case could have been made that staying consistent with `var`'s precedent was more prudent, and that such opinion-enforcement was best left to opt-in tooling like linters. In Appendix A, we'll explore whether `var` (and its associated behavior, like "re-declaration") can still be useful in modern JS. |
+| 비고: |
+| :--- |
+| 이것은 물론 형식적인 의견이지 기술적인 주장은 아니다. 많은 개발자들이 이 의견에 동의하고 있으며, 그 때문에 TC39이 그것을 오류로 포함한 것이다(`const`와 같이 동작하는 `let`도 마찬가지로). 그러나 일부 경우는 이 전에 사용된`var` 일관성을 유지하는 것이 더 중요했고, 그러한 경우는 린터 같은 도구를 채택하는 것이 최선일 수 있다. 부록 A에서는 `var`(그리고 "재선언"과 같은 관련 동작)이 여전히 현대 JS에서 유용할 수 있는지 여부를 살펴보겠다. |
 
-When *Compiler* asks *Scope Manager* about a declaration, if that identifier has already been declared, and if either/both declarations were made with `let`, an error is thrown. The intended signal to the developer is "Stop relying on sloppy re-declaration!"
+When *Compiler* asks *Scope Manager* about a declaration, if that identifier has already been declared, and if either/both declarations were made with `let`, an error is thrown. The intended signal to the developer is "Stop relying on sloppy re-declaration!
+*컴파일러*가 선언에 대해 *스코프 매니저*에게 질문할 때, 해당 식별자가 이미 선언되었는지 여부 및 둘 중 하나가 'let'으로 지정된 경우 오류가 발생합니다. 개발자에게 보내는 신호는 "허술한 재선언에 의존하지 말라!"이다.
 
 ### Constants?
 

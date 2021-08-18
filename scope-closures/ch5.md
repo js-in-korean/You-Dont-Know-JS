@@ -145,10 +145,8 @@ greeting();
 
 이는 런타임 동작으로서의 호이스팅에서 컴파일 시간 작업 사이의 적절한 위치로 미묘하지만 중요한 전환이다.
 
-## Re-declaration?
 ## 재선언?
 
-What do you think happens when a variable is declared more than once in the same scope? Consider:
 변수가 동일한 스코프에서 두 번 이상 선언되면 어떻게 된다고 생각하는가? 다음을 살펴보자:
 
 ```js
@@ -160,13 +158,10 @@ var studentName;
 console.log(studentName);   // ???
 ```
 
-What do you expect to be printed for that second message? Many believe the second `var studentName` has re-declared the variable (and thus "reset" it), so they expect `undefined` to be printed.
 두 번째 메시지는 무엇을 출력할까? 대부분은 두 번째 `var studentName`이 변수를 다시 선언(따라서 '재설정')했다고 생각하기 때문에 `undefined`이 출력될 것으로 예상할 것이다.
 
-But is there such a thing as a variable being "re-declared" in the same scope? No.
 하지만 변수가 같은 스코프에서 "재선언"될 수 있을까? 아니다.
 
-If you consider this program from the perspective of the hoisting metaphor, the code would be re-arranged like this for execution purposes:
 호스팅 비유법 관점에서 이 프로그램을 고려할 경우, 코드는 실행 목적으로 다음과 같이 다시 배열된다.
 
 ```js
@@ -181,16 +176,12 @@ console.log(studentName);
 // Frank
 ```
 
-Since hoisting is actually about registering a variable at the beginning of a scope, there's nothing to be done in the middle of the scope where the original program actually had the second `var studentName` statement. It's just a no-op(eration), a pointless statement.
 실제로 호스팅은 범위의 시작 부분에 변수를 등록하는 것이기 때문에 원래 프로그램이 두 번째 'var studentname' 문구를 가지고 있던 범위 중간에 수행할 수 있는 작업이 없습니다. 그것은 단지 작전 금지, 무의미한 진술일 뿐이다.
 
 | TIP: |
 | :--- |
-| In the style of the conversation narrative from Chapter 2, *Compiler* would find the second `var` declaration statement and ask the *Scope Manager* if it had already seen a `studentName` identifier; since it had, there wouldn't be anything else to do. 
-2장의 대화 서술 방식으로 설명하자면, *컴파일러*는 두 번째 `var` 선언문을 찾아 *스코프 매니저*에게 `studentName` 식별자를 이미 보았는지 물어본다; 스코프 매니저를 보았기 때문에 더이상 할 것은 없다.
-|
+| 2장의 대화 서술 방식으로 설명하자면, *컴파일러*는 두 번째 `var` 선언문을 찾아 *스코프 매니저*에게 `studentName` 식별자를 이미 보았는지 물어본다; 스코프 매니저를 보았기 때문에 더이상 할 것은 없다. |
 
-It's also important to point out that `var studentName;` doesn't mean `var studentName = undefined;`, as most assume. Let's prove they're different by considering this variation of the program:
 대부분이 생각하는 것처럼 `var studentName;`이  `var studentName = undefined`을 의미하는 것은 아니라는 점도 중요하다. 프로그램의 이러한 변형을 고려하여 이 둘이 다르다는 것을 증명해 보자.
 
 ```js
@@ -205,10 +196,8 @@ var studentName = undefined;
 console.log(studentName);   // undefined <--- see!?
 ```
 
-See how the explicit `= undefined` initialization produces a different outcome than assuming it happens implicitly when omitted? In the next section, we'll revisit this topic of initialization of variables from their declarations.
 명시적으로 `= undefined` 초기화가 이것이 암묵적으로 생략되었을 때와 어떻게 다른 결과를 낳을까? 다음 섹션에서는 선언에서의 변수 초기화 주제를 다시 살펴보자.
 
-A repeated `var` declaration of the same identifier name in a scope is effectively a do-nothing operation. Here's another illustration, this time across a function of the same name:
 스코프에서 동일한 식별자 이름을 반복적으로 'var' 선언하는 것은 사실상 아무것도 하지 않는 작업이다. 다음은 같은 이름의 함수가 반복될 때에 대한 설명이다.
 
 ```js
@@ -228,13 +217,10 @@ var greeting = "Hello!";
 typeof greeting;        // "string"
 ```
 
-The first `greeting` declaration registers the identifier to the scope, and because it's a `var` the auto-initialization will be `undefined`. The `function` declaration doesn't need to re-register the identifier, but because of *function hoisting* it overrides the auto-initialization to use the function reference. The second `var greeting` by itself doesn't do anything since `greeting` is already an identifier and *function hoisting* already took precedence for the auto-initialization.
 첫 번째 `greeting` 선언은 식별자를 스코프에 등록하며, `var`이기 때문에 자동 초기화는 `undefined`을 할당한다. `function` 선언은 식별자를 다시 등록할 필요가 없지만 *함수 호이스팅* 때문에 함수 참조를 사용하도록 자동 초기화를 재정한다. 이미 `greeting`이 식별자이고 자동초기화에는 *함수 호이스팅*이 우선이었기 때문에 두 번째 `greeting`만으로는 아무것도 할 수 없다.
 
-Actually assigning `"Hello!"` to `greeting` changes its value from the initial function `greeting()` to the string; `var` itself doesn't have any effect.
 실제로 '`"Hello!"`을 `greeting`에 할당하면 첫 함수인 `greeting()`에서 문자열로 값이 바뀌지만, `var` 자체는 아무런 효과가 없다.
 
-What about repeating a declaration within a scope using `let` or `const`?
 스코프 내에서 `let`이나 `const`를 이용해 선언을 반복하는 것은 어떨까.
 
 ```js
@@ -245,11 +231,8 @@ console.log(studentName);
 let studentName = "Suzy";
 ```
 
-This program will not execute, but instead immediately throw a `SyntaxError`. Depending on your JS environment, the error message will indicate something like: "studentName has already been declared." In other words, this is a case where attempted "re-declaration" is explicitly not allowed!
 이 프로그램은 실행되지 않고 즉시 `SyntaxError`를 발생시킨다. JS 환경에 따라 "studentName이(가) 이미 선언되었습니다."와 같은 오류 메시지가 표시된다. 즉, 시도된 "재선언"이 명시적으로 허용되지 않는 경우이다!
 
-
-It's not just that two declarations involving `let` will throw this error. If either declaration uses `let`, the other can be either `let` or `var`, and the error will still occur, as illustrated with these two variations:
 단순히 `let`을 포함한 이 두 선언이 이런 오류를 낳는 것은 아니다. 두 선언 중 하나가 `let`을 사용할 경우 다른 선언은 `let` 또는 `var`가 될 수 있으며, 다음 두 변형에서 볼 수 있듯이 오류가 계속 발생한다.
 
 ```js
@@ -266,36 +249,29 @@ let studentName = "Frank";
 var studentName = "Suzy";
 ```
 
-In both cases, a `SyntaxError` is thrown on the *second* declaration. In other words, the only way to "re-declare" a variable is to use `var` for all (two or more) of its declarations.
 두 경우 모두 *두 번째* 선언에 `SyntaxError`가 발생한다. 즉, 변수를 '재선언'하는 유일한 방법은 선언의 전부(2개 이상)에 'var'를 사용하는 것이다.
 
-But why disallow it? The reason for the error is not technical per se, as `var` "re-declaration" has always been allowed; clearly, the same allowance could have been made for `let`.
 그런데 왜 그걸 허용하지 않을까? 오류의 원인은 기술적인 것이 아니라 `var` "재선언"이 항상 허용되어 왔기 때문이다. `let`은 허용되지 않는다.
 
-It's really more of a "social engineering" issue. "Re-declaration" of variables is seen by some, including many on the TC39 body, as a bad habit that can lead to program bugs. So when ES6 introduced `let`, they decided to prevent "re-declaration" with an error.
 이것은 정말로 "사회 공학"에 더 가까운 문제이다. TC39 본문 등 일부에서는 변수 "재선언"이 프로그램 버그로 이어질 수 있는 악습으로 보고 있다. 그래서 ES6는 `let`을 도입할 때 오류로 "재선언"을 막기로 했다.
 
-| NOTE: |
-| :--- |
-| This is of course a stylistic opinion, not really a technical argument. Many developers agree with the position, and that's probably in part why TC39 included the error (as well as `let` conforming to `const`). But a reasonable case could have been made that staying consistent with `var`'s precedent was more prudent, and that such opinion-enforcement was best left to opt-in tooling like linters. In Appendix A, we'll explore whether `var` (and its associated behavior, like "re-declaration") can still be useful in modern JS. |
 | 비고: |
 | :--- |
 | 이것은 물론 형식적인 의견이지 기술적인 주장은 아니다. 많은 개발자들이 이 의견에 동의하고 있으며, 그 때문에 TC39이 그것을 오류로 포함한 것이다(`const`와 같이 동작하는 `let`도 마찬가지로). 그러나 일부 경우는 이 전에 사용된`var` 일관성을 유지하는 것이 더 중요했고, 그러한 경우는 린터 같은 도구를 채택하는 것이 최선일 수 있다. 부록 A에서는 `var`(그리고 "재선언"과 같은 관련 동작)이 여전히 현대 JS에서 유용할 수 있는지 여부를 살펴보겠다. |
 
-When *Compiler* asks *Scope Manager* about a declaration, if that identifier has already been declared, and if either/both declarations were made with `let`, an error is thrown. The intended signal to the developer is "Stop relying on sloppy re-declaration!
 *컴파일러*가 선언에 대해 *스코프 매니저*에게 질문할 때, 해당 식별자가 이미 선언되었는지 여부 및 둘 중 하나가 'let'으로 지정된 경우 오류가 발생합니다. 개발자에게 보내는 신호는 "허술한 재선언에 의존하지 말라!"이다.
 
-### Constants?
+### 상수
 
-The `const` keyword is more constrained than `let`. Like `let`, `const` cannot be repeated with the same identifier in the same scope. But there's actually an overriding technical reason why that sort of "re-declaration" is disallowed, unlike `let` which disallows "re-declaration" mostly for stylistic reasons.
+`const` 키워드는 `let`보다 더 제약이 많다. `let`처럼 같은 스코프의 동일 식별자로 `const`를 반복할 수 없다. 그러나 형식적인 이유로 "재선언"을 허용하지 않는 `let`와는 달리, 그러한 종류의 "재선언"이 허용되지 않는 중요한 기술적 이유가 실제로 있다.
 
-The `const` keyword requires a variable to be initialized, so omitting an assignment from the declaration results in a `SyntaxError`:
+`const` 키워드는 변수를 초기화해야 하므로 선언에서 할당을 생략하면 `SyntaxError`가 발생합니다.
 
 ```js
 const empty;   // SyntaxError
 ```
 
-`const` declarations create variables that cannot be re-assigned:
+`const` 선언은 다시 할당할 수 없는 변수를 만든다.
 
 ```js
 const studentName = "Frank";
@@ -305,13 +281,13 @@ console.log(studentName);
 studentName = "Suzy";   // TypeError
 ```
 
-The `studentName` variable cannot be re-assigned because it's declared with a `const`.
+`studentName` 변수는 `const`로 선언되어 있으므로 재할당할 수 없습니다.
 
-| WARNING: |
+| 주의: |
 | :--- |
-| The error thrown when re-assigning `studentName` is a `TypeError`, not a `SyntaxError`. The subtle distinction here is actually pretty important, but unfortunately far too easy to miss. Syntax errors represent faults in the program that stop it from even starting execution. Type errors represent faults that arise during program execution. In the preceding snippet, `"Frank"` is printed out before we process the re-assignment of `studentName`, which then throws the error. |
+| `studentName`을 재할당할 때 발생하는 오류는 `TypeError`이지 `SyntaxError`가 아니다. 여기서의 미묘한 차이는 사실 꽤 중요하지만 불행하게도 놓치기 너무 쉽다. SyntaxError는 실행조차 시작하지 못하게 하는 프로그램의 결함을 나타낸다. TypeError는 프로그램 실행 중에 발생하는 장애를 나타낸다. 앞의 스니펫에서는 `studentName` 재할당을 진행하기 전에 `"Frank"`가 출력되어 오류가 발생한다. |
 
-So if `const` declarations cannot be re-assigned, and `const` declarations always require assignments, then we have a clear technical reason why `const` must disallow any "re-declarations": any `const` "re-declaration" would also necessarily be a `const` re-assignment, which can't be allowed!
+그러므로 만일 `const` 선언을 재할당할 수 없고 `const` 선언이 항상 할당을 요구한다면, `const`가 재선언을 허용하지없는 분명한 기술적 이유가 있다: 어떤 `const` 재선언은 반드시 `const` 재할당이다
 
 ```js
 const studentName = "Frank";
@@ -320,11 +296,11 @@ const studentName = "Frank";
 const studentName = "Suzy";
 ```
 
-Since `const` "re-declaration" must be disallowed (on those technical grounds), TC39 essentially felt that `let` "re-declaration" should be disallowed as well, for consistency. It's debatable if this was the best choice, but at least we have the reasoning behind the decision.
+TC39는 (이러한 기술적 이유로) `const` '재선언'을 불허해야 하기 때문에 일관성을 위해 `let` '재선언'도 불허해야 한다고 느꼈다. 이게 최선의 선택이었는지는 논란의 여지가 있지만, 적어도 우리는 그 결정의 이면에 있는 이유를 가지고 있다.
 
-### Loops
+### 루프
 
-So it's clear from our previous discussion that JS doesn't really want us to "re-declare" our variables within the same scope. That probably seems like a straightforward admonition, until you consider what it means for repeated execution of declaration statements in loops. Consider:
+따라서 이전 논의에서 우리는 JS는 동일한 스코프 내에서 변수를 "재선언"하는 것을 원하지 않는 것을 알 수 있다. 루프에서 선언문을 반복적으로 실행하는 것이 무엇을 의미하는지 고려하기 전까지는 이 말은 간단한 훈계처럼 보일 것이다. 다음을 살펴보자:
 
 ```js
 var keepGoing = true;
@@ -336,11 +312,11 @@ while (keepGoing) {
 }
 ```
 
-Is `value` being "re-declared" repeatedly in this program? Will we get errors thrown? No.
+`value`가 이 프로그램에서 반복적으로 '재선언'되고 있는 것일까? 오류가 발생할까? 아니다.
 
-All the rules of scope (including "re-declaration" of `let`-created variables) are applied *per scope instance*. In other words, each time a scope is entered during execution, everything resets.
+스코프의 모든 규칙(`let` 생성 변수의 "재선언" 포함)은 *스코프 인스턴스당* 적용된다. 즉, 실행 중에 스코프를 시작될 때마다 모든 항목이 재설정된다.
 
-Each loop iteration is its own new scope instance, and within each scope instance, `value` is only being declared once. So there's no attempted "re-declaration," and thus no error. Before we consider other loop forms, what if the `value` declaration in the previous snippet were changed to a `var`?
+각 루프 반복은 고유한 새 스코프 인스턴스이며 각 스코프 인스턴스 내에서 '값'은 한 번만 선언된다. 따라서 "재선언" 시도도 없고, 따라서 오류도 없다. 다른 루프 형식을 고려하기 전에 이전 스니펫의 '값' 선언이 'var'로 변경되면 어떻게 될까?
 
 ```js
 var keepGoing = true;
@@ -352,13 +328,13 @@ while (keepGoing) {
 }
 ```
 
-Is `value` being "re-declared" here, especially since we know `var` allows it? No. Because `var` is not treated as a block-scoping declaration (see Chapter 6), it attaches itself to the global scope. So there's just one `value` variable, in the same scope as `keepGoing` (global scope, in this case). No "re-declaration" here, either!
+특히 'var'가 허용한다는 것을 알고 있기 때문에 여기서 `value`가 '재선언'되는 것일까? 아니다. 'var'는 블록 스코프 지정 선언(6장 참조)으로 취급되지 않기 때문에 전역 스코프에 등록된다. 따라서 `value` 변수는 `keepGoing`(이 경우 전역 스코프)와 같은 스코프 안에 딱 하나 있을 뿐이다. 여기도 "재선언"은 없다!
 
-One way to keep this all straight is to remember that `var`, `let`, and `const` keywords are effectively *removed* from the code by the time it starts to execute. They're handled entirely by the compiler.
+이 모든 것을 바로잡을 수 있는 한 가지 방법은 실행이 시작될 때쯤 코드로부터 `var`, `let`, `const` 키워드가 효과적으로 *제거된다는 것*을 기억하는 것이다. 그것들은 전적으로 컴파일러에 의해 처리된다.
 
-If you mentally erase the declarator keywords and then try to process the code, it should help you decide if and when (re-)declarations might occur.
+선언자 키워드를 개념적으로 지운 다음 코드를 처리하려고 할 경우, 선언이 발생할 수 있는지 여부와 시기를 결정하는 데 도움이 된다.
 
-What about "re-declaration" with other loop forms, like `for`-loops?
+`for` 루프와 같은 다른 루프 형식의 "재선언"은 어떨까?
 
 ```js
 for (let i = 0; i < 3; i++) {
@@ -370,9 +346,9 @@ for (let i = 0; i < 3; i++) {
 // 2: 20
 ```
 
-It should be clear that there's only one `value` declared per scope instance. But what about `i`? Is it being "re-declared"?
+스코프 인스턴스당 선언된 '값'이 하나뿐임을 분명히 해야 한다. 하지만 'i'는 어떤가? "재선언"되는 건가?
 
-To answer that, consider what scope `i` is in. It might seem like it would be in the outer (in this case, global) scope, but it's not. It's in the scope of `for`-loop body, just like `value` is. In fact, you could sorta think about that loop in this more verbose equivalent form:
+이에 답하려면 'i'가 어느 스코프에 속하는지 생각해 보아야 한다. 외부(이 경우 전역) 스코프에 있을 것으로 보이지만 그렇지 않다. `value`처럼 `for` 루프 본체 스코프 안에 있다. 이 루프를 조금더 풀어서 작성하여 살펴보자.
 
 ```js
 {
@@ -392,9 +368,9 @@ To answer that, consider what scope `i` is in. It might seem like it would be in
 }
 ```
 
-Now it should be clear: the `i` and `value` variables are both declared exactly once **per scope instance**. No "re-declaration" here.
+이제 명확하다. `i` 변수와 `value` 변수는 모두 **스코프 인스턴스당** 정확하게 한 번 선언된다. 여기엔 "재선언"이 없다.
 
-What about other `for`-loop forms?
+다른 `for` 루프 형태는 어떤가?
 
 ```js
 for (let index in students) {
@@ -406,9 +382,9 @@ for (let student of students) {
 }
 ```
 
-Same thing with `for..in` and `for..of` loops: the declared variable is treated as *inside* the loop body, and thus is handled per iteration (aka, per scope instance). No "re-declaration."
+`for..in`과`for..of` 도 마찬가지다: 선언된 변수는 루프 본체 내부에서 처리되므로, 반복마다(일명 스코프 인스턴스별로) 처리됩니다. "재선언"은 없다.
 
-OK, I know you're thinking that I sound like a broken record at this point. But let's explore how `const` impacts these looping constructs. Consider:
+지금 내 목소리가 고장난 레코드 같다고 생각할 것이다. 그러나 `const`가 이러한 루프 구조물에 어떤 영향을 미치는지 알아보자. 다음을 살펴보자:
 
 ```js
 var keepGoing = true;
@@ -421,9 +397,9 @@ while (keepGoing) {
 }
 ```
 
-Just like the `let` variant of this program we saw earlier, `const` is being run exactly once within each loop iteration, so it's safe from "re-declaration" troubles. But things get more complicated when we talk about `for`-loops.
+앞서 살펴본 이 프로그램의 `let` 변수처럼 `const`가 루프 반복마다 정확히 한 번씩 실행되기 때문에 '재선언' 문제로부터 안전하다. 그러나 우리가 `for` 루프 이야기를 할 때 상황은 더 복잡해진다.
 
-`for..in` and `for..of` are fine to use with `const`:
+`for..in` 과 `for..of`는 `const`와 함께 사용되어도 문제 없다:
 
 ```js
 for (const index in students) {
@@ -435,7 +411,7 @@ for (const student of students) {
 }
 ```
 
-But not the general `for`-loop:
+그러나 일반적인 `for` 루프는 아니다:
 
 ```js
 for (const i = 0; i < 3; i++) {
@@ -444,9 +420,9 @@ for (const i = 0; i < 3; i++) {
 }
 ```
 
-What's wrong here? We could use `let` just fine in this construct, and we asserted that it creates a new `i` for each loop iteration scope, so it doesn't even seem to be a "re-declaration."
+무엇이 문제인가? 우리는 이 구조에서 그냥 `let`을 사용할 수도 있고, 각각의 루프 반복 스코프에 대해 새로운 'i'를 만들 수 있다고 주장했기 때문에 '재선언'도 아닌 것 같다.
 
-Let's mentally "expand" that loop like we did earlier:
+전에 했던 것처럼 이 루프를 개념적으로 "확자"해서 살펴보자:
 
 ```js
 {
@@ -461,15 +437,15 @@ Let's mentally "expand" that loop like we did earlier:
 }
 ```
 
-Do you spot the problem? Our `i` is indeed just created once inside the loop. That's not the problem. The problem is the conceptual `$$i` that must be incremented each time with the `$$i++` expression. That's **re-assignment** (not "re-declaration"), which isn't allowed for constants.
+당신은 문제를 발견했나? 우리의 `i`는 정말 루프 안에서 한 번 만들어질 뿐이다. 그게 문제가 아니다. 문제는 '$i++' 표현으로 매번 늘려야 하는 개념적인 '$i'다. 상수에 허용되지 않는 **재할당**("재선언"이 아님)이다.
 
-Remember, this "expanded" form is only a conceptual model to help you intuit the source of the problem. You might wonder if JS could have effectively made the `const $$i = 0` instead into `let $ii = 0`, which would then allow `const` to work with our classic `for`-loop? It's possible, but then it could have introduced potentially surprising exceptions to `for`-loop semantics.
+이 "확장" 양식은 문제의 원인을 직관하는 데 도움이 되는 개념적 모델일 뿐이다. JS가 'const $i = 0'을 'let $ii = 0'으로 효과적으로 만들 수 있었는지 궁금할 것이다. 그렇다면 'const'가 우리의 고전적인 'for' 루프와 함께 동작할 수 있을까? 그럴 수도 있지만, 그렇다면 잠재적으로 `for` 루프에 대해 놀랄만한 예외를 도입했을 수도 있다.
 
-For example, it would have been a rather arbitrary (and likely confusing) nuanced exception to allow `i++` in the `for`-loop header to skirt strictness of the `const` assignment, but not allow other re-assignments of `i` inside the loop iteration, as is sometimes useful.
+예를 들어, `for` 루프 헤더에서 `i++`가 'constant' 할당의 엄격함을 회피할 수 있도록 허용한 것은 다소 자의적인(그리고 혼동될 가능성이 있는) 뉘앙스에서 예외일 수 있지만, 루프 반복 내에서 `i`의 다른 재할당은 때로는 유용하지 않을 수 있다.
 
-The straightforward answer is: `const` can't be used with the classic `for`-loop form because of the required re-assignment.
+분명한 대답은 `const`는 필수 재할당 때문에 고전적인 `for` 루프 형식과 함께 사용할 수 없다는 것이다.
 
-Interestingly, if you don't do re-assignment, then it's valid:
+흥미롭게도 재할당을 하지 않으면 유효하다.
 
 ```js
 var keepGoing = true;
@@ -480,7 +456,7 @@ for (const i = 0; keepGoing; /* nothing here */ ) {
 }
 ```
 
-That works, but it's pointless. There's no reason to declare `i` in that position with a `const`, since the whole point of such a variable in that position is **to be used for counting iterations**. Just use a different loop form, like a `while` loop, or use a `let`!
+이 코드는 작동은 하지만 무의미하다. 해당 위치의 변수의 목적은 **반복문을 계속 진행시키기 위해 사용되는 것이기** 때문에 `const`를 사용하여 해당 위치에 `i`를 선언할 이유가 없다. 그냥 `while` 루프와 같은 다른 루프 형식을 사용하거나 `let`을 사용해라!
 
 ## Uninitialized Variables (aka, TDZ)
 

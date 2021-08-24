@@ -189,11 +189,11 @@ var studentName = "Frank";
 console.log(studentName);   // Frank
 
 var studentName;
-console.log(studentName);   // Frank <--- still!
+console.log(studentName);   // Frank <--- 여전히!
 
-// let's add the initialization explicitly
+// 좀 더 명확하게 하기 위해 초기화를 추가해보자
 var studentName = undefined;
-console.log(studentName);   // undefined <--- see!?
+console.log(studentName);   // undefined <--- 보았는가!?
 ```
 
 명시적으로 `= undefined` 초기화한 것과 이것이 암묵적으로 생략되었을 때는 어떻게 다른 결과를 낳을까? 다음 섹션에서는 선언에서의 변수 초기화 주제를 다시 살펴보자.
@@ -207,7 +207,7 @@ function greeting() {
     console.log("Hello!");
 }
 
-// basically, a no-op
+// 기본적으로 아무 일도 하지 않는다.
 var greeting;
 
 typeof greeting;        // "function"
@@ -219,7 +219,7 @@ typeof greeting;        // "string"
 
 첫 번째 `greeting` 선언은 식별자를 스코프에 등록하며, `var`이기 때문에 자동 초기화는 `undefined`을 할당한다. `function` 선언은 식별자를 다시 등록할 필요가 없지만 *함수 호이스팅* 때문에 함수 참조를 사용하도록 자동 초기화를 재정한다. 이미 `greeting`이 식별자이고 자동초기화에는 *함수 호이스팅*이 우선이었기 때문에 두 번째 `greeting`만으로는 아무것도 할 수 없다.
 
-실제로 '`"Hello!"`을 `greeting`에 할당하면 첫 함수인 `greeting()`에서 문자열로 값이 바뀌지만, `var` 자체는 아무런 효과가 없다.
+실제로 '`"Hello!"`를 `greeting`에 할당하면 첫 함수인 `greeting()`에서 문자열로 값이 바뀌지만, `var` 자체는 아무런 효과가 없다.
 
 스코프 내에서 `let`이나 `const`를 이용해 선언을 반복하는 것은 어떨까.
 
@@ -231,7 +231,7 @@ console.log(studentName);
 let studentName = "Suzy";
 ```
 
-이 프로그램은 실행되지 않고 즉시 `SyntaxError`를 발생시킨다. JS 환경에 따라 "studentName이(가) 이미 선언되었습니다."와 같은 오류 메시지가 표시된다. 즉, 시도된 "재선언"이 명시적으로 허용되지 않는 경우이다!
+이 프로그램은 실행되지 않고 즉시 `SyntaxError`를 발생시킨다. JS 환경에 따라 "studentName이 이미 선언되었습니다."와 같은 오류 메시지가 표시된다. 즉, 시도된 "재선언"이 명시적으로 허용되지 않는 경우이다!
 
 단순히 `let`을 포함한 이 두 선언이 이런 오류를 낳는 것은 아니다. 두 선언 중 하나가 `let`을 사용할 경우 다른 선언은 `let` 또는 `var`가 될 수 있으며, 다음 두 변형에서 볼 수 있듯이 오류가 계속 발생한다.
 
@@ -265,7 +265,7 @@ var studentName = "Suzy";
 
 `const` 키워드는 `let`보다 더 제약이 많다. `let`처럼 같은 스코프의 동일 식별자로 `const`를 반복할 수 없다. 그러나 형식적인 이유로 "재선언"을 허용하지 않는 `let`와는 달리, 그러한 종류의 "재선언"이 허용되지 않는 중요한 기술적 이유가 실제로 있다.
 
-`const` 키워드는 변수를 초기화해야 하므로 선언에서 할당을 생략하면 `SyntaxError`가 발생합니다.
+`const` 키워드는 변수를 초기화해야 하므로 선언에서 할당을 생략하면 `SyntaxError`가 발생한다.
 
 ```js
 const empty;   // SyntaxError
@@ -281,18 +281,18 @@ console.log(studentName);
 studentName = "Suzy";   // TypeError
 ```
 
-`studentName` 변수는 `const`로 선언되어 있으므로 재할당할 수 없습니다.
+`studentName` 변수는 `const`로 선언되어 있으므로 재할당할 수 없다.
 
 | 주의: |
 | :--- |
 | `studentName`을 재할당할 때 발생하는 오류는 `TypeError`이지 `SyntaxError`가 아니다. 여기서의 미묘한 차이는 사실 꽤 중요하지만 불행하게도 놓치기 너무 쉽다. SyntaxError는 실행조차 시작하지 못하게 하는 프로그램의 결함을 나타낸다. TypeError는 프로그램 실행 중에 발생하는 장애를 나타낸다. 앞의 스니펫에서는 `studentName` 재할당을 진행하기 전에 `"Frank"`가 출력되어 오류가 발생한다. |
 
-그러므로 만일 `const` 선언을 재할당할 수 없고 `const` 선언이 항상 할당을 요구한다면, `const`가 재선언을 허용하지없는 분명한 기술적 이유가 있다: 어떤 `const` 재선언은 반드시 `const` 재할당이다
+그러므로 만일 `const` 선언을 재할당할 수 없고 `const` 선언이 항상 할당을 요구한다면, `const`가 재선언을 할 수 없는 분명한 기술적 이유가 있다: `const` 재선언은 `const` 재할당을 의미하고 재할당은 허용되지 않기 때문이다.
 
 ```js
 const studentName = "Frank";
 
-// obviously this must be an error
+// 무조건 에러를 발생시킨다.
 const studentName = "Suzy";
 ```
 
@@ -346,17 +346,17 @@ for (let i = 0; i < 3; i++) {
 // 2: 20
 ```
 
-스코프 인스턴스당 선언된 '값'이 하나뿐임을 분명히 해야 한다. 하지만 'i'는 어떤가? "재선언"되는 건가?
+스코프 인스턴스당 선언된 `value`가 하나뿐임을 분명히 해야 한다. 하지만 `i`는 어떤가? "재선언"되는 건가?
 
-이에 답하려면 'i'가 어느 스코프에 속하는지 생각해 보아야 한다. 외부(이 경우 전역) 스코프에 있을 것으로 보이지만 그렇지 않다. `value`처럼 `for` 루프 본체 스코프 안에 있다. 이 루프를 조금더 풀어서 작성하여 살펴보자.
+이에 답하려면 `i`가 어느 스코프에 속하는지 생각해 보아야 한다. 외부(이 경우 전역) 스코프에 있을 것으로 보이지만 그렇지 않다. `value`처럼 `for` 루프 본체 스코프 안에 있다. 이 루프를 조금더 풀어서 작성하여 살펴보자.
 
 ```js
 {
-    // a fictional variable for illustration
+    // 설명을 위한 가상의 변수
     let $$i = 0;
 
     for ( /* nothing */; $$i < 3; $$i++) {
-        // here's our actual loop `i`!
+        // 이것이 실제 루프의 `i` 변수이다!
         let i = $$i;
 
         let value = i * 10;
@@ -403,11 +403,11 @@ while (keepGoing) {
 
 ```js
 for (const index in students) {
-    // this is fine
+    // 이 코드는 문제 없다.
 }
 
 for (const student of students) {
-    // this is also fine
+    // 이 코드 또한 문제 없다.
 }
 ```
 
@@ -420,9 +420,9 @@ for (const i = 0; i < 3; i++) {
 }
 ```
 
-무엇이 문제인가? 우리는 이 구조에서 그냥 `let`을 사용할 수도 있고, 각각의 루프 반복 스코프에 대해 새로운 'i'를 만들 수 있다고 주장했기 때문에 '재선언'도 아닌 것 같다.
+무엇이 문제인가? 우리는 이 구조에서 그냥 `let`을 사용할 수도 있고, 각각의 루프 반복 스코프에 대해 새로운 `i`를 만들 수 있다고 주장했기 때문에 "재선언"도 아닌 것 같다.
 
-전에 했던 것처럼 이 루프를 개념적으로 "확자"해서 살펴보자:
+전에 했던 것처럼 이 루프를 개념적으로 "확장"해서 살펴보자:
 
 ```js
 {
@@ -437,7 +437,7 @@ for (const i = 0; i < 3; i++) {
 }
 ```
 
-당신은 문제를 발견했나? 우리의 `i`는 정말 루프 안에서 한 번 만들어질 뿐이다. 그게 문제가 아니다. 문제는 '$i++' 표현으로 매번 늘려야 하는 개념적인 '$i'다. 상수에 허용되지 않는 **재할당**("재선언"이 아님)이다.
+당신은 문제를 발견했나? 우리의 `i`는 정말 루프 안에서 한 번 만들어질 뿐이다. 그게 문제가 아니다. 문제는 '$i++' 표현식으로 매번 늘려야 하는 개념적인 '$i'다. 상수에 허용되지 않는 **재할당**("재선언"이 아님)이다.
 
 이 "확장" 양식은 문제의 원인을 직관하는 데 도움이 되는 개념적 모델일 뿐이다. JS가 'const $i = 0'을 'let $ii = 0'으로 효과적으로 만들 수 있었는지 궁금할 것이다. 그렇다면 'const'가 우리의 고전적인 'for' 루프와 함께 동작할 수 있을까? 그럴 수도 있지만, 그렇다면 잠재적으로 `for` 루프에 대해 놀랄만한 예외를 도입했을 수도 있다.
 

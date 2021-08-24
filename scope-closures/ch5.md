@@ -458,13 +458,13 @@ for (const i = 0; keepGoing; /* nothing here */ ) {
 
 이 코드는 작동은 하지만 무의미하다. 해당 위치의 변수의 목적은 **반복문을 계속 진행시키기 위해 사용되는 것이기** 때문에 `const`를 사용하여 해당 위치에 `i`를 선언할 이유가 없다. 그냥 `while` 루프와 같은 다른 루프 형식을 사용하거나 `let`을 사용해라!
 
-## Uninitialized Variables (aka, TDZ)
+## 초기화되지 않는 변수들 (TDZ)
 
-With `var` declarations, the variable is "hoisted" to the top of its scope. But it's also automatically initialized to the `undefined` value, so that the variable can be used throughout the entire scope.
+`var` 선언을 사용하면, 변수가 스코프의 최상단으로 "호이스팅"된다. 그러나 이 값은 자동으로 `undefined` 값으로 초기화되므로 변수를 전체 스코프에서 사용할 수 있다.
 
-However, `let` and `const` declarations are not quite the same in this respect.
+그러나 이런 점에서 `let`'과 `const` 선언은 다르다.
 
-Consider:
+살펴보자:
 
 ```js
 console.log(studentName);
@@ -473,16 +473,16 @@ console.log(studentName);
 let studentName = "Suzy";
 ```
 
-The result of this program is that a `ReferenceError` is thrown on the first line. Depending on your JS environment, the error message may say something like: "Cannot access studentName before initialization."
+이 프로그램의 결과로 첫 번째 줄에 `ReferenceError`가 던져진다. JS 환경에 따라, "초기화 전에 studentName에 접근할 수 없습니다."와 같은 오류 메시지가 표시될 수 있다.
 
-| NOTE: |
+| 비고: |
 | :--- |
-| The error message as seen here used to be much more vague or misleading. Thankfully, several of us in the community were successfully able to lobby for JS engines to improve this error message so it more accurately tells you what's wrong! |
+| 여기서 확인한 오류 메시지는 이전에는 훨씬 더 모호하거나 오해의 소지가 있었다. 다행히도, 이 오류 메시지를 개선하기 위해 커뮤니티의 여러 명이 JS 엔진을 위한 로비를 성공적으로 수행하였고, 지금은 문제가 무엇인지 더 정확하게 알 수 있게 되었다! |
 
-That error message is quite indicative of what's wrong: `studentName` exists on line 1, but it's not been initialized, so it cannot be used yet. Let's try this:
+이 오류 메시지는 무엇이 문제인지를 잘 전달하고있다: `studentName`이 1행에 존재하지만 초기화되지 않아 아직 사용할 수 없다. 다음을 시도해보자.
 
 ```js
-studentName = "Suzy";   // let's try to initialize it!
+studentName = "Suzy";   // 이 변수를 초기화 해보자!
 // ReferenceError
 
 console.log(studentName);
@@ -490,18 +490,18 @@ console.log(studentName);
 let studentName;
 ```
 
-Oops. We still get the `ReferenceError`, but now on the first line where we're trying to assign to (aka, initialize!) this so-called "uninitialized" variable `studentName`. What's the deal!?
+이런. `ReferenceError`가 계속 발생하지만, 지금은 소위 '초기화 되지 않은' 변수인 `studentName`을 할당(초기화)하려는 첫 번째 행에서 발생하고 있다 . 이게 무슨 일인가!
 
-The real question is, how do we initialize an uninitialized variable? For `let`/`const`, the **only way** to do so is with an assignment attached to a declaration statement. An assignment by itself is insufficient! Consider:
+문제는 초기화되지 않은 변수를 초기화하려면 어떻게 해야 할까? `let`/`const`의 경우, **유일한 방법**은 선언문에 할당이 등록되는 것이다. 할당만으로는 부족하다! 다음을 살펴보자:
 
 ```js
 let studentName = "Suzy";
 console.log(studentName);   // Suzy
 ```
 
-Here, we are initializing the `studentName` (in this case, to `"Suzy"` instead of `undefined`) by way of the `let` declaration statement form that's coupled with an assignment.
+여기서는, 할당과 결합된 `let` 선언문 형식을 통해 `studentName`(이 경우 `undefined`이 아닌 `"Suzy"`)로 초기화한다.
 
-Alternatively:
+대안적으로는:
 
 ```js
 // ..
@@ -518,21 +518,21 @@ console.log(studentName);
 // Suzy
 ```
 
-| NOTE: |
+| 비고: |
 | :--- |
-| That's interesting! Recall from earlier, we said that `var studentName;` is *not* the same as `var studentName = undefined;`, but here with `let`, they behave the same. The difference comes down to the fact that `var studentName` automatically initializes at the top of the scope, where `let studentName` does not. |
+| 흥미롭다! 앞에서 우리는 `var studentName;`은 `var studentName = undefined;`'과  *같지 않다*고 말했지만 여기서 `let`을 사용하면 동일하게 행동한다. 차이점은 `var studentName`이 자동으로 초기화되지만 `let studentName`은 초기화되지 않는다는 점이다. |
 
-Remember that we've asserted a few times so far that *Compiler* ends up removing any `var`/`let`/`const` declarators, replacing them with the instructions at the top of each scope to register the appropriate identifiers.
+지금까지 *Compiler*가 모든 `var`/`let`/`const` 선언자를 제거하고 각 범위의 맨 위에 적절한 식별자를 등록하는 명령문으로 교체한다고 몇 차례 주장했다.
 
-So if we analyze what's going on here, we see that an additional nuance is that *Compiler* is also adding an instruction in the middle of the program, at the point where the variable `studentName` was declared, to handle that declaration's auto-initialization. We cannot use the variable at any point prior to that initialization occuring. The same goes for `const` as it does for `let`.
+따라서 여기서 무슨 일이 벌어지고 있는지 분석해보면 *Compiler*가 프로그램 중간에 `studentName` 변수가 선언된 시점에 해당 선언의 자동 초기화를 처리하라는 명령문을 추가하고 있다는 것을 알 수 있다. 초기화 전에는 변수를 사용할 수 없다. `const`도 `let`과 마찬가지다.
 
-The term coined by TC39 to refer to this *period of time* from the entering of a scope to where the auto-initialization of the variable occurs is: Temporal Dead Zone (TDZ).
+TC39가 스코프 시작부터 변수의 자동 초기화가 발생하는 곳까지 *기간*을(를) 나타내기 위해 만든 용어는 다음과 같다. TDZ(Temporal Dead Zone)이다.
 
-The TDZ is the time window where a variable exists but is still uninitialized, and therefore cannot be accessed in any way. Only the execution of the instructions left by *Compiler* at the point of the original declaration can do that initialization. After that moment, the TDZ is done, and the variable is free to be used for the rest of the scope.
+TDZ는 변수가 존재하지만 여전히 초기화되지 않은 시간 창이므로 어떤 방법으로도 액세스할 수 없다. 원래 선언 시 *Compiler*가 남긴 명령의 실행만이 이 초기화를 수행할 수 있다. 그 후, TDZ가 완료되고, 변수는 나머지 스코프에서 자유롭게 사용할 수 있다.
 
-A `var` also has technically has a TDZ, but it's zero in length and thus unobservable to our programs! Only `let` and `const` have an observable TDZ.
+`var`도 기술적으로는 TDZ를 가지고 있지만, 길이가 0이기 때문에 우리 프로그램에서는 관찰할 수 없다! 관측 가능한 TDZ는 `let`과 `const`에만 있다.
 
-By the way, "temporal" in TDZ does indeed refer to *time* not *position in code*. Consider:
+그런데 TDZ의 "임시"는 *코드에서의 위치*가 아닌 *시간*을 의미한다. 다음을 살펴보자:
 
 ```js
 askQuestion();
@@ -545,13 +545,13 @@ function askQuestion() {
 }
 ```
 
-Even though positionally the `console.log(..)` referencing `studentName` comes *after* the `let studentName` declaration, timing wise the `askQuestion()` function is invoked *before* the `let` statement is encountered, while `studentName` is still in its TDZ! Hence the error.
+위치적으로 `studentName`을 지칭하는 `console.log(..)`가 `let studentName` 선언 뒤에 나오지만, `studentName`이 TDZ에 있는 동안 `askQuestion()` 함수가 `let` 선언문 *전*에 호출된다! 따라서 오류가 발생하다.
 
-There's a common misconception that TDZ means `let` and `const` do not hoist. This is an inaccurate, or at least slightly misleading, claim. They definitely hoist.
+흔히 TDZ는 `let`과 `const`는 '호이스팅'하지않는다는 오해를 하고 있다. 이것은 부정확하거나 적어도 약간 오해의 소지가 있는 주장이다. 그것들은 분명이 호이스팅 된다.
 
-The actual difference is that `let`/`const` declarations do not automatically initialize at the beginning of the scope, the way `var` does. The *debate* then is if the auto-initialization is *part of* hoisting, or not? I think auto-registration of a variable at the top of the scope (i.e., what I call "hoisting") and auto-initialization at the top of the scope (to `undefined`) are distinct operations and shouldn't be lumped together under the single term "hoisting."
+실제 차이점은 `let`/`const` 선언이 `var`처럼 스코프 시작 시 자동으로 초기화되지 않는다는 점이다. 그렇다면 *논의점*은 자동 초기화가 *호스팅의 일부*인지 여부이다. 나는 변수의 상위 등록(즉, "호이스팅")과 상위 변수의 자동 초기화(`undefined`으로 함)는 별개의 작업이며 단일 용어 "호이스팅"으로 묶이면 안 된다고 생각한다.
 
-We've already seen that `let` and `const` don't auto-initialize at the top of the scope. But let's prove that `let` and `const` *do* hoist (auto-register at the top of the scope), courtesy of our friend shadowing (see "Shadowing" in Chapter 3):
+우리는 이미 `let`과 `const`가 스코프 상단에서 자동 초기화되지 않는 것을 보았다. 하지만 섀도잉(3장의 "섀도잉"을 참고)에 대한 예의로 `let`과 `const` *호이스팅(스코프 상단에 자동 등록) 하는것*을 증명해보자! 
 
 ```js
 var studentName = "Kyle";
@@ -569,26 +569,27 @@ var studentName = "Kyle";
 }
 ```
 
-What's going to happen with the first `console.log(..)` statement? If `let studentName` didn't hoist to the top of the scope, then the first `console.log(..)` *should* print `"Kyle"`, right? At that moment, it would seem, only the outer `studentName` exists, so that's the variable `console.log(..)` should access and print.
+첫 번째 `console.log(..)`문은 어떻게 될까? `let studentName`이 스코프의 맨 위로 올라가지 않으면 첫 번째 `console.log(..)`는 `"Kyle"`을 출력한다. 맞는가? 그 때는 외부의 `studentName`만 존재하는 것처럼 보일 것이고, 그것이 바로  `console.log(..)`가 접근하고 출력하는 값이다.
 
-But instead, the first `console.log(..)` throws a TDZ error, because in fact, the inner scope's `studentName` **was** hoisted (auto-registered at the top of the scope). What **didn't** happen (yet!) was the auto-initialization of that inner `studentName`; it's still uninitialized at that moment, hence the TDZ violation!
+그러나 우리와 생각과 달리 `console.log(..)`는 TDZ error를 던진다. 실제로 내부 스코프의 `studentName` *호이스팅 되었기* 때문에(스코프의 맨 위에 자동 등록됨) TDZ 오류가 발생한다.내부 `studentName`의 자동 초기화는 아직 **발생하지 않았다**. 아직 초기화되지 않았으므로 TDZ 위반이다.
 
-So to summarize, TDZ errors occur because `let`/`const` declarations *do* hoist their declarations to the top of their scopes, but unlike `var`, they defer the auto-initialization of their variables until the moment in the code's sequencing where the original declaration appeared. This window of time (hint: temporal), whatever its length, is the TDZ.
+요약하자면 TDZ 오류는 `let`/`const` 선언이 스코프 상위로 올리기 때문에 발생하지만, `var`와 달리, 원래 선언이 나타난 코드 시퀀싱의 순간까지 변수의 자동 초기화를 지연합니다. 이 시간 창(힌트: 
+)은 길이가 무엇이든 TDZ이다.
 
-How can you avoid TDZ errors?
+어떻게 TDZ 에러를 피할 수 있을까?
 
-My advice: always put your `let` and `const` declarations at the top of any scope. Shrink the TDZ window to zero (or near zero) length, and then it'll be moot.
+내가 조언하는 것은 항상 당신의 `let`과 `const` 선언을 어떤 스코프에서도 최우선 순위에 두라는 것이다. TDZ 창을 0(또는 0) 길이로 축소하면 의미가 없어진다.
 
-But why is TDZ even a thing? Why didn't TC39 dictate that `let`/`const` auto-initialize the way `var` does? Just be patient, we'll come back to explore the *why* of TDZ in Appendix A.
+그런데 왜 TDZ가 중요할까? TC39는 왜 `var`처럼 `let`/`const`를 자동 초기화하지 않았을까? 기다려 보라, 부록 A에서 TDZ의 *이유*에 대해 살펴볼 것이다.
 
-## Finally Initialized
+## 드디어 초기화를 모두 다루었다
 
-Working with variables has much more nuance than it seems at first glance. *Hoisting*, *(re)declaration*, and the *TDZ* are common sources of confusion for developers, especially those who have worked in other languages before coming to JS. Before moving on, make sure your mental model is fully grounded on these aspects of JS scope and variables.
+변수를 가지고 일하는 것은 언뜻 보기보다 훨씬 많은 뉘앙스를 가지고 있다. *호이스팅*, *(재) 선언* 및 *TDZ*은 개발자, 특히 JS에 오기 전에 다른 언어로 작업한 경험이 있는 개발자을 혼란스럽게 하는 것들이다. 다음으로 넘어가기 전에 JS 스코프 및 변수의 이러한 측면에 대한 멘탈 모델이 완전히 정립되어 있는지 확인하라.
 
-Hoisting is generally cited as an explicit mechanism of the JS engine, but it's really more a metaphor to describe the various ways JS handles variable declarations during compilation. But even as a metaphor, hoisting offers useful structure for thinking about the life-cycle of a variable—when it's created, when it's available to use, when it goes away.
+호이스팅 일반적으로 JS 엔진의 명시적 메커니즘으로 인용되지만, 실제로는 컴파일 중에 JS가 변수 선언을 처리하는 다양한 방법을 설명하는 비유법이다. 하지만 비유적으로라도, 호이스팅은 변수의 수명 주기를 생각할 수 있는 유용한 구조를 제공한다.
 
-Declaration and re-declaration of variables tend to cause confusion when thought of as runtime operations. But if you shift to compile-time thinking for these operations, the quirks and *shadows* diminish.
+변수의 선언 및 재선언은 런타임 작업으로 간주될 때 혼란을 야기하는 경향이 있다. 그러나 이러한 작업에 대한 컴파일 타임 작업으로 사고 방식으로 전환하면, 기이한 점과 *그림자*가 줄어든다.
 
-The TDZ (temporal dead zone) error is strange and frustrating when encountered. Fortunately, TDZ is relatively straightforward to avoid if you're always careful to place `let`/`const` declarations at the top of any scope.
+TDZ(일시적인 사각지대 <sub>Temporal Dead Zone</sub>) 오류가 발생하면 이상하고 답답하다. 다행히도 TDZ는 어느 범위에서도 `let`/`const` 선언을 최우선 순위에 두는 데 항상 조심한다면 피하기가 쉽다.
 
-As you successfully navigate these twists and turns of variable scope, the next chapter will lay out the factors that guide our decisions to place our declarations in various scopes, especially nested blocks.
+이러한 변수 스코프의 곡절을 성공적으로 다루었기 때문에, 다음 장에서는 선언을 다양한 범위, 특히 중첩된 블록에 배치하기 위한 결정을 안내하는 요소를 설명할 것이다.

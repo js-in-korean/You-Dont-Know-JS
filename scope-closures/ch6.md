@@ -1,43 +1,43 @@
 # You Don't Know JS Yet: Scope & Closures - 2nd Edition
-# Chapter 6: Limiting Scope Exposure
+# Chapter 6: 스코프 노출을 제한하기
 
-So far our focus has been explaining the mechanics of how scopes and variables work. With that foundation now firmly in place, our attention raises to a higher level of thinking: decisions and patterns we apply across the whole program.
+지금까지 스코프와 변수가 어떻게 작동하는지 그 동작 방식을 설명하는 것에 집중했다. 이러한 기초 지식이 확고히 자리 잡으면서 우리의 관점은 프로그램 전체에 적용되는 결정과 패턴까지 확장되며, 이전보다 높은 수준으로 상승하게 된다.
 
-To begin, we're going to look at how and why we should be using different levels of scope (functions and blocks) to organize our program's variables, specifically to reduce scope over-exposure.
+먼저, 프로그램 변수를 스코프의 과다한 노출을 줄이는 방식으로 조직하기 위해 다른 스코프 레벨(함수와 블록)을 사용해야 하는 이유와 방법에 대해 알아볼 것이다.
 
-## Least Exposure
+## 노출의 최소화
 
-It makes sense that functions define their own scopes. But why do we need blocks to create scopes as well?
+함수가 자체 스코프를 정의하다는 것은 이해가 될 것이다. 하지만, 스코프를 생성하기 위해 다시 블록이 필요한 이유는 무엇일까?
 
-Software engineering articulates a fundamental discipline, typically applied to software security, called "The Principle of Least Privilege" (POLP). [^POLP] And a variation of this principle that applies to our current discussion is typically labeled as "Least Exposure" (POLE).
+소프트웨어 엔지니어링에서는 일반적으로 소프트웨어 보안에 적용되는 기본 원칙으로 "최소 권한 원칙"(POLP). [^POLP]을 명시하고 있다. 그리고 현재 논의하고 있는 것에 적용되는 이 원칙의 변형으로 흔히 "최소 노출"(POLE)이란 것이 있다.
 
-POLP expresses a defensive posture to software architecture: components of the system should be designed to function with least privilege, least access, least exposure. If each piece is connected with minimum-necessary capabilities, the overall system is stronger from a security standpoint, because a compromise or failure of one piece has a minimized impact on the rest of the system.
+POLP는 소프트웨어 아키텍처에 대한 방어태새를 나타낸다. 시스템의 구성 요소는 최소 권한, 최소 접근, 최소 노출로 작동하도록 설계되어야 한다. 각 부분이 최소한의 필요 기능으로 연결되어 있어야 하나의 부분이 손상되거나 실패하더라도 시스템의 나머지 부분에 미치는 영향이 최소화되기 때문에 보안 측면에서 전체 시스템이 더 강력해진다.
 
-If POLP focuses on system-level component design, the POLE *Exposure* variant focuses on a lower level; we'll apply it to how scopes interact with each other.
+POLP가 시스템 수준의 구성요소 설계에 초점을 맞춘다면 POLE의 *노출*은 더 낮은 수준에 초점을 맞춘다. 여기서는 스코프가 서로 상호 작용하는 방식에 적용할 것이다.
 
-In following POLE, what do we want to minimize the exposure of? Simply: the variables registered in each scope.
+다음 POLE에서 노출을 최소화하려는 것은 무엇일까? 단순히 각 스코프에 등록된 변수이다.
 
-Think of it this way: why shouldn't you just place all the variables of your program out in the global scope? That probably immediately feels like a bad idea, but it's worth considering why that is. When variables used by one part of the program are exposed to another part of the program, via scope, there are three main hazards that often arise:
+이렇게 생각해보자. 프로그램의 모든 변수를 글로벌 스코프에 배치한다면 어떨까? 당장은 나쁜 아이디어라고 느껴지겠지만, 왜 그런지 생각해 볼 필요가 있다. 프로그램의 한 부분에서 사용하는 변수가 스코프를 통해 프로그램의 다른 부분에 노출되는 경우 다음과 같은 세 가지 주요 위험이 발생한다.
 
-* **Naming Collisions**: if you use a common and useful variable/function name in two different parts of the program, but the identifier comes from one shared scope (like the global scope), then name collision occurs, and it's very likely that bugs will occur as one part uses the variable/function in a way the other part doesn't expect.
+* **이름 충돌**: 프로그램의 서로 다른 두 부분에서 공통적이고 유용한 변수/함수 이름을 사용하지만 식별자가 하나의 (전역 스코프처럼) 공유된 스코프에서 온 경우 이름 충돌이 발생한다. 이런 경우, 다른 부분의 코드에서 예상하지 못한 방식으로 변수/함수를 사용할 때 버그가 발생하기 쉽다.
 
-    For example, imagine if all your loops used a single global `i` index variable, and then it happens that one loop in a function is running during an iteration of a loop from another function, and now the shared `i` variable gets an unexpected value.
+    예를 들어, 모든 반복문에서 하나의 전역 변수의 이름으로 'i'를 사용했을때, 어떤 함수에서 반복문 내부를 반복하는 동안 다른 함수의 반복문이 실행되어 공유된 'i' 변수가 예기치 않은 값을 얻게 될 것을 생각해보라.
 
-* **Unexpected Behavior**: if you expose variables/functions whose usage is otherwise *private* to a piece of the program, it allows other developers to use them in ways you didn't intend, which can violate expected behavior and cause bugs.
+* **예상치 않은 동작**: 용도가 *프라이빗*한 변수/함수를 프로그램의 일부에 노출하면 다른 개발자가 의도하지 않은 방식으로 사용할 수 있으므로 예상된 동작을 위반하고 버그를 발생시킬 수 있다.
 
-    For example, if your part of the program assumes an array contains all numbers, but someone else's code accesses and modifies the array to include booleans and strings, your code may then misbehave in unexpected ways.
+    예를 들어, 당신의 프로그램 한 부분은 어떤 배열이 숫자만 포함되어 있을것으로 추정하고 있었는데 다른 사용자의 코드는 그 배열이 참/거짓 값과 문자열을 포함하도록 수정할 수 있다. 이 경우, 예기치 않은 방식으로 코드가 잘못 동작할 수 있다.
 
-    Worse, exposure of *private* details invites those with mal-intent to try to work around limitations you have imposed, to do things with your part of the software that shouldn't be allowed.
+    게다가 *프라이빗*한 세부 정보가 노출되면 의도하지 않은 사용자가 당신이 도입한 제약 사항을 침범하려 시도하게 되고 소프트웨어 내부의 허용되지 않는 부분을 사용해 작업을 수행할 것이다.
 
-* **Unintended Dependency**: if you expose variables/functions unnecessarily, it invites other developers to use and depend on those otherwise *private* pieces. While that doesn't break your program today, it creates a refactoring hazard in the future, because now you cannot as easily refactor that variable or function without potentially breaking other parts of the software that you don't control.
+* **의도하지 않은 종속성**: 변수/함수를 불필요하게 노출하면 다른 개발자가 *프라이빗*한 부분을 사용하고 의존하게 된다. 지금 바로 프로그램이 중단되는 것은 아니지만 향후 리팩토링 위험을 발생시킨다. 왜냐하면 이제 제어하지 않는 소프트웨어의 일부를 잠재적으로 손상시키지 않고서 변수나 기능을 쉽게 리팩토링할 수 없기 때문이다.
 
-    For example, if your code relies on an array of numbers, and you later decide it's better to use some other data structure instead of an array, you now must take on the liability of adjusting other affected parts of the software.
+    예를 들어, 숫자 배열에 의존하는 코드를 사용하다가 배열 대신 다른 데이터 구조를 사용하는 것이 낫다고 판단한 경우, 이제 당신은 소프트웨어에서 영향받는 다른 부분을 조정할 책임을 져야 한다.
 
-POLE, as applied to variable/function scoping, essentially says, default to exposing the bare minimum necessary, keeping everything else as private as possible. Declare variables in as small and deeply nested of scopes as possible, rather than placing everything in the global (or even outer function) scope.
+POLE은 변수/함수 스코프 지정에 적용하는 것으로 기본적으로 필요한 최소한의 노출을 기본 설정하며 다른 모든 것은 최대한 비공개로 유지한다. 또한 모든 항목을 전역(또는 외부 함수) 스코프에 배치하지 말고 가능한 작고 깊게 중첩된 스코프에서 변수를 선언한다.
 
-If you design your software accordingly, you have a much greater chance of avoiding (or at least minimizing) these three hazards.
+위의 조언대로 소프트웨어를 설계할 경우 이러한 세 가지 위험을 피할(적어도 최소화할) 수 있는 가능성이 훨씬 커진다.
 
-Consider:
+다음 코드를 살펴보자:
 
 ```js
 function diff(x,y) {
@@ -54,9 +54,9 @@ diff(3,7);      // 4
 diff(7,5);      // 2
 ```
 
-In this `diff(..)` function, we want to ensure that `y` is greater than or equal to `x`, so that when we subtract (`y - x`), the result is `0` or larger. If `x` is initially larger (the result would be negative!), we swap `x` and `y` using a `tmp` variable, to keep the result positive.
+위의 'diff(..)' 함수에서 우리는 'y'가 'x'보다 크거나 같도록 하여 ('y - x') 뺄 때 결과가 '0' 이상이 되도록 하고자 한다. 처음에 'x'가 더 크면(결과는 음수가 된다!), 'tmp' 변수를 사용해서 'x'와 'y'를 교환하고 결과를 양수로 유지한다.
 
-In this simple example, it doesn't seem to matter whether `tmp` is inside the `if` block or whether it belongs at the function level—it certainly shouldn't be a global variable! However, following the POLE principle, `tmp` should be as hidden in scope as possible. So we block scope `tmp` (using `let`) to the `if` block.
+위 단순한 예시에서, `tmp`가 `if` 블록 안에 있는지, 함수 스코프에 속하는지 여부는 중요하지 않아 보인다. 물론 전역 변수가 되어서는 안 됩니다! 그러나 POLE 원칙에 따라 `tmp`는 가능한한 스코프 내부에 숨겨야한다. 그래서 (`let`을 사용하여) `tmp`의 스코프를`if` 블록까지로 차단한다.
 
 ## Hiding in Plain (Function) Scope
 

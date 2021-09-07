@@ -58,17 +58,17 @@ diff(7,5);      // 2
 
 위 단순한 예시에서, `tmp`가 `if` 블록 안에 있는지, 함수 스코프에 속하는지 여부는 중요하지 않아 보인다. 물론 전역 변수가 되어서는 안 됩니다! 그러나 POLE 원칙에 따라 `tmp`는 가능한한 스코프 내부에 숨겨야한다. 그래서 (`let`을 사용하여) `tmp`의 스코프를`if` 블록까지로 차단한다.
 
-## Hiding in Plain (Function) Scope
+## 평범한(함수) 스코프에 숨기기
 
-It should now be clear why it's important to hide our variable and function declarations in the lowest (most deeply nested) scopes possible. But how do we do so?
+이제, 변수 와 함수 선언을 가능한 가장 (깊게 중첩된) 아래의 스코프로 숨기는 것이 중요한 이유를 확실히 알게 되었다. 그러나 이것은 어떻게 하는 것일까?
 
-We've already seen the `let` and `const` keywords, which are block scoped declarators; we'll come back to them in more detail shortly. But first, what about hiding `var` or `function` declarations in scopes? That can easily be done by wrapping a `function` scope around a declaration.
+이미 블록 스코프의 선언문인 `let`과 `const` 키워드를 다루었고, 조만간 다시 자세히 살펴보겠다. 그 전에 먼저 `var`나 `function` 선언을 스코프 내부에 숨기는 것은 어떨까? 선언문을 `function` 스코프로 감싸서 쉽게 숨길 수 있다.
 
-Let's consider an example where `function` scoping can be useful.
+`function` 스코프 지정이 유용할 수 있는 예를 들어보자.
 
-The mathematical operation "factorial" (notated as "6!") is the multiplication of a given integer against all successively lower integers down to `1`—actually, you can stop at `2` since multiplying `1` does nothing. In other words, "6!" is the same as "6 * 5!", which is the same as "6 * 5 * 4!", and so on. Because of the nature of the math involved, once any given integer's factorial (like "4!") has been calculated, we shouldn't need to do that work again, as it'll always be the same answer.
+수학 연산자인 "팩토리얼"("6!"으로 표기)은 주어진 정수부터 `1`까지 내려가며 연속으로 곱한 값이다. 사실 `1`을 곱하는 것은 의미가 없으므로 `2`에서 멈출 수 있다. 즉, "6!"은 "6 * 5!"와 같고 "6 * 5 * 4!" 등과 같다. 관련된 수학적 특성 때문에, 주어진 정수의 팩토리얼(예: "4!") 값은 달라지지 않으므로 한 번만 계산하고 다시 계산할 필요가 없다.
 
-So if you naively calculate factorial for `6`, then later want to calculate factorial for `7`, you might unnecessarily re-calculate the factorials of all the integers from 2 up to 6. If you're willing to trade memory for speed, you can solve that wasted computation by caching each integer's factorial as it's calculated:
+따라서 아무런 계획 없이 `6`에 대한 팩토리얼을 계산한 다음 `7`에 대한 팩토리얼을 계산한다면 2에서 6까지 모든 정수의 팩토리얼을 불필요하게 다시 계산할 수도 있다. 만약 메모리와 속도를 교환할 의향이 있다면 계산 시 각 정수의 팩토리얼을 캐싱하여 불필요한 연산을 아낄 수 있다.
 
 ```js
 var cache = {};
@@ -97,21 +97,21 @@ factorial(7);
 // 5040
 ```
 
-We're storing all the computed factorials in `cache` so that across multiple calls to `factorial(..)`, the previous computations remain. But the `cache` variable is pretty obviously a *private* detail of how `factorial(..)` works, not something that should be exposed in an outer scope—especially not the global scope.
+위 코드에서는 계산한 팩토리얼 값을 `cache`에 저장하여 여러 번 `factorial(...)`을 호출하더라도 이전에 계산한 값을 유지하도록 한다. 하지만 `cache` 변수는 `factorial(..)` 동작 방식에 관련된 상당히 *프라이빗*한 세부사항으로, 특히 글로벌 스코프에는 노출하지 말아야 하는 요소이다.
 
 | NOTE: |
 | :--- |
-| `factorial(..)` here is recursive—a call to itself is made from inside—but that's just for brevity of code sake; a non-recursive implementation would yield the same scoping analysis with respect to `cache`. |
+| 이 `factorial(..)`은 내부에서 자신을 다시 호출하기 때문에 재귀적인데, 코드를 단지 간결하게 하기 위함이었다. 재귀적이지 않게 구현하더라도 `cache`와 관련된 스코프에 대한 분석은 동일할 것이다. |
 
-However, fixing this over-exposure issue is not as simple as hiding the `cache` variable inside `factorial(..)`, as it might seem. Since we need `cache` to survive multiple calls, it must be located in a scope outside that function. So what can we do?
+그러나 이러한 과노출 문제를 해결하는 것은 `cache` 변수를 `factorial(..)` 안에 숨기는 것만으로 끝나지 않는다. 여러번 호출하더라도 `cache`를 유지해야 하므로 해당 함수의 바깥 스코프에 두어야 한다. 그렇다면 이 문제를 어떻게 해결할 수 있을까?
 
-Define another middle scope (between the outer/global scope and the inside of `factorial(..)`) for `cache` to be located:
+`cache`가 위치할 다른 중간 스코프(외부/전역 스코프와 `factorial(..)`의 내부 사이)를 정의하자.
 
 ```js
-// outer/global scope
+// 외부/전역 스코프
 
 function hideTheCache() {
-    // "middle scope", where we hide `cache`
+    // `cache`를 숨길 "중간 스코프"
     var cache = {};
 
     return factorial;
@@ -119,7 +119,7 @@ function hideTheCache() {
     // **********************
 
     function factorial(x) {
-        // inner scope
+        // 내부 스코프
         if (x < 2) return 1;
         if (!(x in cache)) {
             cache[x] = x * factorial(x - 1);
@@ -137,15 +137,15 @@ factorial(7);
 // 5040
 ```
 
-The `hideTheCache()` function serves no other purpose than to create a scope for `cache` to persist in across multiple calls to `factorial(..)`. But for `factorial(..)` to have access to `cache`, we have to define `factorial(..)` inside that same scope. Then we return the function reference, as a value from `hideTheCache()`, and store it in an outer scope variable, also named `factorial`. Now as we call `factorial(..)` (multiple times!), its persistent `cache` stays hidden yet accessible only to `factorial(..)`!
+`hideTheCache()` 함수는 `factorial(..)`을 여러 번 호출하더라도 `cache`가 값을 유지할 수 있도록 하는 스코프를 만드는 것 외에 다른 목적이 없다. 그러나 `factorial(..)`이 `cache`에 접근하기 위해서는 같은 스코프 내부에 `factorial(..)`을 정의해야 한다. 그 다음엔 함수 참조를 `hideTheCache()`의 값으로 반환하고 `factorial`이라는 외부 스코프 변수에 저장한다. 이제 (여러 번) `factorial(..)`를 호출해도 유지되는 `cache`는 숨겨진 채로 남게 되지만 `factorial(..)`에서만 접근할 수 있다!
 
-OK, but... it's going to be tedious to define (and name!) a `hideTheCache(..)` function scope each time such a need for variable/function hiding occurs, especially since we'll likely want to avoid name collisions with this function by giving each occurrence a unique name. Ugh.
+좋다, 하지만... 변수나 함수를 숨겨야 할 일이 있을 때마다 매번 `hideTheCache(..)`함수 스코프(와 이름)를 정의하는 것은 지루할 것이다. 특히 각 항목에 고유한 이름을 지정하여 이 함수와 이름이 충돌하지 않도록 해야 하기 때문이다. 으윽
 
 | NOTE: |
 | :--- |
-| The illustrated technique—caching a function's computed output to optimize performance when repeated calls of the same inputs are expected—is quite common in the Functional Programming (FP) world, canonically referred to as "memoization"; this caching relies on closure (see Chapter 7). Also, there are memory usage concerns (addressed in "A Word About Memory" in Appendix B). FP libraries will usually provide an optimized and vetted utility for memoization of functions, which would take the place of `hideTheCache(..)` here. Memoization is beyond the *scope* (pun intended!) of our discussion, but see my *Functional-Light JavaScript* book for more information. |
+| 동일한 입력으로 호출하는 것이 반복될 것으로 예상되는 경우, 성능을 최적화하기 위해 함수에서 계산한 결과를 캐싱하는 이 기법은 함수형 프로그래밍 세계에서는 매우 일반적이다. 이 기법은 "메모이제이션"으로 불리며 클로저(7창 참조)에 의존한다. 또한 메모리 사용량 문제가 있다. (부록 B의 "메모리에 관련된 단어"에서 다룰 예정) 함수형 프로그래밍 라이브러리는 주로 함수의 메모이제이션에 최적화된 기능을 제공하며, 이 기능은 `hideTheCache(..)`를 대체한다. 메모이제이션은 지금 논의하고 있는 내용의 *스코프* (의도한 말장난!)를 벗어난다. 자세한 내용이 궁금하다면 *Functional-Light JavaScript* 책을 참조하라. |
 
-Rather than defining a new and uniquely named function each time one of those scope-only-for-the-purpose-of-hiding-a-variable situations occurs, a perhaps better solution is to use a function expression:
+이렇게 변수를 숨기기 위한 목적만으로 스코프를 생성해야 하는 상황이 발생할 때마다 고유한 이름을 붙여서 새로운 함수를 정의하는 대신 다음과 같은 함수 표현식을 사용하는 것이 더 나을 수 있다.
 
 ```js
 var factorial = (function hideTheCache() {
@@ -169,13 +169,13 @@ factorial(7);
 // 5040
 ```
 
-Wait! This is still using a function to create the scope for hiding `cache`, and in this case, the function is still named `hideTheCache`, so how does that solve anything?
+잠깐! 이 함수는 여전히 `cache`를 숨기기 위한 스코프를 만드는 목적으로 함수를 사용하고 있으며 위 경우에 함수의 이름은 여전히 `hideTheCache`이다. 그러면 이 문제는 어떻게 해결될까?
 
-Recall from "Function Name Scope" (in Chapter 3), what happens to the name identifier from a `function` expression. Since `hideTheCache(..)` is defined as a `function` expression instead of a `function` declaration, its name is in its own scope—essentially the same scope as `cache`—rather than in the outer/global scope.
+"함수 이름 스코프"(3장)를 참조하여 `function` 표현식에서 이름 식별자가 어떻게 되는지 확인하라. `hideTheCache(..)`를 `function`' 선언 대신 `function` 표현식으로 정의했기 때문에 이 이름은 외부/전역 스코프가 아닌 자체 스코프, 기본적으로 `cache`와 동일한 스코프에에 있다.
 
-That means we can name every single occurrence of such a function expression the exact same name, and never have any collision. More appropriately, we can name each occurrence semantically based on whatever it is we're trying to hide, and not worry that whatever name we choose is going to collide with any other `function` expression scope in the program.
+즉, 이렇게 함수 표현식을 사용한 부분마다 내부에서 함수의 이름을 동일하게 지정할 수 있으며, 충돌이 발생하지 않는다. 좀 더 적절하게, 숨기려는 것이 무엇이든 간에 각각의 함수에 의미론적으로 이름을 지정할 수 있고, 어떤 이름을 선택하든 프로그램의 다른 `function` 표현식의 스코프와 충돌할 것이라는 걱정은 하지 않아도 된다.
 
-In fact, we *could* just leave off the name entirely—thus defining an "anonymous `function` expression" instead. But Appendix A will discuss the importance of names even for such scope-only functions.
+실제로 이름 전체를 *생략할 수도 있고*, 따라서 그 대신 "익명의 `function` 표현식"을 정의할 수 있다. 그러나 부록 A에서는 그러한 스코프 전용 함수에 대해서도 이름의 중요성에 대해 설명할 것이다.
 
 ### Invoking Function Expressions Immediately
 

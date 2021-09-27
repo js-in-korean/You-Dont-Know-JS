@@ -177,33 +177,33 @@ factorial(7);
 
 실제로 이름 전체를 *생략할 수도 있고*, 따라서 그 대신 "익명의 `function` 표현식"을 정의할 수 있다. 그러나 부록 A에서는 그러한 스코프 전용 함수에 대해서도 이름의 중요성에 대해 설명할 것이다.
 
-### Invoking Function Expressions Immediately
+### 즉시 실행 함수 표현식
 
-There's another important bit in the previous factorial recursive program that's easy to miss: the line at the end of the `function` expression that contains `})();`.
+위에서 다룬 팩토리얼 재귀 함수 코드에 지나치기 쉬운 중요한 부분이 있다. 바로 `function` 표현식의 마지막 줄에 있는 `})();` 부분이다.
 
-Notice that we surrounded the entire `function` expression in a set of `( .. )`, and then on the end, we added that second `()` parentheses set; that's actually calling the `function` expression we just defined. Moreover, in this case, the first set of surrounding `( .. )` around the function expression is not strictly necessary (more on that in a moment), but we used them for readability sake anyway.
+`function` 표현식 전체를 `( .. )`로 감싸고 있다는 것에 주목하라. 마지막 부분에 두 번째로 `()` 괄호 한 쌍을 추가했는데 이 부분이 방금 `function` 표현식으로 정의한 함수를 호출하는 것이다. 이 때, 함수 표현식을 감싸는 첫 번째 `( .. )` 괄호가 꼭 필요한 것은 아니지만 가독성을 위해 사용한다.
+ 
+즉, 위 코드는 즉시 실행되는 `function` 표현식을 정의하고 있다. 흔히 사용하는 이 패턴의 (매우 기발한) 이름은 바로 즉시 실행 함수 표현식<sub>Immediately Invoked Function Expression</sub>(IIFE)이다.
 
-So, in other words, we're defining a `function` expression that's then immediately invoked. This common pattern has a (very creative!) name: Immediately Invoked Function Expression (IIFE).
+IIFE는 변수/함수를 숨기기 위해 새 스코프를 생성해야 할 때 유용하다. 단지 표현식이기 때문에, 표현식을 사용할 수 있는 JS 프로그램의 **모든** 위치에서 사용할 수 있다. IIFE에는 `hideTheCache()` 같은 이름을 붙여 줄 수도 있고 (좀 더 일반적으로) 익명으로 사용할 수도 있다. 또, 이 표현식은 독립적으로 사용할 수도 있고 다른 구문의 일부로 사용할 수도 있다. 위 코드에서는 `hideTheCache()`가 `factorial()` 함수 참조를 반환하는데 이것을 `=`을 통해 `factorial` 변수에 할당하고 있다.
 
-An IIFE is useful when we want to create a scope to hide variables/functions. Since it's an expression, it can be used in **any** place in a JS program where an expression is allowed. An IIFE can be named, as with `hideTheCache()`, or (much more commonly!) unnamed/anonymous. And it can be standalone or, as before, part of another statement—`hideTheCache()` returns the `factorial()` function reference which is then `=` assigned to the variable `factorial`.
-
-For comparison, here's an example of a standalone IIFE:
+IIFE를 독립적으로 사용하는 예제와 비교해보자:
 
 ```js
-// outer scope
+// 외부 스코프
 
 (function(){
-    // inner hidden scope
+    // 안으로 숨긴 스코프
 })();
 
-// more outer scope
+// 또 다른 외부 스코프
 ```
 
-Unlike earlier with `hideTheCache()`, where the outer surrounding `(..)` were noted as being an optional stylistic choice, for a standalone IIFE they're **required**; they distinguish the `function` as an expression, not a statement. For consistency, however, always surround an IIFE `function` with `( .. )`.
+앞서 살펴본 `hideTheCache()`에서는 외부를 둘러싸는 `(..)`가 겉모습을 위한 선택지에 불과했지만, IIFE를 독립적으로 사용하는 이 예제에서는 **필수적**인 것이 되었다. `function`을 구문이 아닌 표현식으로 구별해야 하기 때문이다. 물론, 일관성을 위해 IIFE `function`은 항상  `( .. )`로 감싸야 한다. 
 
-| NOTE: |
+| 비고: |
 | :--- |
-| Technically, the surrounding `( .. )` aren't the only syntactic way to ensure the `function` in an IIFE is treated by the JS parser as a function expression. We'll look at some other options in Appendix A. |
+| 기술적인 관점으로 보면, `( .. )`로 감싸는 기법만이 JS 파서가 IIFE 내부의 `function`를 함수 표현식으로 취급하도록 하는 유일한 구문론적 방법은 아니다. 이 외의 방법은 부록 A에서 살펴볼 것이다. |
 
 #### Function Boundaries
 

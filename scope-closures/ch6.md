@@ -205,13 +205,13 @@ IIFE를 독립적으로 사용하는 예제와 비교해보자:
 | :--- |
 | 기술적인 관점으로 보면, `( .. )`로 감싸는 기법만이 JS 파서가 IIFE 내부의 `function`를 함수 표현식으로 취급하도록 하는 유일한 구문론적 방법은 아니다. 이 외의 방법은 부록 A에서 살펴볼 것이다. |
 
-#### Function Boundaries
+#### 함수 경계
 
-Beware that using an IIFE to define a scope can have some unintended consequences, depending on the code around it. Because an IIFE is a full function, the function boundary alters the behavior of certain statements/constructs.
+IIFE를 사용하여 스코프를 정의할 때는 주변 코드에 따라서 의도하지 않은 결과가 나올 수 있으므로 주의해야 한다. IIFE는 완전히 함수이기 때문에, 함수의 경계가 특정한 구문/구성요소의 동작을 변경할 수 있다.
 
-For example, a `return` statement in some piece of code would change its meaning if an IIFE is wrapped around it, because now the `return` would refer to the IIFE's function. Non-arrow function IIFEs also change the binding of a `this` keyword—more on that in the *Objects & Classes* book. And statements like `break` and `continue` won't operate across an IIFE function boundary to control an outer loop or block.
+예를 들어, 코드의 특정 부분을 IIFE로 감싸게 되면 내부의 `return`의 의미는 달라질 수도 있다. 이 경우 `return`은 IIFE의 함수를 의미하기 때문이다. 화살표 함수로 작성하지 않은 IIFE도 `this` 키워드의 바인딩을 변경한다. (자세한 내용은 *Objects & Classs* 책을 참조하라) 그리고 `break`와 `continue`와 같은 키워드는 외부 루프나 블록을 제어하기 위해 IIFE 함수의 경계를 넘나들지 않는다.
 
-So, if the code you need to wrap a scope around has `return`, `this`, `break`, or `continue` in it, an IIFE is probably not the best approach. In that case, you might look to create the scope with a block instead of a function.
+따라서, 스코프로 감싸야 할 코드에 `return`, `this`, `break`, `continue` 등이 있다면 IIFE가 최선의 방법이 아닐 것이다. 이 경우 함수 대신 블록을 사용하여 스코프를 만들 수 있다.
 
 ## Scoping with Blocks
 

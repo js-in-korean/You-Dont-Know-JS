@@ -213,28 +213,28 @@ IIFE를 사용하여 스코프를 정의할 때는 주변 코드에 따라서 �
 
 따라서, 스코프로 감싸야 할 코드에 `return`, `this`, `break`, `continue` 등이 있다면 IIFE가 최선의 방법이 아닐 것이다. 이 경우 함수 대신 블록을 사용하여 스코프를 만들 수 있다.
 
-## Scoping with Blocks
+## 블록으로 스코프 지정하기
 
-You should by this point feel fairly comfortable with the merits of creating scopes to limit identifier exposure.
+이쯤 되면 식별자의 노출을 제한하기 위해 스코프를 생성하는 것의 장점을 이해할 수 있어야 한다.
 
-So far, we looked at doing this via `function` (i.e., IIFE) scope. But let's now consider using `let` declarations with nested blocks. In general, any `{ .. }` curly-brace pair which is a statement will act as a block, but **not necessarily** as a scope.
+지금까지는 (IIFE를 사용하여)  `function` 으로 스코프를 지정하는 법을 알아보았다. 지금부터는  `let` 선언과 중첩된 블록을 사용하는 방법을 살펴보자. 일반적으로 구문으로 사용한 `{ .. }` 중괄호 한 쌍은 블록 역할을 하지만, 그렇다고 해서 항상 스코프 역할을 하는 것은 **아니다.**
 
-A block only becomes a scope if necessary, to contain its block-scoped declarations (i.e., `let` or `const`). Consider:
+블록 스코프를 사용하는 선언을 포함(예를 들어, `let` 또는 `const`를 사용할 때)하기 위해 필요한 경우에만 스코프로 동작한다. 다음을 살펴보자:
 
 ```js
 {
-    // not necessarily a scope (yet)
+    // (아직) 스코프가 필요하지 않다.
 
     // ..
 
-    // now we know the block needs to be a scope
+    // 이 블록에서 스코프가 필요하다는 것을 알게 된다.
     let thisIsNowAScope = true;
 
     for (let i = 0; i < 5; i++) {
-        // this is also a scope, activated each
-        // iteration
+        // 여기도 개별적으로 활성화된 스코프이다.
+        // 반복문
         if (i % 2 == 0) {
-            // this is just a block, not a scope
+            // 여기는 스코프가 아닌 평범한 블록이다.
             console.log(i);
         }
     }
@@ -242,21 +242,21 @@ A block only becomes a scope if necessary, to contain its block-scoped declarati
 // 0 2 4
 ```
 
-Not all `{ .. }` curly-brace pairs create blocks (and thus are eligible to become scopes):
+모든 `{ .. }` 중괄호 쌍이 블록을 생성하는 것은 아니다. (따라서, 스코프가 되지도 못한다.):
 
-* Object literals use `{ .. }` curly-brace pairs to delimit their key-value lists, but such object values are **not** scopes.
+* 객체 리터럴에서 키-값 쌍을 명시하기 위해 `{ .. }` 중괄호를 사용하지만, 이러한 객체의 값에 스코프가 있는 건 **아니다**.
 
-* `class` uses `{ .. }` curly-braces around its body definition, but this is not a block or scope.
+* `class`는 몸체를 정의하는 부분을 `{ .. }` 중괄호를 사용해 감싸지만, 블록이나 스코프는 아니다.
 
-* A `function` uses `{ .. } ` around its body, but this is not technically a block—it's a single statement for the function body. It *is*, however, a (function) scope.
+* `function`는 몸체를 `{ .. } ` 중괄호를 사용해 감싸지만, 기술적으로 블록이 아니라 함수의 몸체를 나타내는 단일 구문이다. 하지만,이것은 (함수) 스코프가 *맞다.*
 
-* The `{ .. }` curly-brace pair on a `switch` statement (around the set of `case` clauses) does not define a block/scope.
+* `switch`문에서 (`case`절을 감싸는) `{ .. }` 중괄호는 블록/스코프를 정의하지 않는다.
 
-Other than such non-block examples, a `{ .. }` curly-brace pair can define a block attached to a statement (like an `if` or `for`), or stand alone by itself—see the outermost `{ .. }` curly brace pair in the previous snippet. An explicit block of this sort—if it has no declarations, it's not actually a scope—serves no operational purpose, though it can still be useful as a semantic signal.
+이렇게 블록이 아닌 경우를 제외하고, `{ .. }` 중괄호는 (`if` 또는 `for` 같은) 구문에 추가한 블록을 정의하거나 단독으로 사용할 수도 있다. 이전 코드에서 가장 바깥쪽 `{ .. }` 중괄호 쌍을 다시 보아라. 이런 종류(선언이 없어서 실제로는 스코프가 아닌 경우)의 명시적인 블록은 의미를 나타내는 용도로는 여전히 유용하지만, 사용해야 할 목적을 제공하진 않는다.
 
-Explicit standalone `{ .. }` blocks have always been valid JS syntax, but since they couldn't be a scope prior to ES6's `let`/`const`, they are quite rare. However, post ES6, they're starting to catch on a little bit.
+명시적이고 독립적인 `{ .. }` 블록은 이제까지 유효한 JS 구문이었지만, ES6의 `let`/`const` 이전에는 스코프가 될 수 없었기 때문에 거의 사용하지 않는다. 하지만 ES6 이후 이 방식은 조금씩 인기를 얻기 시작했다.
 
-In most languages that support block scoping, an explicit block scope is an extremely common pattern for creating a narrow slice of scope for one or a few variables. So following the POLE principle, we should embrace this pattern more widespread in JS as well; use (explicit) block scoping to narrow the exposure of identifiers to the minimum practical.
+블록 스코프를 지원하는 대부분의 언어에서, 명시적인 블록 스코프는 여러 변수를 위해 작은 스코프를 생성하는데에 매우 자주 쓰이는 패턴이다. 따라서 POLE 원칙에 따라, JS에 이 패턴을 더 널리 수용해야 한다. 식별자의 노출을 최소한으로 좁히기 위해 (명시적) 블록 범위를 사용해야 한다. 식별자의 노출을 최소화하기 위해 (명시적) 블록 스코프를 사용하자.
 
 An explicit block scope can be useful even inside of another block (whether the outer block is a scope or not).
 

@@ -375,22 +375,22 @@ sortNamesByLength([
 
 최상위 함수 스코프에서 `sortedNames`를 정의할 수도 있었지만, 이 변수는 함수의 후반부에서만 필요하다. 상위 스코프에서 변수의 과다 노출을 막기 위해, POLE 원칙을 따라 내부의 명시적 블록 스코프를 지정했다.
 
-### `var` *and* `let`
+### `var` *그리고* `let`
 
-Next, let's talk about the declaration `var buckets`. That variable is used across the entire function (except the final `return` statement). Any variable that is needed across all (or even most) of a function should be declared so that such usage is obvious.
+다음으로 `var buckets`라고 선언한 부분을 살펴보자. 이 변수를 (마지막 `return`문을 제외한) 함수 전체에서 사용하고 있다. 함수의 전체(또는 대부분)에 걸쳐 필요한 변수는 용도가 명확하게 보이도록 선언해야 한다.
 
-| NOTE: |
+| 비고: |
 | :--- |
-| The parameter `names` isn't used across the whole function, but there's no way limit the scope of a parameter, so it behaves as a function-wide declaration regardless. |
+| 매개변수 `names`는 함수 전체에서 사용하고 있진 않지만 스코프를 제한할 수 있는 방법이 없기 때문에 위 방법과는 상관없이 함수 전체에서의 선언으로 동작한다. |
 
-So why did we use `var` instead of `let` to declare the `buckets` variable? There's both semantic and technical reasons to choose `var` here.
+그렇다면 왜 `let` 대신 `var`로 `buckets` 변수를 선언했을까? `var`를 선택한 의미적인 이유, 기술적인 이유가 둘 다 있다.
 
-Stylistically, `var` has always, from the earliest days of JS, signaled "variable that belongs to a whole function." As we asserted in "Lexical Scope" (Chapter 1), `var` attaches to the nearest enclosing function scope, no matter where it appears. That's true even if `var` appears inside a block:
+문체적으로, `var`는 JS의 초창기부터 항상 "함수 전체에 속하는 변수"를 나타냈다. 1장 "Lexical Scope"에서 주정한 것과 같이, `var`는 어디에 나타도 가장 가까운 함수 스코프 내부에 속하게 된다. 블록 안에서 `var`가 나와도 마찬가지입니다.
 
 ```js
 function diff(x,y) {
     if (x > y) {
-        var tmp = x;    // `tmp` is function-scoped
+        var tmp = x;    // `tmp`은 함수 스코프에 있다.
         x = y;
         y = tmp;
     }

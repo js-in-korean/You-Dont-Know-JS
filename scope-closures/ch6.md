@@ -258,17 +258,16 @@ IIFE를 사용하여 스코프를 정의할 때는 주변 코드에 따라서 �
 
 블록 스코프를 지원하는 대부분의 언어에서, 명시적인 블록 스코프는 여러 변수를 위해 작은 스코프를 생성하는데에 매우 자주 쓰이는 패턴이다. 따라서 POLE 원칙에 따라, JS에 이 패턴을 더 널리 수용해야 한다. 식별자의 노출을 최소한으로 좁히기 위해 (명시적) 블록 범위를 사용해야 한다. 식별자의 노출을 최소화하기 위해 (명시적) 블록 스코프를 사용하자.
 
-An explicit block scope can be useful even inside of another block (whether the outer block is a scope or not).
+명시적 블록 스코프는 (외부 블록이 스코프가 아니더라도) 다른 블록의 내부에서 유용할 수 있다.
 
-For example:
+예를 들어:
 
 ```js
 if (somethingHappened) {
-    // this is a block, but not a scope
+    // 이것은 블록이지만 스코프는 아니다.
 
     {
-        // this is both a block and an
-        // explicit scope
+        // 이것은 블록이면서 명시적 스코프이다.
         let msg = somethingHappened.message();
         notifyOthers(msg);
     }
@@ -279,15 +278,15 @@ if (somethingHappened) {
 }
 ```
 
-Here, the `{ .. }` curly-brace pair **inside** the `if` statement is an even smaller inner explicit block scope for `msg`, since that variable is not needed for the entire `if` block. Most developers would just block-scope `msg` to the `if` block and move on. And to be fair, when there's only a few lines to consider, it's a toss-up judgement call. But as code grows, these over-exposure issues become more pronounced.
+위의 예시처럼 `if`문의 **내부**에 위치한 `{ .. }` 중괄호 쌍은 훨씬 작은 명시적 블록 스코프이며 `msg`를 위해 존재한다. 그 변수가 `if` 블록 전체에서 필요하지 않기 때문이다. 대부분의 개발자는 `msg`의 블록 스코프를 `if` 블록에 두고 넘어간다. 그리고 엄밀히 말하자면, 신경써야 할 코드의 양이 많지 않을 때, 느낌대로 내린 결정일 것이다. 결국 코드가 많아질수록, 이런 과다한 노출 문제는 더욱 돋보이게 된다.
 
-So does it matter enough to add the extra `{ .. }` pair and indentation level? I think you should follow POLE and always (within reason!) define the smallest block for each variable. So I recommend using the extra explicit block scope as shown.
+그렇다면 코드에 `{ .. }` 중괄호 한 쌍과 들여쓰기를 추가하는 것이 정말로 중요한걸까? 당신은 POLE 원칙을 지켜야 하고 언제나 (합리적인 범위 내에서) 각 변수에 대해 가장 작은 블록을 정의해야 한다고 생각한다. 그래서 위의 예시처럼 명시적인 블록 스코프를 사용하는 것이 좋다.
 
-Recall the discussion of TDZ errors from "Uninitialized Variables (TDZ)" (Chapter 5). My suggestion there was: to minimize the risk of TDZ errors with `let`/`const` declarations, always put those declarations at the top of their scope.
+5장 "초기화되지 않는 변수들 (TDZ)"에서 다룬 TDZ 오류를 떠올려보자. TDZ 오류를 최소화하기 위해 `let`/`const` 선언을 사용하고 이 선언을 스코프의 가장 첫 부분에 두어야 한다고 제안한 바 있다.
 
-If you find yourself placing a `let` declaration in the middle of a scope, first think, "Oh, no! TDZ alert!" If this `let` declaration isn't needed in the first half of that block, you should use an inner explicit block scope to further narrow its exposure!
+만약 스코프의 중간 지점에 `let` 선언을 하려는 자신을 발견한다면, 먼저 "안돼! TDZ 경보!" 라고 생각하라. 만약 이 `let` 선언이 블록의 스코프의 상단에서 필요하지 않다면, 내부에 명시적인 블록 스코프를 사용하여 이 변수의 노출을 줄여야 한다.
 
-Another example with an explicit block scope:
+명시적 블록 스코프를 사용하는 다른 예시:
 
 ```js
 function getNextMonthStart(dateStr) {
@@ -312,19 +311,19 @@ function getNextMonthStart(dateStr) {
 getNextMonthStart("2019-12-25");   // 2020-01-01
 ```
 
-Let's first identify the scopes and their identifiers:
+먼저 스코프와 해당하는 식별자를 알아보자:
 
-1. The outer/global scope has one identifier, the function `getNextMonthStart(..)`.
+1. 외부/전역 스코프에는 한 개의 식별자가 있다: `getNextMonthStart(..)` 함수
 
-2. The function scope for `getNextMonthStart(..)` has three: `dateStr` (parameter), `nextMonth`, and `year`.
+2. `getNextMonthStart(..)` 함수 스코프에는 세 개의 식별자가 있다: (매개변수)`dateStr`, `nextMonth`, 그리고 `year`
 
-3. The `{ .. }` curly-brace pair defines an inner block scope that includes one variable: `curMonth`.
+3. `{ .. }` 중괄호 한 쌍은 변수 하나를 포함하는 내부 블록 스코프를 정의하고 있다: `curMonth`
 
-So why put `curMonth` in an explicit block scope instead of just alongside `nextMonth` and `year` in the top-level function scope? Because `curMonth` is only needed for those first two statements; at the function scope level it's over-exposed.
+그렇다면 왜 `curMonth`을 `nextMonth`와 `year`와 같은 최상위 함수 스코프 대신 명시적 블록 스코프에 두었을까? 왜냐하면 `curMonth`는 처음 두 개의 구문에서만 필요하기 때문이다. 이런 변수를 함수 스코프에 둔다면 과다 노출인 셈이다.
 
-This example is small, so the hazards of over-exposing `curMonth` are pretty limited. But the benefits of the POLE principle are best achieved when you adopt the mindset of minimizing scope exposure by default, as a habit. If you follow the principle consistently even in the small cases, it will serve you more as your programs grow.
+이 예시 코드는 양이 적기 때문에 `curMonth`의 과다 노출로 인한 위험도 상당히 적은 편이다. 하지만 스코프의 노출을 최소화하는 방식을 기본적인 습관처럼 사용하면 POLE의 장점이 힘을 발휘한다. 사소한 경우에도 이 원칙을 지속적으로 적용한다면, 프로그램이 커지면서 더 많은 장점을 제공할 것이다.
 
-Let's now look at an even more substantial example:
+조금 더 실질적인 예시를 살펴보자:
 
 ```js
 function sortNamesByLength(names) {
@@ -337,17 +336,16 @@ function sortNamesByLength(names) {
         buckets[firstName.length].push(firstName);
     }
 
-    // a block to narrow the scope
+    // 스코프를 좁히기 위한 블록
     {
         let sortedNames = [];
 
         for (let bucket of buckets) {
             if (bucket) {
-                // sort each bucket alphanumerically
+                // 각 bucket을 사전순으로 정렬
                 bucket.sort();
 
-                // append the sorted names to our
-                // running list
+                // 정렬한 데이터를 실행 리스트에 추가
                 sortedNames = [
                     ...sortedNames,
                     ...bucket
@@ -371,11 +369,11 @@ sortNamesByLength([
 //   "Scott", "Jennifer" ]
 ```
 
-There are six identifiers declared across five different scopes. Could all of these variables have existed in the single outer/global scope? Technically, yes, since they're all uniquely named and thus have no name collisions. But this would be really poor code organization, and would likely lead to both confusion and future bugs.
+다섯 스코프에 걸쳐 여섯 개의 식별자가 있다. 이 모든 변수가 한 외부/전역 스코프에 존재할 수 있을까? 기술적으로 가능하다. 모두 고유한 이름이 지정되어 이름 충돌이 없기 때문이다. 하지만 이런 경우, 코드의 구성을 매우 부실하게 하여 혼란이나 버그를 유발할 수 있다.
 
-We split them out into each inner nested scope as appropriate. Each variable is defined at the innermost scope possible for the program to operate as desired.
+필요에 따라 한 스코프를 내부의 중첩 스코프로 여러 개로 나누자. 프로그램이 의도한대로 동작할 수 있는 가장 안쪽의 스코프에서 각 변수를 정의하게 된다.
 
-`sortedNames` could have been defined in the top-level function scope, but it's only needed for the second half of this function. To avoid over-exposing that variable in a higher level scope, we again follow POLE and block-scope it in the inner explicit block scope.
+최상위 함수 스코프에서 `sortedNames`를 정의할 수도 있었지만, 이 변수는 함수의 후반부에서만 필요하다. 상위 스코프에서 변수의 과다 노출을 막기 위해, POLE 원칙을 따라 내부의 명시적 블록 스코프를 지정했다.
 
 ### `var` *and* `let`
 

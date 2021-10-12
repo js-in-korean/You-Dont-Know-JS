@@ -399,19 +399,19 @@ function diff(x,y) {
 }
 ```
 
-Even though `var` is inside a block, its declaration is function-scoped (to `diff(..)`), not block-scoped.
+`var`는 블록 안에 있지만, 이 선언은 블록 스코프가 아닌 함수 스코프(`diff(..)`)에 속한다.
 
-While you can declare `var` inside a block (and still have it be function-scoped), I would recommend against this approach except in a few specific cases (discussed in Appendix A). Otherwise, `var` should be reserved for use in the top-level scope of a function.
+블록 내에서 `var`로 선언할 수 있지만(그래도 함수 스코프에 속하게 됨) 몇 가지 구체적인 경우(부록 A에서 설명할 예정)를 제외하고는 이런 방식을 사용하지 않는게 좋다. 그렇지 않으면 `var`는 함수의 최상위 스코프에서 사용해야 한다.
 
-Why not just use `let` in that same location? Because `var` is visually distinct from `let` and therefore signals clearly, "this variable is function-scoped." Using `let` in the top-level scope, especially if not in the first few lines of a function, and when all the other declarations in blocks use `let`, does not visually draw attention to the difference with the function-scoped declaration.
+같은 위치에서 `let`을 사용하면 어떨까? `var`는 `let`과 시각적으로 구별될 뿐만 아니라 "이 변수는 함수 스코프에 속한다."란 의미를 갖기 때문이다. 함수 내부의 최상위 스코프(그리고 특히 함수의 초반부가 아닌 위치)에서 `let`을 사용하면서 같은 블록 내의 다른 선언에도 모두 `let`를 사용한다면 함수 스코프 선언과의 차이점에 대해 시각적으로 주의를 끌지 못할 것이다. 
 
-In other words, I feel `var` better communicates function-scoped than `let` does, and `let` both communicates (and achieves!) block-scoping where `var` is insufficient. As long as your programs are going to need both function-scoped and block-scoped variables, the most sensible and readable approach is to use both `var` *and* `let` together, each for their own best purpose.
+다시말해서 `var`은 `let`보다 더 함수 스코프로 지정되었다는 의미를 더 잘 전달한다고 느낄 수 있다. 그리고 `let` 또한 `var`로 충분히 설명할 수 없는 블록 스코프에 속한다는 의미를 더 잘 전달(하고 달성)할 수 있게 된다. 프로그램이 함수 스코프 변수와 블록 스코프 변수를 모두 필요로 하는 한, 가장 합리적이면서 가독성이 좋은 방법은 `var` *그리고* `let`을 각각의 목적에 맞게 함께 사용하는 것이다.
 
-There are other semantic and operational reasons to choose `var` or `let` in different scenarios. We'll explore the case for `var` *and* `let` in more detail in Appendix A.
+특정 상황에서 `var` 또는 `let`을 구분해 사용하게 되는 의미적이고 운영적인 또 다른 이유가 있다. 부록 A에서 `var` *그리고* `let`의 자세한 내용을 더 살펴볼 것이다.
 
-| WARNING: |
+| 주의: |
 | :--- |
-| My recommendation to use both `var` *and* `let` is clearly controversial and contradicts the majority. It's far more common to hear assertions like, "var is broken, let fixes it" and, "never use var, let is the replacement." Those opinions are valid, but they're merely opinions, just like mine. `var` is not factually broken or deprecated; it has worked since early JS and it will continue to work as long as JS is around. |
+| `var` *그리고* `let`을 동시에 사용하는 방법은 분명히 논란의 여지가 있고 다수의 의견과도 엇갈린다. "var는 고장났기 때문에 let으로 고쳐라"라든지 "var를 사용하지 말고 let으로 대체하라"하는 주장을 훨씬 더 흔히 들을 수 있다. 이런 의견도 타당하지만 위에서 주장했던 내용과 마찬가지로 단지 의견일 뿐이다. `var`는 실제로 고장이났다거나 사라지게 될 것은 아니고 JS 초기부터 그래왔던 것처럼 앞으로도 JS가 있는 한 계속 작동할 것이다.
 
 ### Where To `let`?
 

@@ -413,17 +413,17 @@ function diff(x,y) {
 | :--- |
 | `var` *그리고* `let`을 동시에 사용하는 방법은 분명히 논란의 여지가 있고 다수의 의견과도 엇갈린다. "var는 고장났기 때문에 let으로 고쳐라"라든지 "var를 사용하지 말고 let으로 대체하라"하는 주장을 훨씬 더 흔히 들을 수 있다. 이런 의견도 타당하지만 위에서 주장했던 내용과 마찬가지로 단지 의견일 뿐이다. `var`는 실제로 고장이났다거나 사라지게 될 것은 아니고 JS 초기부터 그래왔던 것처럼 앞으로도 JS가 있는 한 계속 작동할 것이다.
 
-### Where To `let`?
+### `let`이 있어야할 곳은?
 
-My advice to reserve `var` for (mostly) only a top-level function scope means that most other declarations should use `let`. But you may still be wondering how to decide where each declaration in your program belongs?
+`var`를 (대부분) 최상위 함수 스코프에서만 사용하라는 말은 다른 대부분의 선언으로는 `let`을 써야 한다는 것을 의미한다. 하지만 이 조언대로 하려고 해도 여전히 프로그램의 각 선언을 어떤 스코프에 속하도록 배치할지 고민하게 될 것이다.
 
-POLE already guides you on those decisions, but let's make sure we explicitly state it. The way to decide is not based on which keyword you want to use. The way to decide is to ask, "What is the most minimal scope exposure that's sufficient for this variable?"
+POLE가 이미 위와 같은 고민에 도움을 주고 있긴 하지만, 좀 더 명확하게 설명해보자. 위와 같은 문제를 해결하는 방법은 어떤 키워드를 사용할지 결정하는 것이 아니다. 정확한 방법은 "이 변수에게 충분한 최소한의 스코프 노출은 무엇입니까?"란 질문을 던지는 것이다.
 
-Once that is answered, you'll know if a variable belongs in a block scope or the function scope. If you decide initially that a variable should be block-scoped, and later realize it needs to be elevated to be function-scoped, then that dictates a change not only in the location of that variable's declaration, but also the declarator keyword used. The decision-making process really should proceed like that.
+이 질문의 답을 찾으면, 그 변수가 블록 스코프에 속하는지 함수 스코프에 속하는지 알게 될 것이다. 처음에 변수를 블록 스코프로 지정해두었다가 함수 스코프로 상향 조정해야하는 상황이 올 때, 해당 변수의 선언 위치뿐만 아니라 사용된 선언자 키워드까지 같이 수정해야 한다. 이런 식으로 의사결정 과정을 진행해야 한다.
 
-If a declaration belongs in a block scope, use `let`. If it belongs in the function scope, use `var` (again, just my opinion).
+선언이 블록 스코프에 속하면 `let`을 사용하라. 함수 스코프에 속하면 `var`(다시 말하지만, 필자의 의견이다)를 사용하라.
 
-But another way to sort of visualize this decision making is to consider the pre-ES6 version of a program. For example, let's recall `diff(..)` from earlier:
+하지만 이런 결정을 시각화하는 또 다른 방법은 ES6 이전의 프로그램을 고려해보는 것이다. 예를 들어, 앞에서 나왔던 `diff(..)`을 다시 살펴보자:
 
 ```js
 function diff(x,y) {
@@ -439,16 +439,16 @@ function diff(x,y) {
 }
 ```
 
-In this version of `diff(..)`, `tmp` is clearly declared in the function scope. Is that appropriate for `tmp`? I would argue, no. `tmp` is only needed for those few statements. It's not needed for the `return` statement. It should therefore be block-scoped.
+이 버전의 `diff(..)`에서는 `tmp`를 정확히 함수 스코프 내에 선언한다. 이것이 `tmp`에게 적합할까? 아니라고 할 수 있다. `tmp`은 오직 일부 구문에서만 필요하다. `return` 구문 에서도 필요 없다. 그러므로 블록 스코프를 지정해주어야 한다.
 
-Prior to ES6, we didn't have `let` so we couldn't *actually* block-scope it. But we could do the next-best thing in signaling our intent:
+ES6 이전에는 `let`이 없어서 블록 스코프를 *실제로* 지정할 수 없었다. 하지만 이런 의도를 알리는 차선책을 생각해볼 수 있다:
 
 ```js
 function diff(x,y) {
     if (x > y) {
-        // `tmp` is still function-scoped, but
-        // the placement here semantically
-        // signals block-scoping
+        // `tmp`는 여전히 함수 스코프에 속한다.
+        // 하지만 여기에 배치했다는 것은
+        // 의미론적으로 블록 스코프에 속한다는 뜻을 나타낸다.
         var tmp = x;
         x = y;
         y = tmp;
@@ -458,27 +458,27 @@ function diff(x,y) {
 }
 ```
 
-Placing the `var` declaration for `tmp` inside the `if` statement signals to the reader of the code that `tmp` belongs to that block. Even though JS doesn't enforce that scoping, the semantic signal still has benefit for the reader of your code.
+`tmp`에 대한 `var` 선언을 `if` 구문 내부에 두면, `tmp`가 그 블록에 속한다는 것을 코드를 읽는 사람에게 전달할 수 있다. JS가 이 스코프에 대해서 강제하지 않지만, 그 의미론적인 신호는 코드를 읽는 사람에게 장점을 발휘한다.
 
-Following this perspective, you can find any `var` that's inside a block of this sort and switch it to `let` to enforce the semantic signal already being sent. That's proper usage of `let` in my opinion.
+이런 관점으로 보면, 이런 종류의 블록 안에 있는 그 어떤 `var`라도 찾아내  `let`으로 교체해서 이미 전달하고 있는 의미론적인 신호를 강제할 수 있다. 그것이 `let`의 적절한 사용법이다.
 
-Another example that was historically based on `var` but which should now pretty much always use `let` is the `for` loop:
+역사적으로 `var` 를 기초로 두고 있었지만 이제는 `let`을 항상 사용해야 하는 또 다른 예는 `for` 반복문이다:
 
 ```js
 for (var i = 0; i < 5; i++) {
-    // do something
+    // 무언가 처리한다.
 }
 ```
 
-No matter where such a loop is defined, the `i` should basically always be used only inside the loop, in which case POLE dictates it should be declared with `let` instead of `var`:
+이러한 반복문을 정의하는 위치에 관계없이, 기본적으로 `i`는 항상 반복문 안에서만 사용해야 하며, 이 경우 POLE는 `var` 대신 `let`으로 선언해야 하도록 지시한다:
 
 ```js
 for (let i = 0; i < 5; i++) {
-    // do something
+    // 무언가 동작한다.
 }
 ```
 
-Almost the only case where switching a `var` to a `let` in this way would "break" your code is if you were relying on accessing the loop's iterator (`i`) outside/after the loop, such as:
+이런 식으로 `var`를 `let`으로 교체하면 코드가 "깨질" 수 있는 거의 유일한 경우는 다음과 같이 반복문의 바깥이나 뒤에 있는 반복자(`i`)에 접근하는 경우이다.
 
 ```js
 for (var i = 0; i < 5; i++) {
@@ -488,11 +488,11 @@ for (var i = 0; i < 5; i++) {
 }
 
 if (i < 5) {
-    console.log("The loop stopped early!");
+    console.log("반복문이 일찍 멈췄다!");
 }
 ```
 
-This usage pattern is not terribly uncommon, but most feel it smells like poor code structure. A preferable approach is to use another outer-scoped variable for that purpose:
+이런 사용 패턴은 매우 드물게 보이는 것이 아니지만, 대부분은 코드 구조가 좋지 않다고 느낀다. 바람직한 방법은 목적에 맞는 다른 외부 스코프의 변수를 사용하는 것이다.
 
 ```js
 var lastI;
@@ -505,11 +505,11 @@ for (let i = 0; i < 5; i++) {
 }
 
 if (lastI < 5) {
-    console.log("The loop stopped early!");
+    console.log("반복문이 일찍 멈췄다!");
 }
 ```
 
-`lastI` is needed across this whole scope, so it's declared with `var`. `i` is only needed in (each) loop iteration, so it's declared with `let`.
+전체 스코프에 걸쳐 `lastI`가 필요하기 때문에  `var`로 선언했다. `i`는 (각) 반복문을 반복할 때에만 필요하므로 `let`으로 선언했다.
 
 ### What's the Catch?
 

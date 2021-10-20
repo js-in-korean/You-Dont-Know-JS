@@ -554,13 +554,13 @@ catch {   // catch 선언을 생략함
 
 위 내용은 상당히 일반적인 사용 사례를 고려하여, 약간이지만 적절하게 문법을 단순화한 것이다. 그리고 불필요한 스코프를 줄이는데에도 약간이나마 더 효과적일 수 있다.
 
-## Function Declarations in Blocks (FiB)
+## 블록에서의 함수 선언 (FiB)
 
-We've seen now that declarations using `let` or `const` are block-scoped, and `var` declarations are function-scoped. So what about `function` declarations that appear directly inside blocks? As a feature, this is called "FiB."
+`let`이나 `const`를 사용하면 블록 스코프에 속하고 `var`는 함수 스코프에 속한다는 것을 알아보았다. 그렇다면 블록 안에서 직접 `function`선언을 사용하면 어떻게 될까? 이런 함수를 "FiB"라고 한다.
 
-We typically think of `function` declarations like they're the equivalent of a `var` declaration. So are they function-scoped like `var` is?
+일반적으로 `function` 선언을 `var` 선언처럼 취급하기도 한다.  그렇다면 `var` 처럼 함수 스코프로 지정이 될까?
 
-No and yes. I know... that's confusing. Let's dig in:
+아니...지만 그렇다. 약간 혼란스러운데, 예제를 자세히 살펴보자:
 
 ```js
 if (false) {
@@ -571,25 +571,25 @@ if (false) {
 ask();
 ```
 
-What do you expect for this program to do? Three reasonable outcomes:
+위 코드가 어떻게 동작할 것으로 예상하는가? 다음 세 가지 결과를 생각해볼 수 있다:
 
-1. The `ask()` call might fail with a `ReferenceError` exception, because the `ask` identifier is block-scoped to the `if` block scope and thus isn't available in the outer/global scope.
+1. `ask()`를 호출하면 실패하고 `ReferenceError` 예외가 발생할 것이다. `ask` 식별자가 `if` 블록 스코프에 속하므로 외부/전역 스코프에서는 사용할 수 없기 때문이다.
 
-2. The `ask()` call might fail with a `TypeError` exception, because the `ask` identifier exists, but it's `undefined` (since the `if` statement doesn't run) and thus not a callable function.
+2. `ask()`를 호출하면 실패하고 `TypeError` 예외가 발생할 것이다. `ask` 식별자가 존재하지만 (`if` 문 내부는 실행하지 않으므로) `undefined` 이라서 호출할 수 있는 함수가 아니기 때문이다.
 
-3. The `ask()` call might run correctly, printing out the "Does it run?" message.
+3. `ask()`를 호출하면 문제 없이 동작하여 "Does it run?" 문구를 출력한다.
 
-Here's the confusing part: depending on which JS environment you try that code snippet in, you may get different results! This is one of those few crazy areas where existing legacy behavior betrays a predictable outcome.
+여기에 혼란스러운 부분이 있는데, 위 코드를 어떤 JS 환경에서 실행하는지에 따라 다른 결과가 나올 수 있기 때문이다! 이런 경우가 바로 기존 동작에서 예측 가능했던 결과를 내지 못하게 하는 이상한 영역 중 하나이다.
 
-The JS specification says that `function` declarations inside of blocks are block-scoped, so the answer should be (1). However, most browser-based JS engines (including v8, which comes from Chrome but is also used in Node) will behave as (2), meaning the identifier is scoped outside the `if` block but the function value is not automatically initialized, so it remains `undefined`.
+JS 명세에 따르면 블록 내부의 `function` 선언은 블록 스코프에 속하므로 (1)과 같은 결과가 나와야 한다. 그러나 대부분 브라우저를 기반으로 하는 JS 엔진(Chrome에서 나왔지만 Node에서도 사용하는 v8를 포함)은  (2)와 같이 동작한다. 식별자는 `if` 블록의 외부 스코프로 지정되지만 함수 값이 자동으로 초기화되지는 않으므로 `undefined`를 유지하게 된다.
 
-Why are browser JS engines allowed to behave contrary to the specification? Because these engines already had certain behaviors around FiB before ES6 introduced block scoping, and there was concern that changing to adhere to the specification might break some existing website JS code. As such, an exception was made in Appendix B of the JS specification, which allows certain deviations for browser JS engines (only!).
+브라우저 JS 엔진이 명세에 맞지 않는 동작을 허용하는 이유는 무엇일까? 이 엔진은 이미 ES6에서 블록 스코프가 나오기 이전에 이미 FiB에 대한 동작을 정의하고 있었기 때문이다. 그래서, 명세에 따른 방식으로 동작을 변경할 경우, 기존의 웹사이트 JS 코드의 동작에 문제가 생길 수 있다는 우려가 있었다. 이렇게, JS 명세의 부록 B에서 예외가 만들어졌고, 이 예외는 브라우저 JS 엔진(만)의 이런 동작 차이를 허용하고 있다.
 
-| NOTE: |
+| 비고: |
 | :--- |
-| You wouldn't typically categorize Node as a browser JS environment, since it usually runs on a server. But Node's v8 engine is shared with Chrome (and Edge) browsers. Since v8 is first a browser JS engine, it adopts this Appendix B exception, which then means that the browser exceptions are extended to Node. |
+| 일반적으로 Node는 주로 서버에서 실행하므로 브라우저 JS 환경으로 분류하지 않는다. 하지만 Node의 v8 엔진은 Chrome(그리고 Edge)에서도 사용하고 있다. v8를 브라우저 JS 엔진으로 사용하기 때문에 부록 B 예외를 적용하게 되었으며, 브라우저 예외가 Node까지 확장된다는 것을 의미한다. |
 
-One of the most common use cases for placing a `function` declaration in a block is to conditionally define a function one way or another (like with an `if..else` statement) depending on some environment state. For example:
+`function` 선언을 블록 내부에 배치하는 가장 일반적인 사용법 중 하나는 어떤 환경인지에 따라 (`if..else`문을 이용하여) 함수를 조건부로 정의하는 것이다. 예를 들어:
 
 ```js
 if (typeof Array.isArray != "undefined") {
@@ -605,7 +605,7 @@ else {
 }
 ```
 
-It's tempting to structure code this way for performance reasons, since the `typeof Array.isArray` check is only performed once, as opposed to defining just one `isArray(..)` and putting the `if` statement inside it—the check would then run unnecessarily on every call.
+ It's tempting to structure code this way for performance reasons, since the `typeof Array.isArray` check is only performed once, as opposed to defining just one `isArray(..)` and putting the `if` statement inside it—the check would then run unnecessarily on every call.
 
 | WARNING: |
 | :--- |

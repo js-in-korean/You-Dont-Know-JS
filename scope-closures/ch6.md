@@ -511,11 +511,11 @@ if (lastI < 5) {
 
 전체 스코프에 걸쳐 `lastI`가 필요하기 때문에  `var`로 선언했다. `i`는 (각) 반복문을 반복할 때에만 필요하므로 `let`으로 선언했다.
 
-### What's the Catch?
+### 캐치<sub>Catch</sub>는 무엇인가?
 
-So far we've asserted that `var` and parameters are function-scoped, and `let`/`const` signal block-scoped declarations. There's one little exception to call out: the `catch` clause.
+지금까지 `var`와 매개변수는 함수 스코프에 속하고, `let`/`const`는 블록 스코프에 속하는 선언임을 확인했다. 그런데, 여기서 한 가지 예외가 있다. 바로 `catch` 구문이다.
 
-Since the introduction of `try..catch` back in ES3 (in 1999), the `catch` clause has used an additional (little-known) block-scoping declaration capability:
+1999년 ES3으로 `try...catch`가 도입된 이후로 `catch` 구문은 (거의 알려지지 않은) 추가적인 블록 스코프를 지정하는 선언 기능을 사용해왔다:
 
 ```js
 try {
@@ -537,22 +537,22 @@ console.log(err);
 // ^^^^ this is another thrown (uncaught) exception
 ```
 
-The `err` variable declared by the `catch` clause is block-scoped to that block. This `catch` clause block can hold other block-scoped declarations via `let`. But a `var` declaration inside this block still attaches to the outer function/global scope.
+`catch`문에서 선언한 `err` 변수는 해당 블록의 (블록) 스코프에 속하게 된다. 이 `catch`문의 블록에서 `let`과 같은 블록 스코프 선언을 사용할 수 있다. 하지만, 이 블록에서도 `var` 선언은 여전히 외부의 함수/전역 스코프에 속하게 된다.
 
-ES2019 (recently, at the time of writing) changed `catch` clauses so their declaration is optional; if the declaration is omitted, the `catch` block is no longer (by default) a scope; it's still a block, though!
+(이 글을 작성한 시점에서 가장 최근인) ES2019에서 `catch`문은 변수 선언을 생략할 수 있도록 바뀌었다. 선언을 생략하면 `catch` 블록은 더 이상 (기본적으로) 스코프로 동작하지 않는다. 여전히 블록이긴 해도 말이다.
 
-So if you need to react to the condition *that an exception occurred* (so you can gracefully recover), but you don't care about the error value itself, you can omit the `catch` declaration:
+그래서 *오류가 발생한* 상태에는 (안전하게 복구할 수 있도록) 대응해야 하지만, 오류 값 자체는 중요하지 않을 때, `catch`의 변수 선언을 생략할 수 있다:
 
 ```js
 try {
     doOptionOne();
 }
-catch {   // catch-declaration omitted
+catch {   // catch 선언을 생략함
     doOptionTwoInstead();
 }
 ```
 
-This is a small but delightful simplification of syntax for a fairly common use case, and may also be slightly more performant in removing an unnecessary scope!
+위 내용은 상당히 일반적인 사용 사례를 고려하여, 약간이지만 적절하게 문법을 단순화한 것이다. 그리고 불필요한 스코프를 줄이는데에도 약간이나마 더 효과적일 수 있다.
 
 ## Function Declarations in Blocks (FiB)
 

@@ -605,13 +605,13 @@ else {
 }
 ```
 
- It's tempting to structure code this way for performance reasons, since the `typeof Array.isArray` check is only performed once, as opposed to defining just one `isArray(..)` and putting the `if` statement inside it—the check would then run unnecessarily on every call.
+성능상의 이유로 이런 식으로 코드의 구조를 잡는 것이 매력적일 것이다. `isArray(..)`를 정의하고 내부에 `if`문을 넣어 실행할 때마다 매번 불필요하게 조건식을 검사하는 대신, `typeof Array.isArray` 검사를 한 번만 수행할 수 있기 때문이다.
 
-| WARNING: |
+| 주의: |
 | :--- |
-| In addition to the risks of FiB deviations, another problem with conditional-definition of functions is it's harder to debug such a program. If you end up with a bug in the `isArray(..)` function, you first have to figure out *which* `isArray(..)` implementation is actually running! Sometimes, the bug is that the wrong one was applied because the conditional check was incorrect! If you define multiple versions of a function, that program is always harder to reason about and maintain. |
+| FiB 동작 차이로 인한 위험성 외에도, 조건적으로 함수를 정의하는 경우의 또 다른 문제점은 바로 디버깅하기 어렵다는 것이다. `isArray(..)` 함수에 버그가 있다는 걸 알게 되면, 가장 먼저 어떤 `isArray(..)`의 구현을 실제로 실행하고 있는지 파악해야 한다. 때때로, 이런 버그는 초기 조건식의 오류로 잘못된 구현을 적용하게 되어 발생하기도 한다! 함수를 여러 버전으로 정의하게 되면, 그 프로그램을 추론하고 유지 보수하기 어렵다. |
 
-In addition to the previous snippets, several other FiB corner cases are lurking; such behaviors in various browsers and non-browser JS environments (JS engines that aren't browser based) will likely vary. For example:
+상기한 코드 외에도 FiB의 여러가지 예외 동작이 더 숨어 있다. 다양한 브라우저와 브라우저 외 JS 환경(브라우저 기반이 아닌 JS 엔진)에서 FiB는 다양하게 동작할 것이다. 예를 들어:
 
 ```js
 if (true) {
@@ -639,15 +639,15 @@ function ask() {
 }
 ```
 
-Recall that function hoisting as described in "When Can I Use a Variable?" (in Chapter 5) might suggest that the final `ask()` in this snippet, with "Wait, maybe..." as its message, would hoist above the call to `ask()`. Since it's the last function declaration of that name, it should "win," right? Unfortunately, no.
+5장의 "언제 변수를 사용할 수 있을까?"에서 설명한 함수 호이스팅을 상기하라. "Wait, maybe..." 메시지를 출력하는 위 코드의 마지막 `ask()`가 `ask()`를 호출하기 전 위치로 호이스팅 될 것이다. 그렇다면 같은 이름으로 하는 마지막 함수 선언이므로 마지막 `ask()`로 실행하게 될까? 아쉽지만 아니다.
 
-It's not my intention to document all these weird corner cases, nor to try to explain why each of them behaves a certain way. That information is, in my opinion, arcane legacy trivia.
+이런 예외 동작을 모두 정리한다거나 왜 각자마다 특정한 방식으로 동작하는지 설명하려고 하는 것은 아니다. 이런 정보는 그저 과거에서 비롯된 것이며 신기하지만 상식적인 내용이다.
 
-My real concern with FiB is, what advice can I give to ensure your code behaves predictably in all circumstances?
+FiB에 대해 가장 중요한 것은, 코드가 모든 상황에서 언제나 예측 가능한 방식으로 동작하도록 하기 위해 어떻게 해야할지 아는 것이다.
 
-As far as I'm concerned, the only practical answer to avoiding the vagaries of FiB is to simply avoid FiB entirely. In other words, never place a `function` declaration directly inside any block. Always place `function` declarations anywhere in the top-level scope of a function (or in the global scope).
+일반적으로, FiB의 예외 상황을 피하는 가장 실용적인 방법은 바로 FiB를 사용하지 않는 것이다. 즉, 어떤 블록 내부에라도 `function` 선언을 직접 사용하지 말아라. `function` 선언은 항상 함수의 최상위 스코프(또는 전역 스코프)에 해야 한다.
 
-So for the earlier `if..else` example, my suggestion is to avoid conditionally defining functions if at all possible. Yes, it may be slightly less performant, but this is the better overall approach:
+그래서 상기한 `if..else` 예제에서는, 가능한한 함수를 조건부로 정의하지 않는 것을 권장한다. 그렇다. 성능상의 이득은 줄어들지만 이런 방식이 조금 더 나은 접근법이다:
 
 ```js
 function isArray(a) {
@@ -661,7 +661,7 @@ function isArray(a) {
 }
 ```
 
-If that performance hit becomes a critical path issue for your application, I suggest you consider this approach:
+만약 성능 저하가 애플리케이션에서 가장 치명적인 문제가 된다면, 다음과 같이 접근해볼 것을 제안한다:
 
 ```js
 var isArray = function isArray(a) {
@@ -677,11 +677,11 @@ if (typeof Array.isArray == "undefined") {
 }
 ```
 
-It's important to notice that here I'm placing a `function` **expression**, not a declaration, inside the `if` statement. That's perfectly fine and valid, for `function` expressions to appear inside blocks. Our discussion about FiB is about avoiding `function` **declarations** in blocks.
+여기서 `if`문 내부에 함수를 선언한 것이 아니라 `function` **표현식**을 사용했다는 것이 중요하다. `function` 표현식을 블록 내부에 배치하는 것은 완벽하고 유효한 방법이다. FiB에 대해 이야기 하고 있는 내용이 바로 블록 내부의 `function` **표현식**을 피하는 것이기 때문이다.
 
-Even if you test your program and it works correctly, the small benefit you may derive from using FiB style in your code is far outweighed by the potential risks in the future for confusion by other developers, or variances in how your code runs in other JS environments.
+프로그램이 올바르게 작동하더라도, FiB 방식을 코드에 적용하여 얻을 수 있는 약간의 이점은 다른 개발자가 느낄 혼란으로 인한 잠재적인 위험이나 다른 JS 환경에서 실행하는 방식으로 인한 동작 차이에 비하면 너무나 작다.
 
-FiB is not worth it, and should be avoided.
+FiB는 그럴 가치가 없으며 반드시 피해야 한다.
 
 ## Blocked Over
 

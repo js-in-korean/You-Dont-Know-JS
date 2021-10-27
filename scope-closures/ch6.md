@@ -683,12 +683,12 @@ if (typeof Array.isArray == "undefined") {
 
 FiB는 그럴 가치가 없으며 반드시 피해야 한다.
 
-## Blocked Over
+## 블록을 넘어서
 
-The point of lexical scoping rules in a programming language is so we can appropriately organize our program's variables, both for operational as well as semantic code communication purposes.
+프로그래밍 언어에서 렉시컬 스코프 지정의 핵심은 운영적인 관점이나 코드의 의미를 통한 소통의 관점 모두를 고려하여 적절하게 프로그램의 변수를 구성할 수 있도록 하는 것이다.
 
-And one of the most important organizational techniques is to ensure that no variable is over-exposed to unnecessary scopes (POLE). Hopefully you now appreciate block scoping much more deeply than before.
+그리고 가장 중요한 조직화 기법중 하나는 변수가 불필요한 스코프까지 과다하게 노출되지 않도록 하는 것(POLE)이다. 블록 스코프 지정의 장점을 이전보다 더 깊게 이해하길 바란다.
 
-Hopefully by now you feel like you're standing on much more solid ground with understanding lexical scope. From that base, the next chapter jumps into the weighty topic of closure.
+지금쯤이면 렉시컬 스코프에 대한 이해와 함께 훨씬 더 단단한 기반위에 서 있는 것처럼 느낄 수 있을 것이다. 이것을 바탕으로 다음 장에서는 클로저라는 중요한 주제로 넘어갈 것이다.
 
-[^POLP]: *Principle of Least Privilege*, https://en.wikipedia.org/wiki/Principle_of_least_privilege, 3 March 2020.
+[^POLP]: *Principle of Least Privilege*, https://en.wikipedia.org/wiki/Principle_of_least_privilege, 2020년 3월 3일.

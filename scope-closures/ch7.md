@@ -105,9 +105,9 @@ var student = students.find(
 
 여기서 중요한 점은 `greetStudent(..)`가 이 클로저를 들고있다기보다는 배열의 `find(..)` 메소드 콜백으로 넘겨진 화살표 함수가 `studentID`를 클로즈 오버 해야한다는 것이다. 예상대로 잘 동작하니 큰 문제는 아니다. 그저 작은 화살표 함수도 클로저 모임에 참여할 수 있다는 사실을 모른체하지만 않으면 된다.
 
-### Adding Up Closures
+### 클로저 추가하기
 
-Let's examine one of the canonical examples often cited for closure:
+클로저에 대해 자주 인용되는 표준 예 중 하나를 살펴보자.
 
 ```js
 function adder(num1) {
@@ -123,31 +123,31 @@ add10To(15);    // 25
 add42To(9);     // 51
 ```
 
-Each instance of the inner `addTo(..)` function is closing over its own `num1` variable (with values `10` and `42`, respectively), so those `num1`'s don't go away just because `adder(..)` finishes. When we later invoke one of those inner `addTo(..)` instances, such as the `add10To(15)` call, its closed-over `num1` variable still exists and still holds the original `10` value. The operation is thus able to perform `10 + 15` and return the answer `25`.
+각 인스턴스의 내부 `addTo(..)` 함수는 각각의 `num1` 변수를 클로즈 오버 하고있다. 그래서 `num1`은 `adder(..)`가 종료되어도 사라지지 않는다. 이후 `add10To(15)` 호출같이 내부 `addTo(..)` 인스턴스들 중 하나를 실행시킬 때 클로즈 오버된 `num1` 변수는 아직 존재하고 아직 원래 값 `10`을 가지고 있다. 따라서 `10 + 15`를 수행하고 `25` 답을 반환할 수 있다.
 
-An important detail might have been too easy to gloss over in that previous paragraph, so let's reinforce it: closure is associated with an instance of a function, rather than its single lexical definition. In the preceding snippet, there's just one inner `addTo(..)` function defined inside `adder(..)`, so it might seem like that would imply a single closure.
+중요한 세부 사항을 이전 단락에서 쉽게 지나쳤을 수 있으므로, 이를 보강해보자: 클로저는 함수의 단일 렉시컬 선언보다는 함수의 인스턴스와 관련이 있다. 앞의 내용에 따르면, `adder(..)` 내부에 오직 하나의 내부 함수 `addTo(..)`가 정의되어있는데, 이 때문에 단일 클로저가 적용되는 것 처럼 보일 것이다.
 
-But actually, every time the outer `adder(..)` function runs, a *new* inner `addTo(..)` function instance is created, and for each new instance, a new closure. So each inner function instance (labeled `add10To(..)` and `add42To(..)` in our program) has its own closure over its own instance of the scope environment from that execution of `adder(..)`.
+그러나 사실, 바깥 `adder(..)` 함수가 실행될 때마다, *새로운* 내부 `addTo(..)` 함수 인스턴스가 각각 새 인스턴스와 새 클로저로 생성된다. 그래서 각 내부 함수 인스턴스(우리 프로그램에서 `add10To(..)`와 `add42To(..)`로 라벨링된)는 `adder(..)` 실행으로부터 각각의 스코프 환경 인스턴스를 클로즈 오버한다.
 
-Even though closure is based on lexical scope, which is handled at compile time, closure is observed as a runtime characteristic of function instances.
+비록 클로저가 컴파일 시 관리되는 렉시컬 스코프를 기반으로 하지만, 클로저는 함수 인스턴스들의 런타임 특성으로 관찰된다.
 
-### Live Link, Not a Snapshot
+### 스냅샷이 아닌 실시간 연결
 
-In both examples from the previous sections, we **read the value from a variable** that was held in a closure. That makes it feel like closure might be a snapshot of a value at some given moment. Indeed, that's a common misconception.
+이전 섹션의 두 예시에서, **변수에서 값을 읽고** 이 값은 클로저에 저장되었다. 이는 클로저가 마치 어떤 순간의 값 스냅샷인 것 처럼 느껴질 수 있다. 사실 이는 흔한 오해다.
 
-Closure is actually a live link, preserving access to the full variable itself. We're not limited to merely reading a value; the closed-over variable can be updated (re-assigned) as well! By closing over a variable in a function, we can keep using that variable (read and write) as long as that function reference exists in the program, and from anywhere we want to invoke that function. This is why closure is such a powerful technique used widely across so many areas of programming!
+클로저는 사실 전체 변수 그 자체에 대한 접근을 보존하는 실시간 연결이다. 우리는 값을 읽는 것에만 국한되지 않고 클로즈 오버된 변수는 업데이트(재할당)될 수도 있다! 함수 내부의 변수를 클로즈 오버 함으로써, 이 함수의 주소가 프로그램에 존재하거나 우리가 원하는 어디서든 함수를 실행해 변수를 계속 사용(읽기와 쓰기)할 수 있다. 이게 클로저가 강력한 기술로써 프로그래밍의 많은 영역에 걸쳐서 사용되는 이유이다!
 
-Figure 4 depicts the function instances and scope links:
+그림 4에서 함수 인스턴스들과 스코프 링크를 묘사한다.
 
 <figure>
     <img src="images/fig4.png" width="400" alt="Function instances linked to scopes via closure" align="center">
-    <figcaption><em>Fig. 4: Visualizing Closures</em></figcaption>
+    <figcaption><em>그림 4: 클로저 시각화</em></figcaption>
     <br><br>
 </figure>
 
-As shown in Figure 4, each call to `adder(..)` creates a new BLUE(2) scope containing a `num1` variable, as well as a new instance of `addTo(..)` function as a GREEN(3) scope. Notice that the function instances (`addTo10(..)` and `addTo42(..)`) are present in and invoked from the RED(1) scope.
+그림 4에서 보여지듯, 각 `adder(..)` 호출들은 `num1` 변수를 포함하는 새로운 파랑(2) 스코프를 생성한다. `num1` 변수는 초록(3) 스코프인 `addTo(..)` 함수의 새로운 인스턴스이다. 함수 인스턴스들(`addTo10(..)`과 `addTo42(..)`)은 빨강(1) 스코프로부터 실행되고 존재하고 있는 부분을 명심해라.
 
-Now let's examine an example where the closed-over variable is updated:
+이제 클로즈 오버된 변수가 업데이트되는 예시를 살펴보자:
 
 ```js
 function makeCounter() {
@@ -161,23 +161,23 @@ function makeCounter() {
 
 var hits = makeCounter();
 
-// later
+// 나중에
 
 hits();     // 1
 
-// later
+// 나중에
 
 hits();     // 2
 hits();     // 3
 ```
 
-The `count` variable is closed over by the inner `getCurrent()` function, which keeps it around instead of it being subjected to GC. The `hits()` function calls access *and* update this variable, returning an incrementing count each time.
+`count` 변수는 내부 `getCurrent()` 함수에 의해 클로즈 오버되고, GC 대상이 되지 않고 유지된다. `hits()` 함수는 이 변수에 대한 접근과 업데이트를 하고, 증가된 숫자를 매번 반환한다.
 
-Though the enclosing scope of a closure is typically from a function, that's not actually required; there only needs to be an inner function present inside an outer scope:
+클로저의 감싸는 스코프는 일반적으로 함수에서 있지만 필수사항은 아니다. 외부 스코프 내부에 내부 함수만 있으면 된다.
 
 ```js
 var hits;
-{   // an outer scope (but not a function)
+{   // 바깥 스코프 (함수는 아닌)
     let count = 0;
     hits = function getCurrent(){
         count = count + 1;
@@ -189,79 +189,79 @@ hits();     // 2
 hits();     // 3
 ```
 
-| NOTE: |
+| 비고: |
 | :--- |
-| I deliberately defined `getCurrent()` as a `function` expression instead of a `function` declaration. This isn't about closure, but with the dangerous quirks of FiB (Chapter 6). |
+| 여기서 의도적으로 `getCurrent()`를 `함수` 선언식 대신 `함수` 표현식으로 선언하였다. 이것은 클로저에 대한 것은 아니지만, FiB(Function Declarations in Block)의 위험한 단점이 있다(챕터 6) |
 
-Because it's so common to mistake closure as value-oriented instead of variable-oriented, developers sometimes get tripped up trying to use closure to snapshot-preserve a value from some moment in time. Consider:
+클로저를 변수 지향적이 아닌 값 지향적으로 착각하는 것이 매우 일반적이기 때문에 개발자는 때때로 클로저를 사용하여 특정 순간의 값을 스냅샷으로 보존하려고 시도하는 실수를 한다. 고려하다:
 
 ```js
 var studentName = "Frank";
 
 var greeting = function hello() {
-    // we are closing over `studentName`,
-    // not "Frank"
+    // `studentName`을 클로즈 오버,
+    // "Frank"가 아닌
     console.log(
         `Hello, ${ studentName }!`
     );
 }
 
-// later
+// 이후
 
 studentName = "Suzy";
 
-// later
+// 이후
 
 greeting();
 // Hello, Suzy!
 ```
 
-By defining `greeting()` (aka, `hello()`) when `studentName` holds the value `"Frank"` (before the re-assignment to `"Suzy"`), the mistaken assumption is often that the closure will capture `"Frank"`. But `greeting()` is closed over the variable `studentName`, not its value. Whenever `greeting()` is invoked, the current value of the variable (`"Suzy"`, in this case) is reflected.
+`greeting()` (`hello()`라고도 하는) 함수를 선언하면서 `studentName`은 `"Frank"`라는 값을 가지고 있는데(`"Suzy"`가 재할당되기 전에), 잘못된 가정은 클로저가 `"Frank"`를 저장한다는 것이다. 그러나 `greeting()`은 `studnetName` 변수를 클로즈 오버하지 값을 클로즈 오버하는건 아니다. 언제든지 `greeting()`이 실행되면, 현재의 변수(여기서는 `"Suzy"`)를 반영한다.
 
-The classic illustration of this mistake is defining functions inside a loop:
+이 실수의 전형적인 예로는 반복문 안에 함수를 정의하는 것이다.
 
 ```js
 var keeps = [];
 
 for (var i = 0; i < 3; i++) {
     keeps[i] = function keepI(){
-        // closure over `i`
+        // `i`가 클로즈 오버됨
         return i;
     };
 }
 
-keeps[0]();   // 3 -- WHY!?
+keeps[0]();   // 3 -- 왜!?
 keeps[1]();   // 3
 keeps[2]();   // 3
 ```
 
-| NOTE: |
+| 비고: |
 | :--- |
-| This kind of closure illustration typically uses a `setTimeout(..)` or some other callback like an event handler, inside the loop. I've simplified the example by storing function references in an array, so that we don't need to consider asynchronous timing in our analysis. The closure principle is the same, regardless. |
+| 이러한 클로저 형식은 전형적으로 `setTimeout(..)`나 이벤트 핸들러같은 다른 콜백을 반복문 안에서 사용한다. 여기서는 함수 주소를 배열에 저장하는걸로 예시를 간소화해서 비동기 타이밍은 고려할 필요가 없었다. 클로저 원칙은 역시 동일하다. |
 
-You might have expected the `keeps[0]()` invocation to return `0`, since that function was created during the first iteration of the loop when `i` was `0`. But again, that assumption stems from thinking of closure as value-oriented rather than variable-oriented.
+아마 `keeps[0]()` 실행 결과가 `0`을 반환하는 것을 기대했을 것이다. 함수가 반복문의 첫 반복 `i`가 0일때 생성되었기 때문이다. 하지만 이 가정은 클로저가 변수 지향적인게 아니라 값 지향적으로 생각한 것에서 생긴 생각이다.
 
-Something about the structure of a `for`-loop can trick us into thinking that each iteration gets its own new `i` variable; in fact, this program only has one `i` since it was declared with `var`.
+`for` 반복문 구조에서 각 반복마다 새로운 `i` 변수를 가진다고 속일 수도 있다. 사실 이 프로그램에서는 `var`로 선언되었기 때문에 오직 하나의 `i`만 가진다.
 
-Each saved function returns `3`, because by the end of the loop, the single `i` variable in the program has been assigned `3`. Each of the three functions in the `keeps` array do have individual closures, but they're all closed over that same shared `i` variable.
+각 저장된 함수들은 `3`을 반환하는데, 반복문 끝에서 이 하나의 `i` 변수는 `3`으로 할당되기 때문이다. `keeps` 배열의 각 세 함수들은 각각의 클로저를 가지고는 있지만, 이들 모두가 공유된 `i` 변수를 클로즈 오버하고 있다.
 
-Of course, a single variable can only ever hold one value at any given moment. So if you want to preserve multiple values, you need a different variable for each.
+물론, 단일 변수는 특정 시간에 하나의 값만 가질 수 있다. 그래서 만약 여러 변수들을 저장하고 싶으면, 각각 다른 변수들이 필요하다.
 
-How could we do that in the loop snippet? Let's create a new variable for each iteration:
+반복문 구문에서 이를 어떻게 할 수 있을까? 각 반복마다 새로운 변수를 만들어보자.
 
 ```js
 var keeps = [];
 
 for (var i = 0; i < 3; i++) {
-    // new `j` created each iteration, which gets
-    // a copy of the value of `i` at this moment
+    // 새로운 `j`를 각 반복마다 생성하고,
+    // 이 순간 `i`의 값을 복사해 저장한다.
     let j = i;
 
-    // the `i` here isn't being closed over, so
-    // it's fine to immediately use its current
-    // value in each loop iteration
+    // 여기서 `i`는 클로즈 오버되지 않아서,
+    // 각 반복마다의 현재 값을
+    // 즉시 사용해도 괜찮다
     keeps[i] = function keepEachJ(){
-        // close over `j`, not `i`!
+        // 클로즈 오버된 `j` 사용, `i`가 아님!
         return j;
     };
 }
@@ -270,18 +270,18 @@ keeps[1]();   // 1
 keeps[2]();   // 2
 ```
 
-Each function is now closed over a separate (new) variable from each iteration, even though all of them are named `j`. And each `j` gets a copy of the value of `i` at that point in the loop iteration; that `j` never gets re-assigned. So all three functions now return their expected values: `0`, `1`, and `2`!
+모든 변수들이 `j`로 네이밍 되어있음에도 불구하고, 이제 각 함수는 매 반복마다 각각의 (새로운) 변수를 클로즈 오버한다. 그리고 각 `j`는 반복문의 시점마다의 `i` 값을 복사한다; `j`는 전혀 재할당되지 않는다. 그래서 이제 세 함수들 모두 예상된 값을 반환한다: `0`, `1`, 그리고 `2`!
 
-Again remember, even if we were using asynchrony in this program, such as passing each inner `keepEachJ()` function into `setTimeout(..)` or some event handler subscription, the same kind of closure behavior would still be observed.
+다시 강조한다. 이 프로그램에서 내부의 `keepEachJ()`가 `setTimeout(..)`이나 다른 이벤트 핸들러 구독같은 비동기한 방식으로 사용한다고 해도, 같은 방식의 클로저 동작을 관찰할 수 있다.
 
-Recall the "Loops" section in Chapter 5, which illustrates how a `let` declaration in a `for` loop actually creates not just one variable for the loop, but actually creates a new variable for *each iteration* of the loop. That trick/quirk is exactly what we need for our loop closures:
+챕터 5의 "반복문" 섹션을 상기해보자. `for` 반복문에서 `let` 선언을 설명할 때 사실 반복문에 대해서 오직 한 변수만 생성하는게 아니라, *각 반복*마다 새로운 변수를 생성한다고 했다. 이러한 트릭이자 기이한 특징은 클로저 반복문에서 정확하게 필요한 것이다.
 
 ```js
 var keeps = [];
 
 for (let i = 0; i < 3; i++) {
-    // the `let i` gives us a new `i` for
-    // each iteration, automatically!
+    // `let i`는 새로운 `i`를 준다
+    // 각 반복마다, 자동적으로!
     keeps[i] = function keepEachI(){
         return i;
     };
@@ -291,7 +291,7 @@ keeps[1]();   // 1
 keeps[2]();   // 2
 ```
 
-Since we're using `let`, three `i`'s are created, one for each loop, so each of the three closures *just work* as expected.
+`let`을 사용함으로써, 각 반복마다 하나씩 총 3개의 `i`가 생성되고, 그래서 세 클로저들은 예상했던대로 *그냥 동작한다.*
 
 ### Common Closures: Ajax and Events
 

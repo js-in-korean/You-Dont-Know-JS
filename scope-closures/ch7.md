@@ -293,9 +293,9 @@ keeps[2]();   // 2
 
 `let`을 사용함으로써, 각 반복마다 하나씩 총 3개의 `i`가 생성되고, 그래서 세 클로저들은 예상했던대로 *그냥 동작한다.*
 
-### Common Closures: Ajax and Events
+### 흔한 클로저: Ajax와 이벤트
 
-Closure is most commonly encountered with callbacks:
+클로저는 콜백에서 가장 일반적으로 발생한다.
 
 ```js
 function lookupStudentRecord(studentID) {
@@ -313,11 +313,11 @@ lookupStudentRecord(114);
 // Frank (114)
 ```
 
-The `onRecord(..)` callback is going to be invoked at some point in the future, after the response from the Ajax call comes back. This invocation will happen from the internals of the `ajax(..)` utility, wherever that comes from. Furthermore, when that happens, the `lookupStudentRecord(..)` call will long since have completed.
+`onRecord(..)` 콜백은 Ajax 호출로부터 응답이 온 이후의 미래 시점에 실행될 것이다. 이 실행은 `ajax(..)` 유틸리티 내부에서 발생할 것이다. 더구나, 실행되는 시점은 `lookupStudentRecord(..)` 호출이 완료된지 오래된 시점이다.
 
-Why then is `studentID` still around and accessible to the callback? Closure.
+그렇다면 왜 `studentID`에 아직 주변에 있고 콜백으로 접근할 수 있는걸까? 클로저다.
 
-Event handlers are another common usage of closure:
+이벤트 핸들러는 클로저의 또 다른 일반적인 사용법이다.
 
 ```js
 function listenForClicks(btn,label) {
@@ -333,21 +333,21 @@ var submitBtn = document.getElementById("submit-btn");
 listenForClicks(submitBtn,"Checkout");
 ```
 
-The `label` parameter is closed over by the `onClick(..)` event handler callback. When the button is clicked, `label` still exists to be used. This is closure.
+`label` 파라미터는 `onClick(..)` 이벤트 핸들러 콜백에 의해 클로즈 오버된다. 버튼이 클릭될 때, 사용될 `label`은 여전히 존재한다. 이것이 클로저다.
 
-### What If I Can't See It?
+### 이걸 볼 수 없다면?
 
-You've probably heard this common adage:
+다음과 같은 속담을 들어봤을거다:
 
-> If a tree falls in the forest but nobody is around to hear it, does it make a sound?
+> 숲속에서 나무가 쓰러져도 이 소리를 들을 사람이 없다면, 이건 소리를 낸걸까?
 
-It's a silly bit of philosophical gymnastics. Of course from a scientific perspective, sound waves are created. But the real point: *does it matter* if the sound happens?
+이건 약간 철학적인 체조다. 물론 과학적인 관점에서 보면, 음파가 생성된다. 하지만 진짜 요점은: 소리가 나도 *그것이 중요한가?*
 
-Remember, the emphasis in our definition of closure is observability. If a closure exists (in a technical, implementation, or academic sense) but it cannot be observed in our programs, *does it matter?* No.
+기억해라. 클로저에 대한 우리의 정의에서 강조점은 관찰 가능하다는 것이다. 클로저가 존재(기술적, 구현적, 학문적인 관점에서)하지만 우리 프로그램에서 관찰될 수 없다면, *그것이 중요한가?* 아니다.
 
-To reinforce this point, let's look at some examples that are *not* observably based on closure.
+이 점을 강조하기 위해서 클로저를 기반하지 *않은* 몇 가지 예시를 살펴볼 것이다.
 
-For example, invoking a function that makes use of lexical scope lookup:
+예시로 렉시컬 스코프 참조를 사용하는 함수를 실행하는 것:
 
 ```js
 function say(myName) {
@@ -365,13 +365,13 @@ say("Kyle");
 // Hello, Kyle!
 ```
 
-The inner function `output()` accesses the variables `greeting` and `myName` from its enclosing scope. But the invocation of `output()` happens in that same scope, where of course `greeting` and `myName` are still available; that's just lexical scope, not closure.
+내부 함수 `output()`에서 이를 감싸는 스코프의 변수 `greeting`과 `myName`에 접근한다. 그러나 `output()`의 실행이 같은 스코프에서 발생하고, `greeting`과 `myName`은 당연하게 아직 접근이 가능하다; 이는 그냥 렉시컬 스코프고 클로저가 아니다.
 
-Any lexically scoped language whose functions didn't support closure would still behave this same way.
+클로저를 지원하지 않는 렉시컬 스코프 언어 어떤 것도 이와 동일한 방식으로 동작할 것이다.
 
-In fact, global scope variables essentially cannot be (observably) closed over, because they're always accessible from everywhere. No function can ever be invoked in any part of the scope chain that is not a descendant of the global scope.
+사실 전역 스코프 변수는 본질적으로(관찰적으로) 클로즈 오버될 수 없다. 왜냐하면 이들은 어디에서든 항상 접근이 가능하기 때문이다. 전역 스코프의 자손이 아닌 스코프 체인에서 실행될 수 있는 함수는 없다.
 
-Consider:
+생각해보자:
 
 ```js
 var students = [
@@ -393,11 +393,11 @@ student();
 // Kyle
 ```
 
-The inner `firstStudent()` function does reference `students`, which is a variable outside its own scope. But since `students` happens to be from the global scope, no matter where that function is invoked in the program, its ability to access `students` is nothing more special than normal lexical scope.
+`firstStudent()` 내부 함수는 스코프 바깥의 변수 `students`를 참조한다. 그러나 `students`는 전역 스코프로부터 발생했으므로, 함수가 프로그램 어디에서 실행되는지와 상관없고, `students`에 대한 접근은 일반 렉시컬 스코프와 다를게 없다.
 
-All function invocations can access global variables, regardless of whether closure is supported by the language or not. Global variables don't need to be closed over.
+언어에서 클로저가 지원하든 안하든 모든 함수 실행은 전역 변수에 접근할 수 있다. 전역 변수는 클로즈 오버될 필요가 없다.
 
-Variables that are merely present but never accessed don't result in closure:
+변수가 단지 존재만 하고 접근되지 않는다면 클로저가 사용되지 않는다.
 
 ```js
 function lookupStudent(studentID) {
@@ -413,11 +413,11 @@ student();
 // Nobody's here yet.
 ```
 
-The inner function `nobody()` doesn't close over any outer variables—it only uses its own variable `msg`. Even though `studentID` is present in the enclosing scope, `studentID` is not referred to by `nobody()`. The JS engine doesn't need to keep `studentID` around after `lookupStudent(..)` has finished running, so GC wants to clean up that memory!
+내부 함수 `nobody()`는 바깥 변수를 클로즈 오버하지 않는다. 오직 자신의 변수 `msg`만 사용한다. `studentID`가 둘러싸는 스코프에 존재한다고 할지라도, `studentID`는 `nobody()`에서 참조되지 않았다. JS 엔진은 `lookupStudent(..)` 실행을 마친 후에는 `studentID`를 주변에 놔둘 필요가 없고, 그래서 GC는 메모리에서 정리하려고 시도한다!
 
-Whether JS functions support closure or not, this program would behave the same. Therefore, no observed closure here.
+JS 함수가 클로저를 지원하든 안하든, 프로그램은 동일하게 동작한다. 그러므로, 여기서 클로저는 관찰되지 않는다.
 
-If there's no function invocation, closure can't be observed:
+함수 호출이 없다면, 클로저는 관찰되지 않는다:
 
 ```js
 function greetStudent(studentName) {
@@ -430,38 +430,38 @@ function greetStudent(studentName) {
 
 greetStudent("Kyle");
 
-// nothing else happens
+// 다른 일은 일어나지 않는다.
 ```
 
-This one's tricky, because the outer function definitely does get invoked. But the inner function is the one that *could* have had closure, and yet it's never invoked; the returned function here is just thrown away. So even if technically the JS engine created closure for a brief moment, it was not observed in any meaningful way in this program.
+이것은 까다롭다. 바깥 함수는 분명히 실행되었기 때문이다. 그러나 내부 함수는 클로저를 가졌을 *수 있었던* 것이고, 아직 전혀 실행되지 않았다; 여기서 반환된 함수는 그냥 버려진다. 그래서 기술적으로 JS 엔진은 잠깐동안 클로저를 생성하지만, 프로그램에서 의미있는 방향으로는 관찰되지 않는다.
 
-A tree may have fallen... but we didn't hear it, so we don't care.
+나무는 떨어졌을 것이다... 하지만 우리는 이를 듣지 못했으므로 상관쓰지 않는다.
 
-### Observable Definition
+### 관찰 가능한 정의
 
-We're now ready to define closure:
+우리는 이제 클로저를 정의할 준비가 되었다:
 
-> Closure is observed when a function uses variable(s) from outer scope(s) even while running in a scope where those variable(s) wouldn't be accessible.
+> 클로저는 함수가 변수(들)에 접근할 수 없는 스코프에서 실행되는 동안에도 바깥 스코프(들)의 변수(들)을 사용할 때 관찰된다.
 
-The key parts of this definition are:
+이 정의에서 중요한 부분은 다음이다:
 
-* Must be a function involved
+* 함수가 반드시 실행되어야 한다.
 
-* Must reference at least one variable from an outer scope
+* 적어도 한 개의 바깥 스코프의 변수를 참조해야한다.
 
-* Must be invoked in a different branch of the scope chain from the variable(s)
+* 변수(들)과 다른 분기의 스코프 체인에서 호출되어야 한다.
 
-This observation-oriented definition means we shouldn't dismiss closure as some indirect, academic trivia. Instead, we should look and plan for the direct, concrete effects closure has on our program behavior.
+이러한 관찰 지향적인 정의는 간접적인, 학술적인 상식으로 클로저를 치부해서는 안된다는 것을 의미한다. 대신, 클로저가 우리 프로그램 동작에 미치는 직접적이고 구체적인 영향을 살펴보고 계획해야한다.
 
-## The Closure Lifecycle and Garbage Collection (GC)
+## 클로저 생명주기와 가비지 컬렉션(GC)
 
-Since closure is inherently tied to a function instance, its closure over a variable lasts as long as there is still a reference to that function.
+클로저가 본질적으로 함수 인스턴스와 연결되어있기 때문에, 변수에 대한 클로저는 함수에 대한 참조가 있는 동안에는 지속된다.
 
-If ten functions all close over the same variable, and over time nine of these function references are discarded, the lone remaining function reference still preserves that variable. Once that final function reference is discarded, the last closure over that variable is gone, and the variable itself is GC'd.
+만약 10개의 함수가 모두 같은 변수를 클로즈 오버하고, 시간이 지남에 따라서 9개의 함수 참조가 폐기된다면, 유일하게 남은 함수 참조가 여전히 변수를 보존한다. 최종 함수의 참조가 폐기되면 변수에 대한 마지막 클로저가 사라지고 변수 자체가 GC된다.
 
-This has an important impact on building efficient and performant programs. Closure can unexpectedly prevent the GC of a variable that you're otherwise done with, which leads to run-away memory usage over time. That's why it's important to discard function references (and thus their closures) when they're not needed anymore.
+이는 효율적이고 성능 좋은 프로그램을 구축하는데 중요한 영향을 미친다. 클로저는 예상치 못한 다른 방법으로 만들어진 변수의 GC를 막을 수 있는데 이는 시간이 지남에 따라서 메모리 사용량 폭주를 야기한다. 이 때문에 함수 참조(및 그에 따른 클로저)가 더 이상 필요없을 때 폐기되는 것이 중요하다.
 
-Consider:
+생각해봐라:
 
 ```js
 function manageBtnClickEvents(btn) {
@@ -481,8 +481,8 @@ function manageBtnClickEvents(btn) {
             );
         }
         else {
-            // passing no callback unsubscribes
-            // all click handlers
+            // 콜백을 전달하지 않으면
+            // 모든 클릭 핸들러들 구독취소한다
             for (let handler of clickHandlers) {
                 btn.removeEventListener(
                     "click",
@@ -499,22 +499,22 @@ function manageBtnClickEvents(btn) {
 var onSubmit = manageBtnClickEvents(mySubmitBtn);
 
 onSubmit(function checkout(evt){
-    // handle checkout
+    // checkout을 핸들링한다
 });
 
 onSubmit(function trackAction(evt){
-    // log action to analytics
+    // 분석을 위해 로그를 찍는다
 });
 
-// later, unsubscribe all handlers:
+// 나중에 모든 핸들러들을 구독취소한다:
 onSubmit();
 ```
 
-In this program, the inner `onClick(..)` function holds a closure over the passed in `cb` (the provided event callback). That means the `checkout()` and `trackAction()` function expression references are held via closure (and cannot be GC'd) for as long as these event handlers are subscribed.
+프로그램에서 내부 `onClick(..)` 함수는 전달된 `cb`(제공된 이벤트 콜백)을 클로즈 오버한다. 이는 `checkout()`과 `trackAction()` 함수 표현식 참조는 이러한 이벤트 핸들러가 구독되는 동안 클로저를 통해 유지된다(그리고 GC될 수 없다).
 
-When we call `onSubmit()` with no input on the last line, all event handlers are unsubscribed, and the `clickHandlers` array is emptied. Once all click handler function references are discarded, the closures of `cb` references to `checkout()` and `trackAction()` are discarded.
+마지막 라인에서 입력값 없이 `onSubmit()`을 호출할 때, 모든 이벤트 핸들러들은 구독 취소되고, `clickHandlers` 배열은 비어진다. 모든 클릭 핸들러 함수 참조들이 폐기되면, `checkout()`과 `trackAction()`을 참조하는 `cb` 클로저가 폐기된다.
 
-When considering the overall health and efficiency of the program, unsubscribing an event handler when it's no longer needed can be even more important than the initial subscription!
+프로그램의 전반적인 상태와 효율성을 고려할 때, 이벤트 핸들러가 더 이상 필요하지 않을 때 구독 취소하는 것이 초기 구독보다 더 중요할 수 있다!
 
 ### Per Variable or Per Scope?
 

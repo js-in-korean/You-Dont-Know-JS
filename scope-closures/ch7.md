@@ -516,17 +516,17 @@ onSubmit();
 
 프로그램의 전반적인 상태와 효율성을 고려할 때, 이벤트 핸들러가 더 이상 필요하지 않을 때 구독 취소하는 것이 초기 구독보다 더 중요할 수 있다!
 
-### Per Variable or Per Scope?
+### 변수마다 혹은 스코프마다?
 
-Another question we need to tackle: should we think of closure as applied only to the referenced outer variable(s), or does closure preserve the entire scope chain with all its variables?
+우리가 해결해야 할 또 다른 질문: 클로저를 참조된 외부 변수에만 적용되는 것으로 생각해야 할까, 아니면 모든 변수와 함께 전체 스코프 체인을 보존해야 할까?
 
-In other words, in the previous event subscription snippet, is the inner `onClick(..)` function closed over only `cb`, or is it also closed over `clickHandler`, `clickHandlers`, and `btn`?
+즉, 이전 이벤트 구독에 대한 짧은 코드에서, 내부 `onClick(..)` 함수는 오직 `cb`만 클로즈 오버 하고있을까, 아니면 `clickHandler`, `clickHandlers`, 및 `btn`도 클로즈 오버 하고있을까?
 
-Conceptually, closure is **per variable** rather than *per scope*. Ajax callbacks, event handlers, and all other forms of function closures are typically assumed to close over only what they explicitly reference.
+개념적으로는, 클로저는 **스코프마다**라기보다는 **변수마다**이다. Ajax 콜백, 이벤트 핸들러 및 기타 모든 형태의 함수 클로저는 일반적으로 명시적으로 참조하는 것만 클로즈 오버하는 것으로 가정한다.
 
-But the reality is more complicated than that.
+그러나 실제로는 이보다 더 복잡하다.
 
-Another program to consider:
+다른 프로그램을 고려해보자:
 
 ```js
 function manageStudentGrades(studentRecords) {
@@ -541,12 +541,12 @@ function manageStudentGrades(studentRecords) {
     }
 
     function sortAndTrimGradesList() {
-        // sort by grades, descending
+        // 등급 순으로 내림차순 정렬
         grades.sort(function desc(g1,g2){
             return g2 - g1;
         });
 
-        // only keep the top 10 grades
+        // 상위 10개 등급만 저장
         grades = grades.slice(0,10);
     }
 
@@ -561,42 +561,42 @@ var addNextGrade = manageStudentGrades([
     { id: 14, name: "Kyle", grade: 86 },
     { id: 73, name: "Suzy", grade: 87 },
     { id: 112, name: "Frank", grade: 75 },
-    // ..many more records..
+    // ..많은 다른 기록들..
     { id: 6, name: "Sarah", grade: 91 }
 ]);
 
-// later
+// 나중에
 
 addNextGrade(81);
 addNextGrade(68);
 // [ .., .., ... ]
 ```
 
-The outer function `manageStudentGrades(..)` takes a list of student records, and returns an `addGrade(..)` function reference, which we externally label `addNextGrade(..)`. Each time we call `addNextGrade(..)` with a new grade, we get back a current list of the top 10 grades, sorted numerically descending (see `sortAndTrimGradesList()`).
+외부 함수 `manageStudentGrades(..)`는 학생 기록 목록을 입력받고, 외부적으로 `addNextGrade(..)`라고 라벨링된 `addGrade(..)` 함수 참조를 반환한다. 새 등급으로 `addNextGrade(..)`를 호출할 때마다, 숫자 내림차순으로 정렬된 상위 10개 등급의 현재 목록을 다시 가져온다(`sortAndTrimGradesList()` 참조).
 
-From the end of the original `manageStudentGrades(..)` call, and between the multiple `addNextGrade(..)` calls, the `grades` variable is preserved inside `addGrade(..)` via closure; that's how the running list of top grades is maintained. Remember, it's a closure over the variable `grades` itself, not the array it holds.
+기존 `manageStudentGrades(..)` 호출의 끝이면서 여러 `addNextGrade(..)` 호출 사이에서 `grades` 변수는 클로저를 통해 `addGrade(..)` 내부에 보존된다; 이것이 상위 등급 목록이 유지되는 방식이다. 이것은 변수 `grades`에 대한 클로즈 오버이지, 그것이 가지고있는 배열이 아니라는 점을 기억해라.
 
-That's not the only closure involved, however. Can you spot other variables being closed over?
+그러나 이것이 유일하게 존재하는 클로저는 아니다. 클로즈 오버되는 다른 변수를 찾을 수 있나?
 
-Did you spot that `addGrade(..)` references `sortAndTrimGradesList`? That means it's also closed over that identifier, which happens to hold a reference to the `sortAndTrimGradesList()` function. That second inner function has to stay around so that `addGrade(..)` can keep calling it, which also means any variables *it* closes over stick around—though, in this case, nothing extra is closed over there.
+`addGrade(..)`가 `sortAndTrimGradesList`를 참조하는 부분을 발견했나? 이는 `sortAndTrimGradesList()` 함수 참조를 보유한 이 식별자 또한 클로즈 오버한다는 것을 의미한다. 이 두 번째 내부 함수는 `addGrade(..)`가 이를 호출할 수 있도록 주변에 두어야하고, 이는 또한 *그것*이 클로즈 오버하는 모든 변수가 주변에 고정되어있음을 의미한다. 하지만 이 케이스에서는, 추가로 여기에 클로즈 오버되는 것이 없다.
 
-What else is closed over?
+또 무엇이 클로즈 오버되나?
 
-Consider the `getGrade` variable (and its function); is it closed over? It's referenced in the outer scope of `manageStudentGrades(..)` in the `.map(getGrade)` call. But it's not referenced in `addGrade(..)` or `sortAndTrimGradesList()`.
+`getGrade` 변수(그리고 그것의 함수)를 고려해보자; 이것은 클로즈 오버되어있나? 이는 `.map(getGrade)` 호출의 바깥 스코프의 `manageStudentGrades(..)`에서 참조된다. 그러나 `addGrade(..)`나 `sortAndTrimGradesList()`에서 참조되지는 않는다.
 
-What about the (potentially) large list of student records we pass in as `studentRecords`? Is that variable closed over? If it is, the array of student records is never getting GC'd, which leads to this program holding onto a larger amount of memory than we might assume. But if we look closely again, none of the inner functions reference `studentRecords`.
+`studentRecords`로 넘기는 (잠재적으로)많은 학생 기록 목록은 어떨까? 이 변수는 클로즈 오버 되어있나? 만약 그렇다면, 학생 기록들 배열은 절대로 GC되지 않고, 이는 우리가 예상하는 것 보다 더 많은 메모리 양을 보유하게 된다. 그러나 자세히 봐보면, 어떤 내부 함수에서도 `studentRecords`를 참조하지 않고 있다.
 
-According to the *per variable* definition of closure, since `getGrade` and `studentRecords` are *not* referenced by the inner functions, they're not closed over. They should be freely available for GC right after the `manageStudentGrades(..)` call completes.
+클로저의 *각 변수마다* 정의되는 것에 따르고, `getGrade`와 `studentRecords`는 내부 함수에 의해 참조되지 *않으므로* 이들은 클로즈 오버되지 않는다. 이들은 `manageStudentGrades(..)` 호출이 완료된 직후 GC에서 자유롭게 사용할 수 있어야 한다.
 
-Indeed, try debugging this code in a recent JS engine, like v8 in Chrome, placing a breakpoint inside the `addGrade(..)` function. You may notice that the inspector **does not** list the `studentRecords` variable. That's proof, debugging-wise anyway, that the engine does not maintain `studentRecords` via closure. Phew!
+실제로 Chrome의 v8과 같은 최신 JS 엔진에서 이 코드를 디버깅하여 `addGrade(..)` 함수 내부에 중단점을 배치한다. 인스펙터는 `studentRecords` 변수를 나열하지 **않는다**. 어쨌든 디버깅 측면에서 엔진이 클로저를 통해 `studentRecords`를 유지하지 않는다는 증거다. 휴!
 
-But how reliable is this observation as proof? Consider this (rather contrived!) program:
+그러나 이 관찰이 증거로서 얼마나 믿을 수 있을까? 이 (상당히 부자연스러운!) 프로그램을 보자:
 
 ```js
 function storeStudentInfo(id,name,grade) {
     return function getInfo(whichValue){
-        // warning:
-        //   using `eval(..)` is a bad idea!
+        // 주의:
+        //   `eval(..)`을 사용하는 것은 나쁜 생각이다!
         var val = eval(whichValue);
         return val;
     };
@@ -611,26 +611,26 @@ info("grade");
 // 87
 ```
 
-Notice that the inner function `getInfo(..)` is not explicitly closed over any of `id`, `name`, or `grade` variables. And yet, calls to `info(..)` seem to still be able to access the variables, albeit through use of the `eval(..)` lexical scope cheat (see Chapter 1).
+내부 함수 `getInfo(..)`는 `id`, `name` 또는 `grade` 변수에 대해 명시적으로 클로즈 오버되어있지 않은 점을 유의해라. 그럼에도 불구하고, `info(..)` 호출은 아직 변수에 접근할 수 있는 것으로 보이고, 비록 `eval(..)` 사용을 통한 렉시컬 스코프 속임수일지라도(챕터 1 참고) 말이다.
 
-So all the variables were definitely preserved via closure, despite not being explicitly referenced by the inner function. So does that disprove the *per variable* assertion in favor of *per scope*? Depends.
+따라서 내부 함수에서 명시적으로 참조하지 않음에도 불구하고, 모든 변수는 클로저를 통해 확실히 보존되었다. 그렇다면 이게 *변수마다*에 반증되고 *스코프마다*라는 주장에 찬성하는 것일까? 아직 결정되지 않았다.
 
-Many modern JS engines do apply an *optimization* that removes any variables from a closure scope that aren't explicitly referenced. However, as we see with `eval(..)`, there are situations where such an optimization cannot be applied, and the closure scope continues to contain all its original variables. In other words, closure must be *per scope*, implementation wise, and then an optional optimization trims down the scope to only what was closed over (a similar outcome as *per variable* closure).
+많은 최신 JS 엔진은 클로저 스코프에서 명시적으로 참조되지 않는 변수를 제거하는 *최적화*를 적용힌다. 그러나 `eval(..)`에서 볼 수 있듯이 이러한 최적화를 적용할 수 없는 상황이 있고 클로저 스코프에 원래 변수가 모두 포함되어 있다. 다시 말해서, 클로저는 구현적 관점으로는 *스코프마다*여야 하며, 그런 다음 선택적 최적화가 스코프를 클로즈 오버된 것(*변수마다* 클로저와 유사한 결과)으로만 축소한다.
 
-Even as recent as a few years ago, many JS engines did not apply this optimization; it's possible your websites may still run in such browsers, especially on older or lower-end devices. That means it's possible that long-lived closures such as event handlers may be holding onto memory much longer than we would have assumed.
+몇 년 전만 해도, 많은 JS 엔진이 이러한 최적화를 적용하지 않았다. 너의 웹사이트도 아직 그러한 브라우저나, 특히 저사양의 오래된 장치에서 실행될 수 있다. 이는 이벤트 핸들러같이 오랫동안 유지되는 클로저들이 우리가 생각한 것 보다 더 오래 메모리에 유지될 수 있다는 것이다.
 
-And the fact that it's an optional optimization in the first place, rather than a requirement of the specification, means that we shouldn't just casually over-assume its applicability.
+그리고 사실 이는 필수적인 명세가 아닌 선택적인 최적화인데 이는 우리가 무심코 적용 가능성을 과대평가해서는 안된다는 것을 의미한다.
 
-In cases where a variable holds a large value (like an object or array) and that variable is present in a closure scope, if you don't need that value anymore and don't want that memory held, it's safer (memory usage) to manually discard the value rather than relying on closure optimization/GC.
+변수에 큰 값(객체나 배열같은)을 저장하고 이 변수가 스코프 클로저에 존재하는 경우, 이 변수가 더 이상 필요하지 않고, 메모리에 저장되지 않기를 원한다면, 수동으로 값을 버리는 것이 클로저의 최적화나 GC에 의존하는 것 보다 안전(메모리 사용)하다는 것이다.
 
-Let's apply a *fix* to the earlier `manageStudentGrades(..)` example to ensure the potentially large array held in `studentRecords` is not caught up in a closure scope unnecessarily:
+이전의 `manageStudentGrades(..)` 예제에서 `studentRecords`에 있는 잠재적으로 큰 배열이 불필요하게 클로저 스코프에 걸리지 않도록 *수정*해보자:
 
 ```js
 function manageStudentGrades(studentRecords) {
     var grades = studentRecords.map(getGrade);
 
-    // unset `studentRecords` to prevent unwanted
-    // memory retention in the closure
+    // 클로저에서 원치 않는 메모리 보유를 방지하기 위해서
+    // `studentRecords` 를 설정 해제하자
     studentRecords = null;
 
     return addGrade;
@@ -638,13 +638,13 @@ function manageStudentGrades(studentRecords) {
 }
 ```
 
-We're not removing `studentRecords` from the closure scope; that we cannot control. We're ensuring that even if `studentRecords` remains in the closure scope, that variable is no longer referencing the potentially large array of data; the array can be GC'd.
+`studentRecords`를 클로저 스코프로부터 없애지는 않는다; 우리가 조작할 수 없는 영역이다. `studentRecords`가 클로저 스코프에 남아있더라도 이 변수는 더이상 잠재적으로 큰 배열의 데이터를 참조하지 않게끔은 할 수 있다; 배열은 GC될 수 있다.
 
-Again, in many cases JS might automatically optimize the program to the same effect. But it's still a good habit to be careful and explicitly make sure we don't keep any significant amount of device memory tied up any longer than necessary.
+다시 말하지만, 많은 경우 JS가 자동적으로 프로그램을 동일한 효과로 최적화할 것이다. 그러나 많은 양의 장치 메모리가 필요 이상으로 묶여있지 않도록 주의하고 명시적으로 확인하는 것은 여전히 좋은 습관이다.
 
-As a matter of fact, we also technically don't need the function `getGrade()` anymore after the `.map(getGrade)` call completes. If profiling our application showed this was a critical area of excess memory use, we could possibly eek out a tiny bit more memory by freeing up that reference so its value isn't tied up either. That's likely unnecessary in this toy example, but this is a general technique to keep in mind if you're optimizing the memory footprint of your application.
+사실 `.map(getGrade)` 호출이 완료된 이후에는 기술적으로 더이상 `getGrade()` 함수는 필요하지 않다. 만약 어플리케이션을 프로파일링 결과가 메모리 사용의 치명적인 부분임이 보여지면, 아마 해당 참조값이 묶여 있지 않도록 참조를 해제하여 약간의 메모리를 확보할 수 있을 것이다. 이 임시 예시에서는 불필요할 수 있겠지만, 일반 어플리케이션에서 메모리 사용을 최적화한다면 염두해두어야하는 일반적인 기술이다.
 
-The takeaway: it's important to know where closures appear in our programs, and what variables are included. We should manage these closures carefully so we're only holding onto what's minimally needed and not wasting memory.
+요약: 프로그램에서 어디에 클로저가 나타나는지를 알고 어떤 변수들이 포함되는지 아는 것이 중요하다. 이 클로저들을 메모리에서 낭비 없이 최소한으로 필요한 부분만 가지고 있게끔 조심히 관리해야 한다.
 
 ## An Alternative Perspective
 

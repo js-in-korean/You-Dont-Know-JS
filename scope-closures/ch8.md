@@ -1,31 +1,31 @@
 # You Don't Know JS Yet: Scope & Closures - 2nd Edition
-# Chapter 8: The Module Pattern
+# 8장: 모듈 패턴
 
-In this chapter, we wrap up the main text of the book by exploring one of the most important code organization patterns in all of programming: the module. As we'll see, modules are inherently built from what we've already covered: the payoff for your efforts in learning lexical scope and closure.
+이 장에서 우리는 모든 프로그래밍에서 가장 중요한 코드 구성 패턴의 하나인 모듈을 살펴봄으로써 책의 본문을 마무리한다. 알다시피 모듈은 앞에서 다룬 렉시컬 스코프<sub>lexical scope<sub>와 클로저<sub>closure</sub>를 학습한 노력에 대한 성과에 본질적으로 구축된다.
 
-We've examined every angle of lexical scope, from the breadth of the global scope down through nested block scopes, into the intricacies of the variable lifecycle. Then we leveraged lexical scope to understand the full power of closure.
+전역 스코프의 범위부터 중첩 블록 스코프를 거쳐 변수 생명 주기의 복잡성에 이르기 까지 렉시컬 스코프의 모든 것을 조사했다. 그리고 클로저의 모든 힘을 이해하기 위해 렉시컬 스코프를 활용했다.
 
-Take a moment to reflect on how far you've come in this journey so far; you've taken big steps in getting to know JS more deeply!
+잠시 시간을 내어 얼마나 멀리 이 여정까지 온 건지 되돌아 보자. JS를 더 깊이 알기 위해 큰 발걸음을 내딛었다.
 
-The central theme of this book has been that understanding and mastering scope and closure is key in properly structuring and organizing our code, especially the decisions on where to store information in variables.
+이 책의 중심 테마는 스코프와 클로저를 이해하고 마스터 하는 것이, 특히 변수로 정보를 어디에 저장할지 결정하는 코드를 적절하게 구성하는 데 핵심이라는 것이었다.
 
-Our goal in this final chapter is to appreciate how modules embody the importance of these topics, elevating them from abstract concepts to concrete, practical improvements in building programs.
+이 마지막 장의 목표는 프로그램을 만드는 데 있어 추상적인 개념으로 부터 실용적인 개선으로 끌어올리면서, 모듈이 이러한 주제의 중요성을 구현하는 방법을 이해하는 것이다.
 
-## Encapsulation and Least Exposure (POLE)
+## 캡슐화 및 최소 노출 (POLE)
 
-Encapsulation is often cited as a principle of object-oriented (OO) programming, but it's more fundamental and broadly applicable than that. The goal of encapsulation is the bundling or co-location of information (data) and behavior (functions) that together serve a common purpose.
+캡슐화는 객체지향 프로그래밍의 원칙으로 자주 인용된다. 그러나 그 보다 더 근본적이고 넓게 적용된다. 캡슐화의 목표는 공통의 목적을 함께 제공하는 정보(데이터)와 행위(함수)의 결합 또는 공동 배치<sub>co-location</sub>이다.
 
-Independent of any syntax or code mechanisms, the spirit of encapsulation can be realized in something as simple as using separate files to hold bits of the overall program with common purpose. If we bundle everything that powers a list of search results into a single file called "search-list.js", we're encapsulating that part of the program.
+어떤 문법이나 코드 구조의 독립은, 캡슐화의 정신은 공통의 목적을 가진 전체 프로그램의 조각을 묶기 위해 별도의 파일을 사용하는 것으로 간단하게 실현될 수 있다. 만약 검색 결과 목록을 동작시키는 모든 것을 "search-list.js"라는 단일 파일로 묶는다면, 프로그램의 일부분을 캡슐화하고 있는 것이다.
 
-The recent trend in modern front-end programming to organize applications around Component architecture pushes encapsulation even further. For many, it feels natural to consolidate everything that constitutes the search results list—even beyond code, including presentational markup and styling—into a single unit of program logic, something tangible we can interact with. And then we label that collection the "SearchList" component.
+어플리케이션을 구성하기 위한 현대 프론트엔드 프로그램의 최신 트렌드는 컴포넌트 아키텍처를 중심으로 캡슐화로 더욱 나아가고 있다. 대다수가 검색 결과 목록을 구성하는 모든 것(코드를 비롯한 보여지는 마크업과 스타일을 포함하여)을 상호작용할 수 있는 실재하는 어떤 하나의 프로그램 로직 단위로 통합하는 것이 자연스럽다고 느낀다. 그런 다음 "SearchList" 컴포넌트 컬렉션으로 지정한다.
 
-Another key goal is the control of visibility of certain aspects of the encapsulated data and functionality. Recall from Chapter 6 the *least exposure* principle (POLE), which seeks to defensively guard against various *dangers* of scope over-exposure; these affect both variables and functions. In JS, we most often implement visibility control through the mechanics of lexical scope.
+또 다른 핵심 목표는 캡슐화된 데이터와 기능의 특정 측면에 대한 가시성을 제어하는 것이다. 6장에서 스코프 초과 노출의 여러 *위험*을 방어적으로 보호하기 위해 추가하는 *최소 노출<sub>least exposure</sub>* 원칙(POLE)을 상기하자. 변수와 함수 모두에 영향을 미친다. JS에서는 거의 대부분 렉시컬 스코프 기법으로 가시성 제어를 구현한다.
 
-The idea is to group alike program bits together, and selectively limit programmatic access to the parts we consider *private* details. What's not considered *private* is then marked as *public*, accessible to the whole program.
+이 아이디어는 유사한 프로그램 조각을 함께 그룹화하고 *비공개* 세부 사항으로 고려되는 부분에 대한 프로그램의 접근을 선택적으로 제한한다. *비공개*로 고려되지 않는 것은 *공개*로 인식되며, 전체 프로그램에서 접근 가능하다.
 
-The natural effect of this effort is better code organization. It's easier to build and maintain software when we know where things are, with clear and obvious boundaries and connection points. It's also easier to maintain quality if we avoid the pitfalls of over-exposed data and functionality.
+이러한 노력의 자연적 효과는 더 나은 코드 구성이다. 깨끗하고 분명한 경계와 연결점을 가지고, 어디에 있는지 알 때 소프트웨어를 만들고 유지하는 것이 더 쉽다.
 
-These are some of the main benefits of organizing JS programs into modules.
+JS 프로그램을 모듈로 구성하는 것에는 몇 가지 주요 이점이 있다.
 
 ## What Is a Module?
 

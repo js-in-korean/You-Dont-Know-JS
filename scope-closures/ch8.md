@@ -17,7 +17,7 @@
 
 어떤 문법이나 코드 구조의 독립은, 캡슐화의 정신은 공통의 목적을 가진 전체 프로그램의 조각을 묶기 위해 별도의 파일을 사용하는 것으로 간단하게 실현될 수 있다. 만약 검색 결과 목록을 동작시키는 모든 것을 "search-list.js"라는 단일 파일로 묶는다면, 프로그램의 일부분을 캡슐화하고 있는 것이다.
 
-어플리케이션을 구성하기 위한 현대 프론트엔드 프로그램의 최신 트렌드는 컴포넌트 아키텍처를 중심으로 캡슐화로 더욱 나아가고 있다. 대다수가 검색 결과 목록을 구성하는 모든 것(코드를 비롯한 보여지는 마크업과 스타일을 포함하여)을 상호작용할 수 있는 실재하는 어떤 하나의 프로그램 로직 단위로 통합하는 것이 자연스럽다고 느낀다. 그런 다음 "SearchList" 컴포넌트 컬렉션으로 지정한다.
+어플리케이션을 구성하기 위한 현대 프론트엔드 프로그램의 최신 트렌드는 컴포넌트 아키텍처를 중심으로 캡슐화로 더욱 나아가고 있다. 대다수가 검색 결과 목록을 구성하는 모든 것(코드를 비롯한 보여지는 마크업과 스타일을 포함하여)을 상호작용할 수 있는 실재하는 어떤 하나의 프로그램 로직 단위로 통합하는 것이 자연스럽다고 느낀다. 그런 다음 "SearchList" 컴포넌트 모음으로 지정한다.
 
 또 다른 핵심 목표는 캡슐화된 데이터와 기능의 특정 측면에 대한 가시성을 제어하는 것이다. 6장에서 스코프 초과 노출의 여러 *위험*을 방어적으로 보호하기 위해 추가하는 *최소 노출<sub>least exposure</sub>* 원칙(POLE)을 상기하자. 변수와 함수 모두에 영향을 미친다. JS에서는 거의 대부분 렉시컬 스코프 기법으로 가시성 제어를 구현한다.
 
@@ -27,24 +27,24 @@
 
 JS 프로그램을 모듈로 구성하는 것에는 몇 가지 주요 이점이 있다.
 
-## What Is a Module?
+## 모듈은 무엇인가?
 
-A module is a collection of related data and functions (often referred to as methods in this context), characterized by a division between hidden *private* details and *public* accessible details, usually called the "public API."
+모듈은 연관된 데이터와 함수(이 문맥에서는 흔히 메서드로 언급)의 모음이며, 숨겨진 *비공개* 세부 사항과 *공개* 접근 가능한 세부 사항 사이의 구분이 특징이며, 보통 "공개 API"라고 부른다.
 
-A module is also stateful: it maintains some information over time, along with functionality to access and update that information.
+모듈은 또한 상태를 가진다. 시간이 지나도 어떤 정보를, 그 정보에 접근하고 수정하는 기능과 마찬가지로 유지한다.
 
-| NOTE: |
+| 비고: |
 | :--- |
-| A broader concern of the module pattern is fully embracing system-level modularization through loose-coupling and other program architecture techniques. That's a complex topic well beyond the bounds of our discussion, but is worth further study beyond this book. |
+| 모듈 패턴의 광범위한 관심사는 느슨한 결합과 기타 프로그램 아키텍처 기술을 통한 시스템 수준 모듈화를 완전히 수용하는 것이다. |
 
-To get a better sense of what a module is, let's compare some module characteristics to useful code patterns that aren't quite modules.
+모듈이 무엇인지 더 잘 이해하기 위해서 일부 모듈 특징을 모듈이 아닌 쓸만한 코드 패턴과 비교해보자.
 
-### Namespaces (Stateless Grouping)
+### 네임스페이스 (상태가 없는 그룹화)
 
-If you group a set of related functions together, without data, then you don't really have the expected encapsulation a module implies. The better term for this grouping of *stateless* functions is a namespace:
+데이터 없이 연관된 함수의 집합을 함께 모은다면 모듈이 암시하는 예상 캡슐화는 정말로 가질 수 없다. *상태가 없는* 함수의 그룹화에 더 적합한 용어는 네이스페이스이다.
 
 ```js
-// namespace, not module
+// 네임스페이스, 모듈이 아님
 var Utils = {
     cancelEvt(evt) {
         evt.preventDefault();
@@ -62,16 +62,16 @@ var Utils = {
 };
 ```
 
-`Utils` here is a useful collection of utilities, yet they're all state-independent functions. Gathering functionality together is generally good practice, but that doesn't make this a module. Rather, we've defined a `Utils` namespace and organized the functions under it.
+여기서 `Utils`는 유용한 유틸리티 모음이지만 모두 상태 독립적인 함수이다. 기능을 함께 모으는 것은 일반적으로 좋은 방법이지만 모듈이 되지 않는다. 대신 `Utils` 네임스페이스를 정의했고 그 아래에 함수를 구성했다.
 
-### Data Structures (Stateful Grouping)
+### 자료 구조 (상태가 있는 그룹화)
 
-Even if you bundle data and stateful functions together, if you're not limiting the visibility of any of it, then you're stopping short of the POLE aspect of encapsulation; it's not particularly helpful to label that a module.
+데이터와 상태가 있는 함수를 함께 묶어도 이것의 가시성을 제한하고 있지 않는다면 캡슐화의 POLE 측면에는 미치지 못한다. 모듈로 이름 붙이기에는 그다지 도움이 되지 않는다.
 
-Consider:
+아래를 보자.
 
 ```js
-// data structure, not module
+// 자료 구조, 모듈이 아님
 var Student = {
     records: [
         { id: 14, name: "Kyle", grade: 86 },
@@ -91,15 +91,15 @@ Student.getName(73);
 // Suzy
 ```
 
-Since `records` is publicly accessible data, not hidden behind a public API, `Student` here isn't really a module.
+`records`는 공개적으로 접근 가능한 데이터이고 공개 API 뒤로 숨겨져 있지 않기 때문에 `Student`는 실제로 모듈이 아니다.
 
-`Student` does have the data-and-functionality aspect of encapsulation, but not the visibility-control aspect. It's best to label this an instance of a data structure.
+`Student`는 캡슐화의 데이터 및 기능 측면을 가진다. 하지만 가시성 제어 측면은 가지고 있지 않다. 자료 구조의 인스턴스로 이름 붙이는 것이 최선이다.
 
-### Modules (Stateful Access Control)
+### 모듈 (상태가 있는 접근 제어)
 
-To embody the full spirit of the module pattern, we not only need grouping and state, but also access control through visibility (private vs. public).
+모듈 패턴의 완전한 정신을 구현하기 위해서는 그룹화 및 상태뿐만 아니라 가시성(비공개 vs 공개)을 통한 접근 제어가 필요하다.
 
-Let's turn `Student` from the previous section into a module. We'll start with a form I call the "classic module," which was originally referred to as the "revealing module" when it first emerged in the early 2000s. Consider:
+이전 섹션의 `Student`를 모듈로 바꿔보자. 내가 "클래식 모듈"이라 부르는 형태부터 시작할 것이다. 2000년대 초에 처음 등장했을 때는 원래 "리빌링<sub>revealing</sub> 모듈"로 불렸다. 아래를 보자.
 
 ```js
 var Student = (function defineStudent(){
@@ -129,25 +129,26 @@ var Student = (function defineStudent(){
 Student.getName(73);   // Suzy
 ```
 
-`Student` is now an instance of a module. It features a public API with a single method: `getName(..)`. This method is able to access the private hidden `records` data.
+`Student`는 지금 모듈의 인스턴스이다. 단일 메서드 `getName(..)`을 가진 공개 API가 특징이다. 이 메서드는 비공개로 숨겨진 `records` 데이터에 접근할 수 있다.
 
-| WARNING: |
+| 경고: |
 | :--- |
-| I should point out that the explicit student data being hard-coded into this module definition is just for our illustration purposes. A typical module in your program will receive this data from an outside source, typically loaded from databases, JSON data files, Ajax calls, etc. The data is then injected into the module instance typically through method(s) on the module's public API. |
+| 이 모듈 정의에서 코드로 넣어진 명시적인 학생 데이터는 단지 우리의 예시 목적을 위한 것임을 지적하고 싶다. 당신의 프로그램에서 보통의 모듈은 이 데이터를 바깥의 출처에서 받을 것이다. 일반적으로 데이터베이스, JSON 데이터 파일, Ajax 호출 등이다. 그런 다음 데이터는 일반적으로 모듈의 공개 API로 된 메서드를 통하여 모듈 인스턴스에 주입된다.  |
 
-How does the classic module format work?
+클래식 모듈 형식은 어떻게 동작하는가?
 
-Notice that the instance of the module is created by the `defineStudent()` IIFE being executed. This IIFE returns an object (named `publicAPI`) that has a property on it referencing the inner `getName(..)` function.
+모듈의 인스턴스는 실행되는 `defineStudent()` IIFE에 의해 생성된다는 것을 주목해라. 이 IIFE는 내부 `getName(..)` 함수를 참조하는 속성이 있는 객체(`publicAPI`)를 반환한다.
 
-Naming the object `publicAPI` is stylistic preference on my part. The object can be named whatever you like (JS doesn't care), or you can just return an object directly without assigning it to any internal named variable. More on this choice in Appendix A.
+`publicAPI` 객체로 이름 지은 것은 내가 선호하는 스타일이다. 이 객체는 당신이 좋아하는 어떤 이름이든 될 수 있다(JS는 신경쓰지 않는다). 또는 내부의 이름 있는 변수에 할당하지 않고 객체를 그냥 반환할 수 있다. 이 선택에 대한 자세한 내용은 부록 A에 있다.
 
-From the outside, `Student.getName(..)` invokes this exposed inner function, which maintains access to the inner `records` variable via closure.
+외부에서 `Student.getName(..)`은 이 노출된 내부 함수를 호출하여, 클로저를 통해 내부 `records` 변수에 대한 접근을 유지한다.
 
-You don't *have* to return an object with a function as one of its properties. You could just return a function directly, in place of the object. That still satisfies all the core bits of a classic module.
+속성 중 하나로 함수를 가지는 객체를 반환해서는 *안된다*. 그냥 객체 대신 함수를 직접 반환할 수 있다. 클랙식 모듈의 핵심 부분을 여전히 만족한다.
+> 뭔 말인지...
 
-By virtue of how lexical scope works, defining variables and functions inside your outer module definition function makes everything *by default* private. Only properties added to the public API object returned from the function will be exported for external public use.
+렉시컬 스코프<sub>lexical scope</sub> 작동 방식에 따라 외부 모듈 정의 함수 안에서 변수와 함수를 정의하는 것은 모든 것을 *기본적으로* 비공개로 만든다. 오직 그 함수로 반환된 공개 API 객체에 추가된 속성만이 외부의 공개적인 사용을 위해 내보내진다.
 
-The use of an IIFE implies that our program only ever needs a single central instance of the module, commonly referred to as a "singleton." Indeed, this specific example is simple enough that there's no obvious reason we'd need anything more than just one instance of the `Student` module.
+IIFE의 사용은 프로그램이 보통 "싱글톤"이라 불리는 모듈의 단일 중앙 인스턴스를 필요로 한다는 것을 의미한다. 실제로, 이 구체적인 예제는 `Student` 모듈의 인스턴스 이상의 것이 필요할 이유가 없을 정도로 충분히 간단하다.
 
 #### Module Factory (Multiple Instances)
 

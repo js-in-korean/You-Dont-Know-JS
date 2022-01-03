@@ -149,12 +149,13 @@ Student.getName(73);   // Suzy
 
 IIFE의 사용은 프로그램이 보통 "싱글톤"이라 불리는 모듈의 단일 중앙 인스턴스를 필요로 한다는 것을 의미한다. 실제로, 이 구체적인 예제는 `Student` 모듈의 인스턴스 이상의 것이 필요할 이유가 없을 정도로 충분히 간단하다.
 
-#### Module Factory (Multiple Instances)
+#### 모듈 팩토리 (여러개의 인스턴스)
 
 But if we did want to define a module that supported multiple instances in our program, we can slightly tweak the code:
+하지만 프로그램에서 여러개의 인스턴스를 지원하는 모듈을 정의하려면 코드를 조금 수정할 수 있다.
 
 ```js
-// factory function, not singleton IIFE
+// 팩토리 함수, 싱글톤 IIFE가 아님
 function defineStudent() {
     var records = [
         { id: 14, name: "Kyle", grade: 86 },
@@ -184,8 +185,10 @@ fullTime.getName(73);            // Suzy
 ```
 
 Rather than specifying `defineStudent()` as an IIFE, we just define it as a normal standalone function, which is commonly referred to in this context as a "module factory" function.
+IIFE로 `defineStudent()`를 구현하지 않고 일반 독립실행형 함수로 정의하며, 일반적으로 "모듈 팩토리" 함수라고 한다.
 
 We then call the module factory, producing an instance of the module that we label `fullTime`. This module instance implies a new instance of the inner scope, and thus a new closure that `getName(..)` holds over `records`. `fullTime.getName(..)` now invokes the method on that specific instance.
+그런 다음 모듈 팩토리를 호출하여 `fullTime`이라고 이름 붙인 모듈 인스턴스를 생성한다. 이 모듈 인스턴스는 안쪽 스코프의 새 인스턴스를 의미하므로 새로운 클로저 `getName(..)`은 `records`를 가지고 있다. `fullTime.getName(..)`은 이제 특정 인스턴스에서 메서드를 실행한다.
 
 #### Classic Module Definition
 

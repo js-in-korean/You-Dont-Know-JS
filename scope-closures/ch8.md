@@ -200,11 +200,11 @@ IIFE로 `defineStudent()`를 구현하지 않고 일반 독립실행형 함수�
 
 이 클래식 모듈 접근법에 대한 다른 변형을 살펴보고 싶다면 부록 A를 참고해라.
 
-## Node CommonJS Modules
+## Node CommonJS 모듈
 
-In Chapter 4, we introduced the CommonJS module format used by Node. Unlike the classic module format described earlier, where you could bundle the module factory or IIFE alongside any other code including other modules, CommonJS modules are file-based; one module per file.
+4장에서 Node에서 사용하는 CommonJS 모듈 형식을 소개했다. 앞에서 설명한 클래식 모듈 형식과 달리 모듈 팩토리 또는 다른 모듈을 포함하는 어떤 다른 코드와 함께 IIFE로 묶을 수 있으며 CommonJS 모듈은 파일 기반이고 파일당 하나의 모듈이다.
 
-Let's tweak our module example to adhere to that format:
+그 형식에 딱 맞는 모듈 예제를 수정해보자.
 
 ```js
 module.exports.getName = getName;
@@ -226,22 +226,24 @@ function getName(studentID) {
 }
 ```
 
-The `records` and `getName` identifiers are in the top-level scope of this module, but that's not the global scope (as explained in Chapter 4). As such, everything here is *by default* private to the module.
+`records`와 `getName` 식별자는 모듈의 최상위 스코프에 있다. 그러나 전역 스코프(4장에서 설명)는 아니다. 따라서 여기 있는 모든 것은 모듈에 *기본적으로* 비공개이다.
 
-To expose something on the public API of a CommonJS module, you add a property to the empty object provided as `module.exports`. In some older legacy code, you may run across references to just a bare `exports`, but for code clarity you should always fully qualify that reference with the `module.` prefix.
+CommonJS 모듈의 공개 API에서 어떤 것을 노출하기 위해서 `module.exports`로 제공되는 비어있는 객체에 속성을 추가한다. 일부 오래된 레거시 코드에서는 그냥 텅 빈 `exports`에 참조를 전달해야 할지 모른다. 그러나 명확한 코드를 위해서 항상 `module.` 접두사를 가진 참조로 완전히 검증해야 한다.
 
-For style purposes, I like to put my "exports" at the top and my module implementation at the bottom. But these exports can be placed anywhere. I strongly recommend collecting them all together, either at the top or bottom of your file.
+스타일 목적을 위해서 상단에 "익스포트<sub>exports</sub>"를 넣고 하단에 모듈 구현을 넣는 것을 좋아한다. 하지만 이 익스포트는 어디에도 위치할 수 있다. 파일의 상단이나 하단에 모두 함께 모아두는 것을 강력히 권장한다.
 
-Some developers have the habit of replacing the default exports object, like this:
+어떤 개발자는 기본 익스포트 객체를 아래처럼 교체하는 습관이 있다.
 
 ```js
-// defining a new object for the API
+// API를 위해 새 객체를 정의
 module.exports = {
     // ..exports..
 };
 ```
 
-There are some quirks with this approach, including unexpected behavior if multiple such modules circularly depend on each other. As such, I recommend against replacing the object. If you want to assign multiple exports at once, using object literal style definition, you can do this instead:
+이 접근법에는 만약 다수의 모듈이 서로 순환적으로 의존한다면 예상치 못한 동작을 포함하는 몇 가지 이상한 것이 있다. 이와 같이 객체를 교체하는 것을 권장한다(??? 권장하지 않아야 할 것 같은데...). 만약 한번에 다수의 익스포틑 할당하길 원한다면, 객체 리터럴<sub>literal</sub> 스타일 정의를 사용하여 아래처럼 사용할 수 있다.
+
+> 익스포트 -> 외부 노출?
 
 ```js
 Object.assign(module.exports,{
@@ -249,9 +251,9 @@ Object.assign(module.exports,{
 });
 ```
 
-What's happening here is defining the `{ .. }` object literal with your module's public API specified, and then `Object.assign(..)` is performing a shallow copy of all those properties onto the existing `module.exports` object, instead of replacing it This is a nice balance of convenience and safer module behavior.
+여기서 일어나는 일은 `{ .. }` 모듈의 공개 API가 지정된 객체 리터럴을 정의하는 것이다. 그러면 `Object.assign(..)`이 존재하는 `module.exports` 객체로 교체하는 대신에 그 모든 속성의 얕은 복사를 수행한다. 편리하고 더 안전한 모듈 동작의 좋은 균형이다.
 
-To include another module instance into your module/program, use Node's `require(..)` method. Assuming this module is located at "/path/to/student.js", this is how we can access it:
+모듈/프로그램에 다른 모듈 인스턴스를 포함하기 위해서는 Node의 `require(..)` 메서드를 사용해라. 이 모듈이 "/path/to/student.js"에 위치한다고 가정하면 아래처럼 접근할 수 있다.
 
 ```js
 var Student = require("/path/to/student.js");
@@ -260,25 +262,26 @@ Student.getName(73);
 // Suzy
 ```
 
-`Student` now references the public API of our example module.
+`Student`는 지금 예제 모듈의 공개 API를 참조한다.
 
-CommonJS modules behave as singleton instances, similar to the IIFE module definition style presented before. No matter how many times you `require(..)` the same module, you just get additional references to the single shared module instance.
+CommonJS 모듈은 싱글톤 인스턴스로서 동작한다. 앞서 설명한 IIFE 모듈 정의 스타일과 비슷하다. 같은 모듈에서 `require(..)`를 많이 사용하더라도 단지 단일 공유 모듈 인스턴스에 대한 추가 참조만 얻는다.
 
-`require(..)` is an all-or-nothing mechanism; it includes a reference of the entire exposed public API of the module. To effectively access only part of the API, the typical approach looks like this:
+`require(..)`는 양자택일 구조이다. 모듈의 공개 API로 노출된 전체 참조를 포함한다. API의 일부에만 효과적으로 접근하기 위한 일반적인 접근법은 아래와 같다.
 
 ```js
 var getName = require("/path/to/student.js").getName;
 
-// or alternately:
+// 대안:
 
 var { getName } = require("/path/to/student.js");
 ```
 
-Similar to the classic module format, the publicly exported methods of a CommonJS module's API hold closures over the internal module details. That's how the module singleton state is maintained across the lifetime of your program.
+클래식 모듈 형식과 비슷하게 CommonJS 모듈의 API로 공개적으로 노출된 메서드는 상세한 내부 모듈을 클로저로 잡고 있다. 프로그램의 수명 동안 모듈 싱글톤 상태가 유지되는 방법이다.
+> 뭔 소리인지...
 
-| NOTE: |
+| 비고: |
 | :--- |
-| In Node `require("student")` statements, non-absolute paths (`"student"`) assume a ".js" file extension and search "node_modules". |
+| Node `require("student")` 구문에서 절대적이지 않은 경로(`"student"`)는 파일 확장자를 ".js"로 가정하고 "node_modules"를 검색한다. |
 
 ## Modern ES Modules (ESM)
 

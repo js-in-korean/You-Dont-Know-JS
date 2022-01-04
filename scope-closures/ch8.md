@@ -230,9 +230,9 @@ function getName(studentID) {
 
 CommonJS 모듈의 공개 API에서 어떤 것을 노출하기 위해서 `module.exports`로 제공되는 비어있는 객체에 속성을 추가한다. 일부 오래된 레거시 코드에서는 그냥 텅 빈 `exports`에 참조를 전달해야 할지 모른다. 그러나 명확한 코드를 위해서 항상 `module.` 접두사를 가진 참조로 완전히 검증해야 한다.
 
-스타일 목적을 위해서 상단에 "익스포트<sub>exports</sub>"를 넣고 하단에 모듈 구현을 넣는 것을 좋아한다. 하지만 이 익스포트는 어디에도 위치할 수 있다. 파일의 상단이나 하단에 모두 함께 모아두는 것을 강력히 권장한다.
+스타일 목적을 위해서 상단에 "exports"를 넣고 하단에 모듈 구현을 넣는 것을 좋아한다. 하지만 이 내보내기<sub>exports</sub>는 어디에도 위치할 수 있다. 파일의 상단이나 하단에 모두 함께 모아두는 것을 강력히 권장한다.
 
-어떤 개발자는 기본 익스포트 객체를 아래처럼 교체하는 습관이 있다.
+어떤 개발자는 기본 내보내기 객체를 아래처럼 교체하는 습관이 있다.
 
 ```js
 // API를 위해 새 객체를 정의
@@ -242,8 +242,6 @@ module.exports = {
 ```
 
 이 접근법에는 만약 다수의 모듈이 서로 순환적으로 의존한다면 예상치 못한 동작을 포함하는 몇 가지 이상한 것이 있다. 이와 같이 객체를 교체하는 것을 권장한다(??? 권장하지 않아야 할 것 같은데...). 만약 한번에 다수의 익스포틑 할당하길 원한다면, 객체 리터럴<sub>literal</sub> 스타일 정의를 사용하여 아래처럼 사용할 수 있다.
-
-> 익스포트 -> 외부 노출?
 
 ```js
 Object.assign(module.exports,{
@@ -283,11 +281,11 @@ var { getName } = require("/path/to/student.js");
 | :--- |
 | Node `require("student")` 구문에서 절대적이지 않은 경로(`"student"`)는 파일 확장자를 ".js"로 가정하고 "node_modules"를 검색한다. |
 
-## Modern ES Modules (ESM)
+## 모던 ES 모듈 (ESM)
 
-The ESM format shares several similarities with the CommonJS format. ESM is file-based, and module instances are singletons, with everything private *by default*. One notable difference is that ESM files are assumed to be strict-mode, without needing a `"use strict"` pragma at the top. There's no way to define an ESM as non-strict-mode.
+ESM 형식은 CommonJS 형식과 몇 가지 형식을 공유한다. ESM은 파일 기반이고 모듈 인스턴스는 *기본적으로* 모든 것이 비공개인 싱글톤이다. 한 가지 주목할 만한 차이점은 ESM 파일은 엄격모드<sub>strict-mode</sub>로 간주된다. 상단에 `"use strict"` 지시문<sub>pragma</sub>이 필요없다. ESM을 비엄격모드<sub>non-strict-mode</sub>로 정의할 방법은 없다.
 
-Instead of `module.exports` in CommonJS, ESM uses an `export` keyword to expose something on the public API of the module. The `import` keyword replaces the `require(..)` statement. Let's adjust "students.js" to use the ESM format:
+CommonJS의 `module.exports` 대신에 ESM은 모듈의 공개 API로 어떤 것을 노출하기 위해서 `export` 키워드를 사용한다. `import` 키워드는 `require(..)` 구문을 교체한다. ESM 형식을 사용하도록 "students.js"를 수정해보자.
 
 ```js
 export { getName };
@@ -309,9 +307,9 @@ function getName(studentID) {
 }
 ```
 
-The only change here is the `export { getName }` statement. As before, `export` statements can appear anywhere throughout the file, though `export` must be at the top-level scope; it cannot be inside any other block or function.
+유일한 차이점은 `export { getName }` 구문이다. 이전과 마찬가지로 `export` 구문은 파일 어디에나 나타날 수 있지만 최상위 스코프에 있어야 한다. 다른 블록이나 함수 내부에 있을 수 없다.
 
-ESM offers a fair bit of variation on how the `export` statements can be specified. For example:
+ESM은 `export` 구문은 표현할 수 있는 방법을 적당히 다양하게 제공한다. 아래 예제를 보자.
 
 ```js
 export function getName(studentID) {
@@ -319,9 +317,9 @@ export function getName(studentID) {
 }
 ```
 
-Even though `export` appears before the `function` keyword here, this form is still a `function` declaration that also happens to be exported. That is, the `getName` identifier is *function hoisted* (see Chapter 5), so it's available throughout the whole scope of the module.
+여기서 `function` 키워드 앞에 `export`가 있다고 해도 이 형식은 여전히 `function` 선언이고 외부에 노출할 수 있다. 즉, `getName` 식별자는 *함수 호이스팅<sub>function hoisted</sub>*(5장 참조)이고 모듈의 전체 스코프에서 사용 가능하다.
 
-Another allowed variation:
+다른 변형은 아래와 같다.
 
 ```js
 export default function getName(studentID) {
@@ -329,11 +327,11 @@ export default function getName(studentID) {
 }
 ```
 
-This is a so-called "default export," which has different semantics from other exports. In essence, a "default export" is a shorthand for consumers of the module when they `import`, giving them a terser syntax when they only need this single default API member.
+다른 내보내기와는 다른 의미를 가지는 "default export"로 부른다. 본질적으로 "default export"는 모듈의 사용자들이 `import`할 때를 위한 축약이고, 하나의 기본 API 멤버만 필요할 때 간결한 문법을 제공한다.
 
-Non-`default` exports are referred to as "named exports."
+`default`가 아닌 내보내기는 "named exports"라 부른다.
 
-The `import` keyword—like `export`, it must be used only at the top level of an ESM outside of any blocks or functions—also has a number of variations in syntax. The first is referred to as "named import":
+`import`는 `export`처럼 ESM의 어떤 블록이나 함수의 바깥인 최상위에서만 사용되어야 하고, 문법상으로는 몇 가지 변형이 있다. 첫번째 것은 "named import"로 부른다.
 
 ```js
 import { getName } from "/path/to/students.js";
@@ -341,9 +339,9 @@ import { getName } from "/path/to/students.js";
 getName(73);   // Suzy
 ```
 
-As you can see, this form imports only the specifically named public API members from a module (skipping anything not named explicitly), and it adds those identifiers to the top-level scope of the current module. This type of import is a familiar style to those used to package imports in languages like Java.
+보다시피 이 형식은 모듈로 부터 오직 특정한 이름이 있는 공개 API 멤버만 가져오고(명시적으로 이름이 없는 것은 생략) 현재 모듈의 최상위 스코프에 식별자를 추가한다. 가져오기의 이러한 유형은 Java같은 언어에서 패키지를 가져오는데 사용하는 것과 비슷한 스타일이다.
 
-Multiple API members can be listed inside the `{ .. }` set, separated with commas. A named import can also be *renamed* with the `as` keyword:
+여러개의 API 멤버는 `{ .. }` 묶은 안에서 콤마로 분리하여 나열할 수 있다. 이름 있는 가져오기는 또한 `as` 키워드와 함께 *이름을 변경*할 수 있다.
 
 ```js
 import { getName as getStudentName }
@@ -353,7 +351,7 @@ getStudentName(73);
 // Suzy
 ```
 
-If `getName` is a "default export" of the module, we can import it like this:
+만약 `getName`이 모듈의 "default export"라면 아래처럼 가져올 수 있다.
 
 ```js
 import getName from "/path/to/students.js";
@@ -361,16 +359,16 @@ import getName from "/path/to/students.js";
 getName(73);   // Suzy
 ```
 
-The only difference here is dropping the `{ }` around the import binding. If you want to mix a default import with other named imports:
+가져오기 묶음 주변에 `{ }`를 없애는 것이 유일한 차이점이다. 기본 가져오기와 다른 이름있는 가져오기를 섞어서 사용하길 원한다면 아래를 보자.
 
 ```js
-import { default as getName, /* .. others .. */ }
+import { default as getName, /* .. 다른 것 .. */ }
    from "/path/to/students.js";
 
 getName(73);   // Suzy
 ```
 
-By contrast, the other major variation on `import` is called "namespace import":
+이와 대조적으로 `import`의 다른 큰 변형은 "namespace import"라 부른다.
 
 ```js
 import * as Student from "/path/to/students.js";
@@ -378,11 +376,12 @@ import * as Student from "/path/to/students.js";
 Student.getName(73);   // Suzy
 ```
 
-As is likely obvious, the `*` imports everything exported to the API, default and named, and stores it all under the single namespace identifier as specified. This approach most closely matches the form of classic modules for most of JS's history.
+당연한 것처럼 `*`는 API에 내보내진 모든 것과 기본 그리고 이름 있는 것을 가져온다. 그리고 그것을 특정된 네임스페이스 식별자 아래에 저장한다. 이 접근법은 JS의 역사 대부분에서 클래식 모듈의 형태와 가장 밀접하게 일치한다.
+> JS의 역사 대부분에서?
 
-| NOTE: |
+| 비고: |
 | :--- |
-| As of the time of this writing, modern browsers have supported ESM for a few years now, but Node's stable'ish support for ESM is fairly recent, and has been evolving for quite a while. The evolution is likely to continue for another year or more; the introduction of ESM to JS back in ES6 created a number of challenging compatibility concerns for Node's interop with CommonJS modules. Consult Node's ESM documentation for all the latest details: https://nodejs.org/api/esm.html |
+| 이 책을 쓰는 시점에, 모던 브라우저는 몇 년 전부터 ESM를 지원하고 있다. 그러나 ESM에 대한 Node의 안정적인 지원은 상당히 최근이며 꽤 오랫동안 발전되고 있다. 이 발전은 수 년 동안 계속될 것 같다. ES6에서 JS에 ESM을 도입함에 따라 Node의 CommonJS 모듈과의 연동을 위한 까다로운 호환성 문제가 야기되었다. 최신 내용에 대해서는 Node의 ESM 문서를 참고해라. https://nodejs.org/api/esm.html |
 
 ## Exit Scope
 

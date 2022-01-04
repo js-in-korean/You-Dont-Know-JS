@@ -383,14 +383,14 @@ Student.getName(73);   // Suzy
 | :--- |
 | 이 책을 쓰는 시점에, 모던 브라우저는 몇 년 전부터 ESM를 지원하고 있다. 그러나 ESM에 대한 Node의 안정적인 지원은 상당히 최근이며 꽤 오랫동안 발전되고 있다. 이 발전은 수 년 동안 계속될 것 같다. ES6에서 JS에 ESM을 도입함에 따라 Node의 CommonJS 모듈과의 연동을 위한 까다로운 호환성 문제가 야기되었다. 최신 내용에 대해서는 Node의 ESM 문서를 참고해라. https://nodejs.org/api/esm.html |
 
-## Exit Scope
+## 스코프 나가기
 
-Whether you use the classic module format (browser or Node), CommonJS format (in Node), or ESM format (browser or Node), modules are one of the most effective ways to structure and organize your program's functionality and data.
+클래식 모듈 형식(브라우저 또는 Node)을 사용하는지에 관계없이 CommonJS 형식(Node) 또는 ESM 형식(브라우저 또는 Node) 모듈은 프로그램의 기능과 데이터를 구조화하고 구성하는 가장 효율적인 방법 중 하나이다.
 
-The module pattern is the conclusion of our journey in this book of learning how we can use the rules of lexical scope to place variables and functions in proper locations. POLE is the defensive *private by default* posture we always take, making sure we avoid over-exposure and interact only with the minimal public API surface area necessary.
+모듈 패턴은 적절한 위치에 변수와 함수를 배치하도록 렉시컬<sub>lexical</sub> 스코프 규칙을 어떻게 사용할 수 있는지 배우는 이 책에서 우리 여정의 결론이다. POLE는 항상 취할 수 있는 방어적인 *기본적으로 비공개* 태도이고 과잉 노출을 방어하며 필요한 최소한의 공개 API 겉에서만 상호작용하도록 만든다.
 
-And underneath modules, the *magic* of how all our module state is maintained is closures leveraging the lexical scope system.
+그리고 모듈 아래에서 모든 모듈 상태가 유지되는 *마법*은 렉시컬 스코프 시스템을 활용하는 클로저이다.
 
-That's it for the main text. Congratulations on quite a journey so far! As I've said numerous times throughout, it's a really good idea to pause, reflect, and practice what we've just discussed.
+본론은 여기까지이다. 지금까지의 멋진 여정을 축하한다. 여러번 말했듯이 논의한 것들을 멈추고 성찰하고 실천하는 것은 좋은 생각이다.
 
-When you're comfortable and ready, check out the appendices, which dig deeper into some of the corners of these topics, and also challenge you with some practice exercises to solidify what you've learned.
+편안하고 준비가 되었을 때, 이러한 주제들의 일부 구석을 파고드는 부록을 확인해라. 그리고 또한 배운 것을 굳히기 위해 실습과 함께 도전해라.

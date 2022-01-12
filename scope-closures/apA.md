@@ -444,18 +444,18 @@ The benefit of `void` is, it clearly communicates at the beginning of the functi
 
 However you define your IIFEs, show them some love by giving them names.
 
-## Hoisting: Functions and Variables
+## 호이스팅: 함수와 변수
 
-Chapter 5 articulated both *function hoisting* and *variable hoisting*. Since hoisting is often cited as mistake in the design of JS, I wanted to briefly explore why both these forms of hoisting *can* be beneficial and should still be considered.
+5장에서는 *함수 호이스팅*과 *변수 호이스팅*에 대해서 다루었다. 호이스팅은 종종 JS 설계상의 실수로 언급되기 때문에, 왜 이 두 형태의 호이스팅이 유용하며 그리고 고려되어야 하는지를 간략하게 설명하고자 한다. 
 
-Give hoisting a deeper level of consideration by considering the merits of:
+다음의 장점들을 생각하며 호이스팅을 더 깊게 이해해보자
 
-* Executable code first, function declarations last
-* Semantic placement of variable declarations
+* 실행 가능한 코드를 먼저, 함수 선언을 나중에
+* 변수 선언의 문맥적 배치
 
-### Function Hoisting
+### 함수 호이스팅
 
-To review, this program works because of *function hoisting*:
+이 프로그램은 *함수 호이스팅* 으로 작동한다.
 
 ```js
 getStudents();
@@ -467,11 +467,11 @@ function getStudents() {
 }
 ```
 
-The `function` declaration is hoisted during compilation, which means that `getStudents` is an identifier declared for the entire scope. Additionally, the `getStudents` identifier is auto-initialized with the function reference, again at the beginning of the scope.
+`function` 선언은 컴파일 동안 호이스팅된다. 다시 말하면 `getStudents`은 전체 스코프에 선언된 식별자라는 것이다. 게다가 `getStudents` 식별자는 스코프 시작 부분에서 함수 참조와 함께 다시 자동 초기화된다.
 
-Why is this useful? The reason I prefer to take advantage of *function hoisting* is that it puts the *executable* code in any scope at the top, and any further declarations (functions) below. This means it's easier to find the code that will run in any given area, rather than having to scroll and scroll, hoping to find a trailing `}` marking the end of a scope/function somewhere.
+왜 이것이 유용할까? *function hoisting*은 *실행가능한* 코드를 상위의 어떤 스코프에나 둘 수 있고 선언들 (함수)을 더 아래에 둘 수 있다. 이것은 동작하는 코드를 찾기 쉽게 도와주는데, 스코프/함수의 끝을 알기 위해 `}`를 찾아 계속 스크롤할 필요가 없기 때문이다.
 
-I take advantage of this inverse positioning in all levels of scope:
+이러한 위치의 역전은 모든 스코프 레벨에서 찾을 수 있다.
 
 ```js
 getStudents();
@@ -493,9 +493,9 @@ function getStudents() {
 }
 ```
 
-When I first open a file like that, the very first line is executable code that kicks off its behavior. That's very easy to spot! Then, if I ever need to go find and inspect `getStudents()`, I like that its first line is also executable code. Only if I need to see the details of `doSomething()` do I go and find its definition down below.
+위 파일을 처음 열었을 때 맨 첫 번째 줄은 실행 가능한 코드이다. 그것은 매우 발견하기 쉽다! 그런 다음 `getStudents()`를 찾아 확인해야 한다면 첫 번째 줄도 실행 가능한 코드인 것이 좋다. `doSomething()`의 세부 사항을 봐야 할 경우에만 아래에 있는 정의를 찾아간다.
 
-In other words, I think *function hoisting* makes code more readable through a flowing, progressive reading order, from top to bottom.
+즉, *함수 호이스팅*은 위에서 아래로 흘러가는 점진적인 읽기 순서를 통해 코드를 보다 쉽게 읽을 수 있게 한다.
 
 ### Variable Hoisting
 

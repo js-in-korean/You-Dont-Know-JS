@@ -161,17 +161,17 @@ The `let` declaration form does not allow re-declaration (see Chapter 5). But th
 
 You'll rarely run into any case where the scope of a function's name identifier matters. But again, it's good to know how these mechanisms actually work. To avoid being bitten, never shadow function name identifiers.
 
-## Anonymous vs. Named Functions
+## 익명 함수 vs. 기명 함수
 
-As discussed in Chapter 3, functions can be expressed either in named or anonymous form. It's vastly more common to use the anonymous form, but is that a good idea?
+3장에서 이야기한 것처럼, 함수는 익명이나 기명 형태로 나타낼 수 있다. 익명 형태를 사용하는 것이 더 일반적이지만, 정말로 좋은 생각일까?
 
-As you contemplate naming your functions, consider:
+함수에 이름을 지정하고자 할 때는 다음을 고려하라:
 
-* Name inference is incomplete
-* Lexical names allow self-reference
-* Names are useful descriptions
-* Arrow functions have no lexical names
-* IIFEs also need names
+* 이름 추론은 완전한 것이 아니다.
+* 이름은 어휘적으로 자신을 참조할 수 있도록 한다.
+* 이름은 유용한 설명이다.
+* 화살표 함수는 어휘적인 이름을 갖지 않는다.
+* IIFE도 이름이 필요하다.
 
 ### Explicit or Inferred Names?
 

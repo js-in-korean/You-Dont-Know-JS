@@ -800,7 +800,7 @@ But alas, that's not how it landed. `let` has a TDZ because `const` needs a TDZ,
 
 ## 동기식 콜백은 여전히 클로저일까?
 
-챕터 7에서 클로저를 해결하기 위해 2가지 다른 모델을 제시했다.
+7장에서 클로저를 해결하기 위해 2가지 다른 모델을 제시했다.
 
 * 클로저는 함수가 전달되어 바깥 스코프에서 **호출해도** 외부 변수를 기억하는 함수 인스턴스다.
 
@@ -817,7 +817,7 @@ But alas, that's not how it landed. `let` has a TDZ because `const` needs a TDZ,
 
 ### 콜백이란 무엇인가?
 
-클로저를 다시 살펴보기 전에 "콜백"이라는 단어에 대해 잠시 살펴보자. "콜백"이 *비동기 콜백* 및 *동기 콜백*과 동의어라는 것은 일반적으로 받아들여지는 규범이다. 나는 이것이 좋은 생각이라는 데 동의하지 않는다고 생각한다. 그래서 그 이유를 설명하고 다른 용어로 바꿀 것을 제안한다.
+클로저를 다시 살펴보기 전에 "콜백"이라는 단어에 대해 잠시 살펴보자. "콜백"이 *비동기 콜백* 및 *동기 콜백*과 동의어라는 것은 일반적으로 받아들여지는 규범이다. 나는 이것이 좋은 생각은 아닌 것 같다. 그래서 그 이유를 설명하고 다른 용어로 바꿀 것을 제안한다.
 
 먼저 *나중* 시점에 호출될 함수 참조인 *비동기 콜백*을 살펴보자. 이 경우 "콜백"은 무엇을 의미할까?
 
@@ -867,21 +867,21 @@ getLabels([ 14, 73, 112, 6 ]);
 
 DI는 기능의 필요한 부분을 프로그램의 다른 부분으로 전달하여 작업을 완료하기 위해 호출할 수 있는 것으로 요약할 수 있다. 위의 `map(..)` 호출에 대한 적절한 설명이다. 그렇지 않나? `map(..)` 유틸리티는 목록의 값을 반복하는 것은 알고 있지만 해당 값으로 *무엇을 해야 하는지는* 알지 못한다. 이것이 `formatIDLabel(..)` 함수를 전달하는 이유다. 의존성을 전달한다.
 
-IoC는 매우 유사하고 연관있는 개념이다. 제어 역전이란 무슨 일이 일어나고 있는지 제어하는 프로그램의 현재 영역 대신 프로그램의 다른 부분에 제어를 넘겨주는 것을 의미한다. 함수 `formatIDLabel(..)`에서 레이블 문자열을 계산하기 위한 논리를 래핑한 다음 호출 제어를 `map(..)` 유틸리티에 넘겼습니다.
+IoC는 매우 유사하고 연관있는 개념이다. 제어 역전이란 무슨 일이 일어나고 있는지 제어하는 프로그램의 현재 영역 대신 프로그램의 다른 부분에 제어를 넘겨주는 것을 의미한다. 함수 `formatIDLabel(..)`에서 레이블 문자열을 계산하기 위한 논리를 래핑한 다음 호출 제어를 `map(..)` 유틸리티에 넘겼다.
 
 특히 Martin Fowler는 프레임워크와 라이브러리의 차이점으로 IoC를 인용한다. 라이브러리에서는 당신이 함수를 호출한다. 프레임워크는 너의 함수를 호출한다. [^fowlerIOC]
 
 논의의 맥락에서 DI 또는 IoC는 *동기식 콜백*에 대한 다른 이름이 될 수 있다.
 
-하지만 다른 제안이 있다. *동기식 콜백*을 *상호 호출 함수<sub>inter-invoked functions</sub>*(IIFs)라고 부르자. 그렇다, 정확히는 IIFE를 이야기하고 있다. 이러한 종류의 함수는 *상호 호출*된다. 즉, 자체적으로 즉시 호출하는 IIFE와 달리 다른 엔티티가 호출한다.
+하지만 다른 제안이 있다. *동기식 콜백*을 *교차 실행 함수<sub>inter-invoked functions</sub>*(IIFs)라고 부르자. 그렇다, 정확히는 IIFE를 이야기하고 있다. 이러한 종류의 함수는 *교차 실행*된다. 즉, 자체적으로 즉시 호출하는 IIFE와 달리 다른 엔티티가 호출한다.
 
-*비동기 콜백*과 IIF 사이의 관계는 무엇일까? *비동기 콜백*은 동기 대신 비동기적으로 호출되는 IIF다.
+*비동기 콜백*과 교차 실행 함수 사이의 관계는 무엇일까? *비동기 콜백*은 동기 대신 비동기적으로 호출되는 교차 실행 함수다.
 
-### Synchronous Closure?
+### 동기식 클로저란?
 
-Now that we've re-labeled *synchronous callbacks* as IIFs, we can return to our main question: are IIFs an example of closure? Obviously, the IIF would have to reference variable(s) from an outer scope for it to have any chance of being a closure. The `formatIDLabel(..)` IIF from earlier does not reference any variables outside its own scope, so it's definitely not a closure.
+이제 *동기식 콜백*에 교차 실행 함수라는 이름을 다시 지정했으므로 주요 질문으로 돌아갈 수 있다. 교차 실행 함수가 클로저의 예인가? 분명히 교차 실행 함수는 클로저가 되려면 외부 스코프의 변수를 참조해야 한다. 이전의 `formatIDLabel(..)` 교차 실행 함수는 자체 스코프 밖의 변수를 참조하지 않으므로 확실히 클로저가 아니다.
 
-What about an IIF that does have external references, is that closure?
+외부 참조가 있는 교차 실행 함수는 클로저인가?
 
 ```js
 function printLabels(labels) {
@@ -897,23 +897,23 @@ function printLabels(labels) {
 }
 ```
 
-The inner `renderLabel(..)` IIF references `list` from the enclosing scope, so it's an IIF that *could* have closure. But here's where the definition/model we choose for closure matters:
+내부 `renderLabel(..)` 교차 실행 함수는 둘러싸는 스코프의 `list`를 참조하므로 클로저가 *있을 수 있는* 교차 실행 함수다. 그러나 클로저를 위해 선택한 정의/모델은 다음과 같다.
 
-* If `renderLabel(..)` is a **function that gets passed somewhere else**, and that function is then invoked, then yes, `renderLabel(..)` is exercising a closure, because closure is what preserved its access to its original scope chain.
+* `renderLabel(..)`이 **다른 곳에서 전달되는 함수**이고 그 함수가 호출되면, 물론 `renderLabel(..)`는 원래 스코프 체인에 대한 접근을 보존하기 위해 클로저를 실행하고 있는 것이다.
 
-* But if, as in the alternative conceptual model from Chapter 7, `renderLabel(..)` stays in place, and only a reference to it is passed to `forEach(..)`, is there any need for closure to preserve the scope chain of `renderLabel(..)`, while it executes synchronously right inside its own scope?
+* 그러나 7장의 대안 모델에서와 같이 `renderLabel(..)`이 제자리에 있고 이에 대한 참조만 `forEach(..)`로 전달되면 `renderLabel(..)`의 스코프 체인이 자체 스코프 안에서 동기적으로 실행되는 동안 클로저가 필요할까?
 
-No. That's just normal lexical scope.
+아니다. 이는 그냥 일반적인 렉시컬 스코프다.
 
-To understand why, consider this alternative form of `printLabels(..)`:
+이유를 이해하려면 `printLabels(..)`의 대안 형태를 봐보자:
 
 ```js
 function printLabels(labels) {
     var list = document.getElementByID("labelsList");
 
     for (let label of labels) {
-        // just a normal function call in its own
-        // scope, right? That's not really closure!
+        // 자체 스코프에서 정상적으로 함수 호출이 되고있다. 맞나?
+        // 이는 실제로 클로저가 아니다!
         renderLabel(label);
     }
 
@@ -927,20 +927,20 @@ function printLabels(labels) {
 }
 ```
 
-These two versions of `printLabels(..)` are essentially the same.
+이 두 버전의 `printLabels(..)`은 본질적으로 동일하다.
 
-The latter one is definitely not an example of closure, at least not in any useful or observable sense. It's just lexical scope. The former version, with `forEach(..)` calling our function reference, is essentially the same thing. It's also not closure, but rather just a plain ol' lexical scope function call.
+후자는 적어도 유용하거나 관찰 가능한 의미에서 클로저의 예가 아니다. 그것은 단지 렉시컬 스코프다. 함수 참조를 호출하는 `forEach(..)`가 있는 이전 버전은 본질적으로 동일하다. 이 또한 클로저가 아니라 그냥 평범한 렉시컬 스코프 함수 호출이다.
 
-### Defer to Closure
+### 클로저로 지연시키기
 
-By the way, Chapter 7 briefly mentioned partial application and currying (which *do* rely on closure!). This is a interesting scenario where manual currying can be used:
+그건 그렇고, 7장에서 부분 적용<sub>partial application</sub>과 커링<sub>currying</sub>에 대해서 간략하게 언급했다(이것도 클로저에 의존한다!). 이것은 정석적으로 커링이 사용되는 흥미로운 시나리오다.
 
 ```js
 function printLabels(labels) {
     var list = document.getElementByID("labelsList");
     var renderLabel = renderTo(list);
 
-    // definitely closure this time!
+    // 이번엔 완벽히 클로저다!
     labels.forEach( renderLabel );
 
     // **************
@@ -955,10 +955,9 @@ function printLabels(labels) {
 }
 ```
 
-The inner function `createLabel(..)`, which we assign to `renderLabel`, is closed over `list`, so closure is definitely being utilized.
+우리가 `renderLabel`에 할당한 내부 함수 `createLabel(..)`은 `list` 에 대해 클로즈 오버 되어있으므로 클로저는 확실히 활용되고 있다.
 
-Closure allows us to remember `list` for later, while we defer execution of the actual label-creation logic from the `renderTo(..)` call to the subsequent `forEach(..)` invocations of the `createLabel(..)` IIF. That may only be a brief moment here, but any amount of time could pass, as closure bridges from call to call.
---------------------여기까지---------------------
+클로저는 `renderTo(..)` 호출에서 `createLabel(..)` 교차 실행 함수의 후속 `forEach(..)` 호출로 실제 레이블 생성 논리 실행을 지연시키는 동안 `list`를 나중을 위해 기억할 수 있게 해준다. 여기에서는 짧은 순간일 수 있지만 클로저가 호출에서 호출로 연결되기 때문에 많은 시간이 지나갈 수도 있다.
 ## Classic Module Variations
 
 Chapter 8 explained the classic module pattern, which can look like this:

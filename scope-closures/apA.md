@@ -451,7 +451,7 @@ However you define your IIFEs, show them some love by giving them names.
 다음의 장점들을 생각하며 호이스팅을 더 깊게 이해해보자
 
 * 실행 가능한 코드를 먼저, 함수 선언을 나중에
-* 변수 선언의 문맥적 배치
+* 변수 선언의 의미적 배치
 
 ### 함수 호이스팅
 
@@ -481,7 +481,7 @@ getStudents();
 function getStudents() {
     var whatever = doSomething();
 
-    // other stuff
+    // 다른 내용
 
     return whatever;
 
@@ -498,21 +498,26 @@ function getStudents() {
 즉, *함수 호이스팅*은 위에서 아래로 흘러가는 점진적인 읽기 순서를 통해 코드를 보다 쉽게 읽을 수 있게 한다.
 
 ### Variable Hoisting
+### 변수 호이스팅
 
 What about *variable hoisting*?
+*variable hoisting*이란 무엇일까?
 
 Even though `let` and `const` hoist, you cannot use those variables in their TDZ (see Chapter 5). So, the following discussion only applies to `var` declarations. Before I continue, I'll admit: in almost all cases, I completely agree that *variable hoisting* is a bad idea:
+`let`과 `const`은 호이스팅 되더라고, TDZ에서 그 변수들을 사용할 수 없다(5장을 참고해라). 그래서 다음 논의는 오직 `var`에만 적용된다. 진행에 앞서, 대부분의 경우에 *variable hoisting*는 나쁜 아이디어라는 것에 완전히 찬성한다는 사실을 밝힌다.
 
 ```js
 pleaseDontDoThis = "bad idea";
 
-// much later
+// 훨씬 후에
 var pleaseDontDoThis;
 ```
 
 While that kind of inverted ordering was helpful for *function hoisting*, here I think it usually makes code harder to reason about.
+역순으로 두는 것이 *함수 호이스팅*에서는 유용한 반면,  변수의 경우 그것은 코드를 추론하는 것을 더 어렵게 한다.
 
 But there's one exception that I've found, somewhat rarely, in my own coding. It has to do with where I place my `var` declarations inside a CommonJS module definition.
+그러나 직접 작성한 코딩중에 드물긴 하지만 한가지 예외가 있다.  
 
 Here's how I typically structure my module definitions in Node:
 

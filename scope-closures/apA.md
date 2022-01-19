@@ -167,19 +167,19 @@ You'll rarely run into any case where the scope of a function's name identifier 
 
 함수에 이름을 지정하고자 할 때는 다음을 고려하라:
 
-* 이름 추론은 완전한 것이 아니다.
+* 이름 추론을 완전하게 할 수 없다.
 * 이름은 어휘적으로 자신을 참조할 수 있도록 한다.
 * 이름은 유용한 설명이다.
 * 화살표 함수는 어휘적인 이름을 갖지 않는다.
 * IIFE도 이름이 필요하다.
 
-### Explicit or Inferred Names?
+### 명시적 이름 또는 추론해야 하는 이름
 
-Every function in your program has a purpose. If it doesn't have a purpose, take it out, because you're just wasting space. If it *does* have a purpose, there *is* a name for that purpose.
+프로그램의 모든 함수는 목적이 있다. 만약 목적이 없는 함수라면 제거하라. 자리만 낭비할 뿐이다. 그리고 함수애 목적이 *있다면*, 목적에 맞는 이름도 *있을 것이다*.
 
-So far many readers likely agree with me. But does that mean we should always put that name into the code? Here's where I'll raise more than a few eyebrows. I say, unequivocally, yes!
+지금까지 많은 독자가 이 의견에 동의했을 것이다. 그렇다면 위와 같은 의견은 코드에 항상 이름을 넣어 주어야 한다는 의미일까? 필자는 눈을 치켜뜨며 강조할 것이다. 명백히 그렇다고!
 
-First of all, "anonymous" showing up in stack traces is just not all that helpful to debugging:
+우선, 스택 추적기에 "anonymous"가 보이는 것은 디버깅에 도움이 되지 않는다.
 
 ```js
 btn.addEventListener("click",function(){
@@ -195,7 +195,7 @@ btn.addEventListener("click",function(){
 //     at myProgram.js:3
 ```
 
-Ugh. Compare to what is reported if I give the functions names:
+윽. 함수에 이름을 지정했을 때와 비교해보자:
 
 ```js
 btn.addEventListener("click",function onClick(){
@@ -211,13 +211,13 @@ btn.addEventListener("click",function onClick(){
 //     at waitAMoment (myProgram.js:3)
 ```
 
-See how `waitAMoment` and `allUpper` names appear and give the stack trace more useful information/context for debugging? The program is more debuggable if we use reasonable names for all our functions.
+`waitAMoment` 와 `allUpper`란 이름이 나타나서 디버깅을 위한 더욱 유용한 정보/문맥을 스택 추적기에 어떻게 전달하는지 확인하라. 모든 함수에 합당한 이름을 붙인다면 프로그램을 디버그하기 더 쉬울 것이다.
 
-| NOTE: |
+| 비고: |
 | :--- |
-| The unfortunate "&lt;anonymous>" that still shows up refers to the fact that the implementation of `Array.map(..)` isn't present in our program, but is built into the JS engine. It's not from any confusion our program introduces with readability shortcuts. |
+| 당혹스러운 "<anonymous>"은 `Array.map(..)`의 구현이 작성한 프로그램에는 존재하지 않지만 JS 엔진에 내장되어 있다는 사실을 말한다. 이 프로그램이 가독성을 위한 방법을 도입해서 발생한 혼란 때문에 그런 것은 아니다. |
 
-By the way, let's make sure we're on the same page about what a named function is:
+아무튼, 위와 동일한 페이지에서 이름을 지정한 함수가 무엇인지 확인해보자.
 
 ```js
 function thisIsNamed() {

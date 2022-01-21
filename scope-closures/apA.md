@@ -1,13 +1,13 @@
 # You Don't Know JS Yet: Scope & Closures - 2nd Edition
-# Appendix A: Exploring Further
+# 부록 A: 더 살펴보기
 
-We will now explore a number of nuances and edges around many of the topics covered in the main text of this book. This appendix is optional, supporting material.
+우리는 이제 이 책의 본문에서 다룬 많은 주제를 중심으로 여러 뉘앙스와 가장자리를 탐구할 것이다. 이 부록은 선택사항이고 참고자료이다.
 
-Some people find diving too deeply into the nuanced corner cases and varying opinions creates nothing but noise and distraction—supposedly, developers are better served by sticking to the commonly-tread paths. My approach has been criticized as being impractical and counterproductive. I understand and appreciate that perspective, even if I don't necessarily share it.
+어떤 사람들은 미묘한 구석 사례를 너무 깊이 들어간다는 것을 알아챈다. 다양한 의견은 소음과 산만함을 야기할 뿐이다. 개발자는 일반적으로 행해지는 길을 고수하면서 더 큰 이득을 얻는다. 나의 접근방식은 비실용적이고 비생산적이라는 비판을 받아왔다. 그것을 공유하지는 않더라도 그런 관점을 이해하고 감사하게 생각한다.
 
-I believe it's better to be empowered by knowledge of how things work than to just gloss over details with assumptions and lack of curiosity. Ultimately, you will encounter situations where something bubbles up from a piece you hadn't explored. In other words, you won't get to spend all your time riding on the smooth *happy path*. Wouldn't you rather be prepared for the inevitable bumps of off-roading?
+단지 추측과 호기심 부족으로 세부사항을 얼버무리는 것보다 일이 어떻게 돌아가는지에 대한 지식에 의해 힘을 얻는 것이 더 낫다고 믿는다. 궁극적으로 당신은 당신이 탐험하지 않은 조각에서 무언가가 거품을 내는 상황에 직면하게 될 것 이다. 다시 말해서 여러분은 모든 시간을 부드러운 *행복한 길*을 가는데 쓸 수 없을 것입니다. 거친 길의 피할 수 없는 돌발에 대비하는 것이 낫지 않을까요?
 
-These discussions will also be more heavily influenced by my opinions than the main text was, so keep that in mind as you consume and consider what is presented. This appendix is a bit like a collection of mini-blog posts that elaborate on various book topics. It's long and deep in the weeds, so take your time and don't rush through everything here.
+이러한 논의도 본문보다 나의 의견에 더 강하게 영향을 받을 것이다. 그러므로 이를 염두에 두고 내용을 고민해야 한다. 이 부록은 다양한 책 주제를 바탕으로 한 미니 블로그 글 모음집이다. 길고 깊은 잡초이기 때문에 천천히 하고 서두르지 마라.
 
 ## Implied Scopes
 

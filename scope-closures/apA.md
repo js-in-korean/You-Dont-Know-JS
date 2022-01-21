@@ -9,12 +9,12 @@
 
 이러한 논의도 본문보다 나의 의견에 더 강하게 영향을 받을 것이다. 그러므로 이를 염두에 두고 내용을 고민해야 한다. 이 부록은 다양한 책 주제를 바탕으로 한 미니 블로그 글 모음집이다. 길고 깊은 잡초이기 때문에 천천히 하고 서두르지 마라.
 
-## Implied Scopes
+## 암묵적 스코프<sub>scopes</sub>
 
-Scopes are sometimes created in non-obvious places. In practice, these implied scopes don't often impact your program behavior, but it's still useful to know they're happening. Keep an eye out for the following surprising scopes:
+스코프는 때때로 분명하지 않은 장소에 만들어진다. 실제로 이러한 암묵적 스코프는 프로그램 동작에 자주 영향을 미치지는 않지만, 실제로 발생한다는 것을 아는 것은 아주 도움이 된다. 깜짝 놀랄만한 스코프를 아래에서 살펴보자.
 
-* Parameter scope
-* Function name scope
+* 파라메터<sub>parameter</sub> 스코프
+* 함수 이름 스코프
 
 ### Parameter Scope
 

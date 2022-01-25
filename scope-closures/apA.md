@@ -16,41 +16,41 @@
 * 파라메터<sub>parameter</sub> 스코프
 * 함수 이름 스코프
 
-### Parameter Scope
+### 파라메터 스코프
 
-The conversation metaphor in Chapter 2 implies that function parameters are basically the same as locally declared variables in the function scope. But that's not always true.
+2장에서의 대화 비유<sub>metaphor</sub>는 함수 파라메터가 기본적으로 함수 스코프에 지역적으로 선언된 변수와 같다는 것을 암시한다. 하지만 항상 그렇지는 않다.
 
-Consider:
+아래를 보자.
 
 ```js
-// outer/global scope: RED(1)
+// 외부/전역 스코프: 빨강(1)
 
 function getStudentName(studentID) {
-    // function scope: BLUE(2)
+    // 함수 스코프: 파랑(2)
 
     // ..
 }
 ```
 
-Here, `studentID` is a considered a "simple" parameter, so it does behave as a member of the BLUE(2) function scope. But if we change it to be a non-simple parameter, that's no longer technically the case. Parameter forms considered non-simple include parameters with default values, rest parameters (using `...`), and destructured parameters.
+여기서 `studentID`는 "단순" 파라메터로 보인다. 그래서 그것은 파랑(2) 함수 스코프의 멤버로 행동한다. 그러나 만약 우리가 그것을 단순하지 않은 파라메터로 바꾼다면 엄밀히 더 이상 그렇지 않다. 단순하지 않은 파라메터 형식은 기본값이 있는 파라메터, (`...`를 사용하는) 나머지 매개변수<sub>rest parameters</sub> 그리고 구조 분해 할당된<sub>destructured</sub> 파라메터가 있다.
 
-Consider:
+아래를 보자.
 
 ```js
-// outer/global scope: RED(1)
+// 외부/전역 스코프: 빨강(1)
 
-function getStudentName(/*BLUE(2)*/ studentID = 0) {
-    // function scope: GREEN(3)
+function getStudentName(/*파랑(2)*/ studentID = 0) {
+    // 함수 스코프: 초록(3)
 
     // ..
 }
 ```
 
-Here, the parameter list essentially becomes its own scope, and the function's scope is then nested inside *that* scope.
+여기서 파라메터 목록은 본질적으로 자체 스코프가 되며 함수의 스코프는 *그* 스코프안으로 중첩된다.
 
-Why? What difference does it make? The non-simple parameter forms introduce various corner cases, so the parameter list becomes its own scope to more effectively deal with them.
+왜? 어떤 차이가 그렇게 만들지? 단순하지 않은 파라메터 형식은 다양한 코너 케이스<sub>corner cases</sub>가 있기 때문에 파라메터 목록은 자체 스코프가 되어 그것들을 더 효과적으로 처리할 수 있다.
 
-Consider:
+아래를 보자.
 
 ```js
 function getStudentName(studentID = maxID, maxID) {
@@ -58,7 +58,7 @@ function getStudentName(studentID = maxID, maxID) {
 }
 ```
 
-Assuming left-to-right operations, the default `= maxID` for the `studentID` parameter requires a `maxID` to already exist (and to have been initialized). This code produces a TDZ error (Chapter 5). The reason is that `maxID` is declared in the parameter scope, but it's not yet been initialized because of the order of parameters. If the parameter order is flipped, no TDZ error occurs:
+왼쪽에서 오른쪽으로 수행되는 연산을 가정하면 `studentID` 파라메터의 기본값 `= maxID`는 `maxID`가 이미 존재하길(그리고 초기화도 된) 기대한다. 이 코드는 TDZ 에러(5장)를 발생시킨다. `maxID`가 파라메터 스코프에 선언되었지만 파라메터 순서상 아직 초기화되지 않았기 때문이다. 만약 파라메터 순서가 바뀐다면 TDZ 에러는 발생하지 않는다.
 
 ```js
 function getStudentName(maxID,studentID = maxID) {

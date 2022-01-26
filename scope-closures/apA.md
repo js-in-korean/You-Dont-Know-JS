@@ -497,14 +497,11 @@ function getStudents() {
 
 즉, *함수 호이스팅*은 위에서 아래로 흘러가는 점진적인 읽기 순서를 통해 코드를 보다 쉽게 읽을 수 있게 한다.
 
-### Variable Hoisting
 ### 변수 호이스팅
 
-What about *variable hoisting*?
-*variable hoisting*이란 무엇일까?
+*변수 호이스팅*이란 무엇일까?
 
-Even though `let` and `const` hoist, you cannot use those variables in their TDZ (see Chapter 5). So, the following discussion only applies to `var` declarations. Before I continue, I'll admit: in almost all cases, I completely agree that *variable hoisting* is a bad idea:
-`let`과 `const`은 호이스팅 되더라고, TDZ에서 그 변수들을 사용할 수 없다(5장을 참고해라). 그래서 다음 논의는 오직 `var`에만 적용된다. 진행에 앞서, 대부분의 경우에 *variable hoisting*는 나쁜 아이디어라는 것에 완전히 찬성한다는 사실을 밝힌다.
+`let`과 `const`은 호이스팅 되더라, TDZ에서 그 변수들을 사용할 수 없다(5장을 참고해라). 그래서 다음 논의는 오직 `var`에만 적용된다. 진행에 앞서, 대부분의 경우에 *변수 호이스팅*은 나쁜 아이디어라는 것에 완전히 찬성한다는 사실을 밝힌다.
 
 ```js
 pleaseDontDoThis = "bad idea";
@@ -513,13 +510,11 @@ pleaseDontDoThis = "bad idea";
 var pleaseDontDoThis;
 ```
 
-While that kind of inverted ordering was helpful for *function hoisting*, here I think it usually makes code harder to reason about.
 역순으로 두는 것이 *함수 호이스팅*에서는 유용한 반면,  변수의 경우 그것은 코드를 추론하는 것을 더 어렵게 한다.
 
-But there's one exception that I've found, somewhat rarely, in my own coding. It has to do with where I place my `var` declarations inside a CommonJS module definition.
 그러나 직접 작성한 코딩중에 드물긴 하지만 한가지 예외가 있다.  
 
-Here's how I typically structure my module definitions in Node:
+다음은 Node에서 module 정의할 때 전형적으로 사용하는 구조이다.
 
 ```js
 // dependencies
@@ -548,9 +543,9 @@ function addStudents() {
 }
 ```
 
-Notice how the `cache` and `otherData` variables are in the "private" section of the module layout? That's because I don't plan to expose them publicly. So I organize the module so they're located alongside the other hidden implementation details of the module.
+왜 `cache`와 `otherData`는 모듈 레이아웃의 "private" 섹션에 존재하게 되었는가? 왜냐하면 공개적으로 노출하지 않기 원했기 때문이다. 그래서 모듈을 이와같이 작성하게 되었고 그래서 모듈의 다른 숨겨진 구현들과 함께 배치되게 되었다.
 
-But I've had a few rare cases where I needed the assignments of those values to happen *above*, before I declare the exported public API of the module. For instance:
+그러나 이 값들을 위에 배치해야 하는 소수의 드문 경우가 있긴하다. 모듈의 퍼블릭 API 내보내기전에 말이다. 예를 들어:
 
 ```js
 // public API
@@ -561,12 +556,12 @@ var publicAPI = Object.assign(module.exports,{
 });
 ```
 
-I need the `cache` variable to have already been assigned a value, because that value is used in the initialization of the public API (the `.bind(..)` partial-application).
+`cache` 값이 퍼블릭 API(`.bind(...)` 부분 응용 프로그램)의 초기화에 사용되므로 변수에 이미 값이 할당되어 있어야 한다.
 
-Should I just move the `var cache = { .. }` up to the top, above this public API initialization? Well, perhaps. But now it's less obvious that `var cache` is a *private* implementation detail. Here's the compromise I've (somewhat rarely) used:
+`var cache = {..}`만 이동하면 될까? 이 공개 API 초기화 위에? 글쎄, 아마도. 그러나 이제는 `var cache`가 *private* 구현 세부 정보라는 것이 명확하지 않다. 이것에 대한 절충안은 다음과 같다.
 
 ```js
-cache = {};   // used here, but declared below
+cache = {};   // 여기에서 사용되지만, 아래에 할당되어 있다.
 
 // public API
 var publicAPI = Object.assign(module.exports,{
@@ -581,9 +576,9 @@ var publicAPI = Object.assign(module.exports,{
 var cache /* = {}*/;
 ```
 
-See the *variable hoisting*? I've declared the `cache` down where it belongs, logically, but in this rare case I've used it earlier up above, in the area where its initialization is needed. I even left a hint at the value that's assigned to `cache` in a code comment.
+*변수 호이스팅*가 보이나? `cache`를 그것이 속하는 아래쪽에 선언하였다. 하지만 코드 위쪽에 초기화가 필요한 영역 사용하고 있다. 코드 코멘트에 `cache`에 할당된 값에 대한 힌트를 남겼다.
 
-That's literally the only case I've ever found for leveraging *variable hoisting* to assign a variable earlier in a scope than its declaration. But I think it's a reasonable exception to employ with caution.
+*변수 호이스팅*을 활용하여 변수의 선언보다 초기에 변수를 할당한 사례는 이 정도밖에 없다. 하지만 이런 예외에 호이스팅을 신중하게 사용하는 것은 합리적이라고 생각한다. 
 
 ## The Case for `var`
 

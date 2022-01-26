@@ -215,7 +215,7 @@ btn.addEventListener("click",function onClick(){
 
 | 비고: |
 | :--- |
-| 당혹스러운 "<anonymous>"은 `Array.map(..)`의 구현이 작성한 프로그램에는 존재하지 않지만 JS 엔진에 내장되어 있다는 사실을 말한다. 이 프로그램이 가독성을 위한 방법을 도입해서 발생한 혼란 때문에 그런 것은 아니다. |
+| 위  당혹스러운 "<anonymous>"은 `Array.map(..)`의 구현이 작성한 프로그램에는 존재하지 않지만 JS 엔진에 내장되어 있다는 사실을 의미한다. 이 프로그램이 가독성을 위한 방법을 도입해서 발생한 혼란 때문에 그런 것은 아니다. |
 
 아무튼, 위와 동일한 페이지에서 이름을 지정한 함수가 무엇인지 확인해보자.
 
@@ -234,7 +234,7 @@ var notNamed = function(){
 
 makeRequest({
     data: 42,
-    cb /* also not a name */: function(){
+    cb /* 이름이 아니다. */: function(){
         // ..
     }
 });
@@ -244,7 +244,7 @@ var stillNotNamed = function butThisIs(){
 };
 ```
 
-"But wait!", you say. Some of those *are* named, right!?
+"하지만 잠깐!", 이름을 지정 *되었다*고 했다. 그렇지 않은가!?
 
 ```js
 var notNamed = function(){
@@ -264,11 +264,11 @@ config.cb.name;
 // cb
 ```
 
-These are referred to as *inferred* names. Inferred names are fine, but they don't really address the full concern I'm discussing.
+위 이름을 *추론된* 이름이라고 한다. 추론된 이름이라고 부르는 건 괜찮다. 하지만 지금 이야기하는 내용을 온전히 다루지는 못한다.
 
-### Missing Names?
+### 이름이 없다면?
 
-Yes, these inferred names might show up in stack traces, which is definitely better than "anonymous" showing up. But...
+그렇다, 이렇게 추론한 이름이 스택 추적기에 나타날 수 있다. "anonymous"라고 나오는 것보단 낫다. 하지만...
 
 ```js
 function ajax(url,cb) {
@@ -281,9 +281,9 @@ ajax("some.url",function(){
 // ""
 ```
 
-Oops. Anonymous `function` expressions passed as callbacks are incapable of receiving an inferred name, so `cb.name` holds just the empty string `""`. The vast majority of all `function` expressions, especially anonymous ones, are used as callback arguments; none of these get a name. So relying on name inference is incomplete, at best.
+이런. 콜백으로 전달된 익명 `function` 표현식은 추론된 이름을 전달 받을 수 없으므로 `cb.name` 은 빈 문자열인 `""`로 남게 된다. 대부분의 `function` 표현식, 특히 익명이면, 대부분은 콜백의 인수로 사용된다. 그래서 이름 추론에 의존하는 것은 아무리 해도 불완전하다.
 
-And it's not just callbacks that fall short with inference:
+그리고 추론이 완전하지 않은 것은 콜백뿐만이 아니다. 
 
 ```js
 var config = {};
@@ -300,11 +300,11 @@ noName.name
 // ""
 ```
 
-Any assignment of a `function` expression that's not a *simple assignment* will also fail name inferencing. So, in other words, unless you're careful and intentional about it, essentially almost all anonymous `function` expressions in your program will in fact have no name at all.
+*단순 할당*이 아닌 `function` 표현식으로 할당하면 이름 추론도 실패한다. 다시 말해서, 이 부분을 신중하고 의도적으로 다루지 않는다면, 프로그램에 있는 거의 모든 익명의 '함수' 표현들은 사실은 전혀 이름이 없을 것이다.
 
-Name inference is just... not enough.
+이름 추론은 그냥... 충분하지 않은 것이다.
 
-And even if a `function` expression *does* get an inferred name, that still doesn't count as being a full named function.
+그리고 `function` 표현식으로 선언한 함수가 추론된 이름을 갖게 되더라도, 이런 함수는 여전히 이름 있는 함수로 취급받지 않는다.
 
 ### Who am I?
 

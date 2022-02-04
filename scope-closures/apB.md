@@ -347,35 +347,35 @@ BONUS: write out a few sentences explaining your thoughts.
 
 BONUS #2: try converting your module to other module formats, including: UMD, CommonJS, and ESM (ES Modules).
 
-## Suggested Solutions
+## 해결 방안 예시
 
-Hopefully you've tried out the exercises before you're reading this far. No cheating!
+너가 이 부분을 읽기 전에 연습 문제를 모두 시도해봤기를 바란다. 컨닝하지 마라!
 
-Remember, each suggested solution is just one of a bunch of different ways to approach the problems. They're not "the right answer," but they do illustrate a reasonable way to approach each exercise.
+기억해라. 각 예시 해결 방안은 각 문제에 접근하는 많은 다른 방법 중 하나일 뿐이다. 이것들이 "정답"인건 아니지만 각 연습 문제들을 합리적인 방향으로 접근하도록 설명해준다.
 
-The most important benefit you can get from reading these suggested solutions is to compare them to your code and analyze why we each made similar or different choices. Don't get into too much bikeshedding; try to stay focused on the main topic rather than the small details.
+이 해결 방안을 읽으면서 너가 얻을 수 있는 가장 중요한 장점은 이를 너의 코드와 비교하고 왜 각각이 비슷하거나 다른 선택을 했는지를 분석하는 것이다. 사소한 것들에 대해서 보지말고 핵심 주제에 집중하도록 해라.
 
-### Suggested: Buckets of Marbles
+### 해결 방안: 구슬 양동이
 
-The *Buckets of Marbles Exercise* can be solved like this:
+*구슬 양동이 연습 문제*는 이렇게 해결될 수 있다:
 
 ```js
-// RED(1)
+// 빨강(1)
 const howMany = 100;
 
-// Sieve of Eratosthenes
+// 에라토스테네스의 체
 function findPrimes(howMany) {
-    // BLUE(2)
+    // 파랑(2)
     var sieve = Array(howMany).fill(true);
     var max = Math.sqrt(howMany);
 
     for (let i = 2; i < max; i++) {
-        // GREEN(3)
+        // 초록(3)
         if (sieve[i]) {
-            // ORANGE(4)
+            // 오렌지(4)
             let j = Math.pow(i,2);
             for (let k = j; k < howMany; k += i) {
-                // PURPLE(5)
+                // 보라(5)
                 sieve[k] = false;
             }
         }
@@ -383,12 +383,12 @@ function findPrimes(howMany) {
 
     return sieve
         .map(function getPrime(flag,prime){
-            // PINK(6)
+            // 분홍(6)
             if (flag) return prime;
             return flag;
         })
         .filter(function onlyPrimes(v){
-            // YELLOW(7)
+            // 노랑(7)
             return !!v;
         })
         .slice(1);
@@ -403,9 +403,9 @@ findPrimes(howMany);
 // ]
 ```
 
-### Suggested: Closure (PART 1)
+### 해결 방안: 클로저 (파트 1)
 
-The *Closure Exercise (PART 1)* for `isPrime(..)` and `factorize(..)`, can be solved like this:
+*클로저 연습 문제 (파트 1)*의 `isPrime(..)`과 `factorize(..)`은 이렇게 해결할 수 있다:
 
 ```js
 var isPrime = (function isPrime(v){
@@ -453,19 +453,19 @@ var factorize = (function factorize(v){
 })();
 ```
 
-The general steps I used for each utility:
+각 함수에서 사용한 일반적인 과정:
 
-1. Wrap an IIFE to define the scope for the cache variable to reside.
+1. IIFE를 래핑하여 캐시 변수가 상주할 스코프를 정의한다.
 
-2. In the underlying call, first check the cache, and if a result is already known, return.
+2. 기본 호출에서 캐시를 확인하고 결과를 이미 알고 있으면 반환한다.
 
-3. At each place where a `return` was happening originally, assign to the cache and just return the results of that assignment operation—this is a space savings trick mostly just for brevity in the book.
+3. `반환`이 발생했던 각 위치에서 캐시에 할당하고 해당 할당 작업의 결과를 반환하면 된다.이것은 주로 책에서 간결함을 위한 공간 절약 트릭이다.
 
-I also renamed the inner function from `factorize(..)` to `findFactors(..)`. That's not technically necessary, but it helps it make clearer which function the recursive calls invoke.
+또한 내부 함수 이름을 `factorize(..)` 에서 `findFactors(..)`로 변경했다. 이는 기술적으로 필요한 것은 아니지만, 재귀 호출이 호출하는 함수를 더 명확하게 하는 데 도움이 된다.
 
-### Suggested: Closure (PART 2)
+### 해결 방안: 클로저 (파트 2)
 
-The *Closure Exercise (PART 2)* `toggle(..)` can be solved like this:
+*클로저 연습문제 (파트 2)* `toggle(..)` 은 이렇게 해결할 수 있다:
 
 ```js
 function toggle(...vals) {
@@ -473,8 +473,8 @@ function toggle(...vals) {
     var cur = unset;
 
     return function next(){
-        // save previous value back at
-        // the end of the list
+        // 목록 끝에
+        // 이전 값을 저장한다.
         if (cur != unset) {
             vals.push(cur);
         }
@@ -500,12 +500,12 @@ speed();      // "fast"
 speed();      // "slow"
 ```
 
-### Suggested: Closure (PART 3)
+### 해결 방안: 클로저 (파트 3)
 
-The *Closure Exercise (PART 3)* `calculator()` can be solved like this:
+*클로저 연습문제 (파트 3)* `calculator()` 는 이렇게 해결할 수 있다:
 
 ```js
-// from earlier:
+// 이전 부분:
 //
 // function useCalc(..) { .. }
 // function formatTotal(..) { .. }
@@ -520,19 +520,19 @@ function calculator() {
     // ********************
 
     function pressKey(key){
-        // number key?
+        // 숫자 키인지?
         if (/\d/.test(key)) {
             currentVal += key;
             return key;
         }
-        // operator key?
+        // 연산자 키인지?
         else if (/[+*/-]/.test(key)) {
-            // multiple operations in a series?
+            // 다중 연산인지?
             if (
                 currentOper != "=" &&
                 currentVal != ""
             ) {
-                // implied '=' keypress
+                // 암시적으로 '=' 키를 누른다
                 pressKey("=");
             }
             else if (currentVal != "") {
@@ -542,7 +542,7 @@ function calculator() {
             currentVal = "";
             return key;
         }
-        // = key?
+        // = 키인지?
         else if (
             key == "=" &&
             currentOper != "="
@@ -561,8 +561,8 @@ function calculator() {
 
     function op(val1,oper,val2) {
         var ops = {
-            // NOTE: using arrow functions
-            // only for brevity in the book
+            // 비고: 책의 간결함을 위해
+            // 화살표 함수를 사용했다
             "+": (v1,v2) => v1 + v2,
             "-": (v1,v2) => v1 - v2,
             "*": (v1,v2) => v1 * v2,
@@ -583,16 +583,16 @@ useCalc(calc,"+3=");            // +3=ERR
 useCalc(calc,"51=");            // 51
 ```
 
-| NOTE: |
+| 비고: |
 | :--- |
-| Remember: this exercise is about closure. Don't focus too much on the actual mechanics of a calculator, but rather on whether you are properly *remembering* the calculator state across function calls. |
+| 기억해라: 이건 클로저에 대한 연습문제다. 실제 계산기의 구조에 너무 집중하지 말고, 함수 호출에 거쳐서 상태를 적절하기 *기억하는지*에 초점을 맞춰라. |
 
-### Suggested: Modules
+### 해결 방안: 모듈
 
-The *Modules Exercise* `calculator()` can be solved like this:
+*모듈 연습 문제* `calculator()`는 이렇게 해결할 수 있다:
 
 ```js
-// from earlier:
+// 이전 부분:
 //
 // function useCalc(..) { .. }
 // function formatTotal(..) { .. }
@@ -616,7 +616,7 @@ function calculator() {
     // ********************
 
     function number(key) {
-        // number key?
+        // 숫자 키인지?
         if (/\d/.test(key)) {
             currentVal += key;
             return key;
@@ -624,7 +624,7 @@ function calculator() {
     }
 
     function eq() {
-        // = key?
+        // = 키인지?
         if (currentOper != "=") {
             currentTotal = op(
                 currentTotal,
@@ -639,12 +639,12 @@ function calculator() {
     }
 
     function operator(key) {
-        // multiple operations in a series?
+        // 다중 연산인지?
         if (
             currentOper != "=" &&
             currentVal != ""
         ) {
-            // implied '=' keypress
+            // 암시적으로 '='를 누른다.
             eq();
         }
         else if (currentVal != "") {
@@ -657,8 +657,8 @@ function calculator() {
 
     function op(val1,oper,val2) {
         var ops = {
-            // NOTE: using arrow functions
-            // only for brevity in the book
+            // 비고: 책의 간결성을 위해서
+            // 화살표 함수를 사용하였다.
             "+": (v1,v2) => v1 + v2,
             "-": (v1,v2) => v1 - v2,
             "*": (v1,v2) => v1 * v2,
@@ -679,6 +679,6 @@ useCalc(calc,"+3=");            // +3=ERR
 useCalc(calc,"51=");            // 51
 ```
 
-That's it for this book, congratulations on your achievement! When you're ready, move on to Book 3, *Objects & Classes*.
+이 책은 여기까지다. 마무리한 것을 축하한다! 준비가 되면 3권, *객체 및 클래스*로 이동해라.
 
 [^MathJSisPrime]: *Math.js: isPrime(..)*, https://github.com/josdejong/mathjs/blob/develop/src/function/utils/isPrime.js, 3 March 2020.

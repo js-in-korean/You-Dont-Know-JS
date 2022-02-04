@@ -1,41 +1,41 @@
 # You Don't Know JS Yet: Scope & Closures - 2nd Edition
-# Appendix B: Practice
+# 부록 B: 연습
 
-This appendix aims to give you some challenging and interesting exercises to test and solidify your understanding of the main topics from this book. It's a good idea to try out the exercises yourself—in an actual code editor!—instead of skipping straight to the solutions at the end. No cheating!
+이 부록은 이 책의 주요 주제에 대한 이해를 테스트하고 확고히 하는 도전적이면서 재미있는 연습 문제를 제공하는데 초점을 맞춘다. 마지막의 솔루션으로 건너뛰는 것 보다 연습 문제들을 (실제 코드 에디터로!) 스스로 시도해보는게 좋을 것이다. 컨닝하지 마라!
 
-These exercises don't have a specific right answer that you have to get exactly. Your approach may differ some (or a lot!) from the solutions presented, and that's OK.
+이 연습문제들은 정확히 얻어야 하는 특정한 정답은 없다. 너의 접근 방법이 제시된 해결책과 일부(또는 많이!) 다를 수 있으나 괜찮다.
 
-There's no judging you on how you write your code. My hope is that you come away from this book feeling confident that you can tackle these sorts of coding tasks built on a strong foundation of knowledge. That's the only objective, here. If you're happy with your code, I am, too!
+너의 코드를 어떻게 작성했는지 아무도 평가하지 않는다. 나는 너가 튼튼한 기반 지식으로 이러한 종류의 코딩 작업을 해결할 수 있다는 자신감을 가지고 이 책을 마무리했으면 좋겠다. 그것이 여기서 유일한 목표다. 너의 코드로 너가 행복하다면 나도 행복하다!
 
-## Buckets of Marbles
+## 구슬 양동이
 
-Remember Figure 2 from back in Chapter 2?
+2장에서의 그림2를 기억하나?
 
 <figure>
     <img src="images/fig2.png" width="300" alt="Colored Scope Bubbles" align="center">
-    <figcaption><em>Fig. 2 (Ch. 2): Colored Scope Bubbles</em></figcaption>
+    <figcaption><em>그림2 (2장): 색칠된 스코프 버블</em></figcaption>
     <br><br>
 </figure>
 
-This exercise asks you to write a program—any program!—that contains nested functions and block scopes, which satisfies these constraints:
+이 연습 문제는 이러한 제약 조건을 만족하며 중첩 함수와 블록 스코프들을 포함하는 프로그램(어떤 프로그램이든!)을 작성하는 것을 묻는다.
 
-* If you color all the scopes (including the global scope!) different colors, you need at least six colors. Make sure to add a code comment labeling each scope with its color.
+* 모든 스코프(글로벌 스코프를 포함해서!)를 다른 색으로 색칠한다면, 적어도 6개의 색이 필요하다. 각 스코프를 색상으로 표시하는 코드 주석을 추가해라.
 
-    BONUS: identify any implied scopes your code may have.
+    보너스: 코드가 가질 수 있는 묵시적 스코프를 식별해라.
 
-* Each scope has at least one identifier.
+* 한 스코프는 적어도 한 식별자를 가진다.
 
-* Contains at least two function scopes and at least two block scopes.
+* 적어도 2개의 함수 스코프와 적어도 2개의 블록 스코프를 포함한다.
 
-* At least one variable from an outer scope must be shadowed by a nested scope variable (see Chapter 3).
+* 적어도 바깥 스코프의 한 변수는 반드시 중첩 스코프 변수(3장)에 의해 섀도잉되어야한다.
 
-* At least one variable reference must resolve to a variable declaration at least two levels higher in the scope chain.
+* 적어도 하나의 변수 참조는 스코프 체인에서 적어도 2단계 이상의 변수 선언을 이행해야한다.
 
-| TIP: |
+| 조언: |
 | :--- |
-| You *can* just write junk foo/bar/baz-type code for this exercise, but I suggest you try to come up with some sort of non-trivial real'ish code that at least does something kind of reasonable. |
+| 이 연습 문제를 위해서 foo/bar/baz 같은 임시 코드를 작성할 *수도* 있으나, 적어도 합리적인 일을 하는 일종의 사소한 실제 코드를 써보도록 노력할 것을 추천한다. |
 
-Try the exercise for yourself, then check out the suggested solution at the end of this appendix.
+연습 문제를 스스로 시도해보고, 이 부록의 마지막에 제시된 해결방안을 확인해라.
 
 ## Closure (PART 1)
 

@@ -66,7 +66,7 @@ function getStudentName(maxID,studentID = maxID) {
 }
 ```
 
-The complication gets even more *in the weeds* if we introduce a function expression into the default parameter position, which then can create its own closure (Chapter 7) over parameters in this implied parameter scope:
+기본 파라메터 자리에 함수 표현식을 도입하면 복잡성은 *잡초 안에서* 더욱 커진다. 그러면 암묵적 파라메터 스코프 범위에서 파라메터에 대한 자체 클로저(7장)을 생성할 수 있다.
 
 ```js
 function whatsTheDealHere(id,defaultID = () => id) {
@@ -78,7 +78,7 @@ whatsTheDealHere(3);
 // 5
 ```
 
-That snippet probably makes sense, because the `defaultID()` arrow function closes over the `id` parameter/variable, which we then re-assign to `5`. But now let's introduce a shadowing definition of `id` in the function scope:
+`defaultID()` 화살표 함수는 `id` 파라메터/변수를 클로즈 오버<sub>closes over</sub>하고, `5`로 재할당하기 때문에 이 코드는 말이 된다.
 
 ```js
 function whatsTheDealHere(id,defaultID = () => id) {
@@ -90,9 +90,9 @@ whatsTheDealHere(3);
 // 3
 ```
 
-Uh oh! The `var id = 5` is shadowing the `id` parameter, but the closure of the `defaultID()` function is over the parameter, not the shadowing variable in the function body. This proves there's a scope bubble around the parameter list.
+워우! `var id = 5`는 `id` 파라메터를 가리고 있다. 그러나 `defaultID()` 함수의 클로저는 함수 본체의 가리고 있는 변수가 아닌 파라메터를 가진다. 이건 파라메터 목록을 둘러싼 스코프 버블이 있다는 것을 증명한다.
 
-But it gets even crazier than that!
+하지만 그것보다 더 미친짓을 해보자!
 
 ```js
 function whatsTheDealHere(id,defaultID = () => id) {
@@ -120,19 +120,19 @@ whatsTheDealHere(3);
 // parameter 'id' (closure): 3
 ```
 
-The strange bit here is the first console message. At that moment, the shadowing `id` local variable has just been `var id` declared, which Chapter 5 asserts is typically auto-initialized to `undefined` at the top of its scope. Why doesn't it print `undefined`?
+여기서 이상한 점은 첫번째 콘솔 메세지이다. 이 순간에 가리고 있는 `id` 지역 변수는 그냥 선언된 `var id`이다. 5장의 논점은 보통 스코프의 상단에서 `undefined`로 자동 초기화된다는 것이다. 왜 `undefined`를 출력하지 않는가?
 
-In this specific corner case (for legacy compat reasons), JS doesn't auto-initialize `id` to `undefined`, but rather to the value of the `id` parameter (`3`)!
+이런 특정한 코너 케이스에서(오래된 호환성을 이유로), JS는 `id`를 `undefined`로 자동 초기화하지 않지만 `id` 파라메터의 값(`3`)으로 대신한다.
 
-Though the two `id`s look at that moment like they're one variable, they're actually still separate (and in separate scopes). The `id = 5` assignment makes the divergence observable, where the `id` parameter stays `3` and the local variable becomes `5`.
+이 순간에 2개의 `id`가 하나의 변수처럼 보일지라도, 실제로는 아직 분리(그리고 분리된 스코프로)되고 있다. `id = 5` 할당은 관찰할 수 있는 분기를 만드는데, `id` 파라메터는 `3`으로 유지하고 지역 변수는 `5`가 된다.
 
-My advice to avoid getting bitten by these weird nuances:
+이런 이상한 뉘앙스에 물리는 걸 피하기 위한 내 충고는 아래와 같다.
 
-* Never shadow parameters with local variables
+* 지역 변수를 가진 파라메터를 가리지말라.
 
-* Avoid using a default parameter function that closes over any of the parameters
+* 파라메터가 어떤 것이라도 클로즈 오버하는 기본 파라메터 함수를 사용하는 것을 피하라.
 
-At least now you're aware and can be careful about the fact that the parameter list is its own scope if any of the parameters are non-simple.
+적어도 지금은 파라메터 목록이 파라메터가 어떤 것이라도 단순하지 않다면 자체 스코프라는 사실에 대해 깨닫고 조심할 수 있다.
 
 ### Function Name Scope
 

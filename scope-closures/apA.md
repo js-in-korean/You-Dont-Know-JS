@@ -306,31 +306,31 @@ noName.name
 
 그리고 `function` 표현식으로 선언한 함수가 추론된 이름을 갖게 되더라도, 이런 함수는 여전히 이름 있는 함수로 취급받지 않는다.
 
-### Who am I?
+### 나는 누구인가?
 
-Without a lexical name identifier, the function has no internal way to refer to itself. Self-reference is important for things like recursion and event handling:
+어휘적 이름 식별자가 없다면, 함수 내부에서 자신을 지칭할 수 없을 것이다. 자기 참조는 재귀나 이벤트 핸들링같은 작업에 매우 필요하다.
 
 ```js
-// broken
+// 작동하지 않는다.
 runOperation(function(num){
     if (num <= 1) return 1;
     return num * oopsNoNameToCall(num - 1);
 });
 
-// also broken
+// 또 작동하지 않는다.
 btn.addEventListener("click",function(){
    console.log("should only respond to one click!");
    btn.removeEventListener("click",oopsNoNameHere);
 });
 ```
 
-Leaving off the lexical name from your callback makes it harder to reliably self-reference the function. You *could* declare a variable in an enclosing scope that references the function, but this variable is *controlled* by that enclosing scope—it could be re-assigned, etc.—so it's not as reliable as the function having its own internal self-reference.
+콜백 함수에 이름이 없다면 함수를 안정적으로 자체 참조하기가 어려워진다. 같은 스코프에 변수를 선언해서 함수를 참조하게 *할 수도* 있겠지만, 이 변수는 감싸는 스코프에 의해 *제어되기* 때문에, 재할당 될 수도 있다. 그래서 내부에서 자체 참조를 할 수 있을만큼 안정적인 방법은 아니다.
 
-### Names are Descriptors
+### 이름은 설명이다.
 
-Lastly, and I think most importantly of all, leaving off a name from a function makes it harder for the reader to tell what the function's purpose is, at a quick glance. They have to read more of the code, including the code inside the function, and the surrounding code outside the function, to figure it out.
+마지막으로, 무엇보다 중요한 점인데, 함수의 이름을 명시하지 않는 행위는 읽는이가 그 함수의 목적이 무엇인지를 한눈에 알 수 없게 만든다. 읽는 이들은 함수의 목적을 파악하기 위해, 함수의 내부와 주변 코드를 더 많이 읽어야 한다.
 
-Consider:
+다음 코드를 살펴보자:
 
 ```js
 [ 1, 2, 3, 4, 5 ].filter(function(v){
@@ -344,15 +344,15 @@ Consider:
 // [ 1, 3, 5 ]
 ```
 
-There's just no reasonable argument to be made that **omitting** the name `keepOnlyOdds` from the first callback more effectively communicates to the reader the purpose of this callback. You saved 13 characters, but lost important readability information. The name `keepOnlyOdds` very clearly tells the reader, at a quick first glance, what's happening.
+첫 번째 콜백 함수에서 `keepOnlyOdds`란 이름을 **생략**해야 읽는 이들에게 이 함수의 목적을 더 확실하게 전달할 수 있다는 것은 타당한 주장이 될 수 없다. 13개의 문자를 아낄 수 있었지만, 중요하고 가독성 높은 정보를 잃어버렸다. `keepOnlyOdds`라는 이름은 읽는 이에게 무슨일이 벌어질지를 한 눈에 알아챌 수 있도록 매우 명확하게 전달한다.
 
-The JS engine doesn't care about the name. But human readers of your code absolutely do.
+JS 엔진은 이름을 신경쓰지 않는다. 하지만 읽는 사람들은 이름을 정말로 많이 신경쓴다.
 
-Can the reader look at `v % 2 == 1` and figure out what it's doing? Sure. But they have to infer the purpose (and name) by mentally executing the code. Even a brief pause to do so slows down reading of the code. A good descriptive name makes this process almost effortless and instant.
+읽는 이가 `v % 2 == 1`를 보고 어떤 작업을 하는지 알 수 있을까? 물론 알 수 있다. 하지만 속으로 코드를 실행해 보면서 목적 (그리고 이름)을 추론해야 한다. 이렇게 추론을 하기 위해 잠시 멈추는 것만으로도 코드를 읽는 속도가 느려진다. 목적을 잘 설명하는 이름은 위 추론 과정을 매우 쉽고 즉각적으로 할 수 있도록 만들어준다.
 
-Think of it this way: how many times does the author of this code need to figure out the purpose of a function before adding the name to the code? About once. Maybe two or three times if they need to adjust the name. But how many times will readers of this code have to figure out the name/purpose? Every single time this line is ever read. Hundreds of times? Thousands? More?
+이렇게 생각해보자: 이 코드를 작성자가 함수에 이름을 붙이기 전에 이 함수의 목적을 파악하려면 얼마나 많이 생각해야? 한 번. 이름을 붙여야 한다면 두 세 번 정도일 것이다. 하지만 읽는 사람들 모두가 함수의 이름/목적을 파악하기 위해 몇 번이나 생각을 해봐야 할까? 각각의 줄을 매번 읽어야 할 것이다. 그래서 수백 번? 수천 번? 그 이상 걸릴지도 모른다.
 
-No matter the length or complexity of the function, my assertion is, the author should figure out a good descriptive name and add it to the code. Even the one-liner functions in `map(..)` and `then(..)` statements should be named:
+함수의 길이나 복잡도와 상관없이 코드의 작성자는 목적을 잘 설명하는 이름을 생각해내어 반드시 붙여 주어야 한다. 심지어 `map(..)`과 `then(..)` 구문에 들어가는 한 줄짜리 함수라도 다음과 같이 이름을 붙여주자:
 
 ```js
 lookupTheRecords(someData)
@@ -362,13 +362,13 @@ lookupTheRecords(someData)
 .then(storeRecords);
 ```
 
-The name `extractSalesRecords` tells the reader the purpose of this `then(..)` handler *better* than just inferring that purpose from mentally executing `return resp.allSales`.
+`extractSalesRecords`란 이름은 읽는 이에게 `then(..)` 핸들러의 목적을 `return resp.allSales`을 속으로 실행시켜서 추론해낼 수 있는 것보다는 *더 제대로* 알려준다.
 
-The only excuse for not including a name on a function is either laziness (don't want to type a few extra characters) or uncreativity (can't come up with a good name). If you can't figure out a good name, you likely don't understand the function and its purpose yet. The function is perhaps poorly designed, or it does too many things, and should be re-worked. Once you have a well-designed, single-purpose function, its proper name should become evident.
+함수에 이름을 포함하지 않는 유일한 구실은 게으르거나(문자 몇 개를 더 입력하기 싫음) 창의적이지 않기(좋은 이름을 생각해낼 수 없음) 때문이다. 좋은 이름을 생각해내지 못한다면, 아직 그 함수와 그 목적을 이해하지 못한 것이다. 그 함수는 아마도 잘 설계되지 않았거나 너무 많은 작업을 수행하므로 다시 설계해야 할 것이다. 잘 설계한 단일 목적의 함수가 있다면 적절하고 명확한 이름이 있어야 한다.
 
-Here's a trick I use: while first writing a function, if I don't fully understand its purpose and can't think of a good name to use, I just use `TODO` as the name. That way, later when reviewing my code, I'm likely to find those name placeholders, and I'm more inclined (and more prepared!) to go back and figure out a better name, rather than just leave it as `TODO`.
+다음과 같은 방법을 사용하면 좋다: 함수를 처음 작성할 때, 이 목적을 이해하기 어려워서 적절한 이름이 떠오르지 않는다면 `TODO`라는 이름을 사용해보자. 이렇게 하면 나중에 코드를 다시 읽어볼 때 찾기도 쉽고, `TODO`로 계속 남겨두는 것 보다는 다시 돌아가서 더 좋은 이름을 붙이고 싶게 만들 것이다.
 
-All functions need names. Every single one. No exceptions. Any name you omit is making the program harder to read, harder to debug, harder to extend and maintain later.
+모든 함수에는 이름이 필요하다. 하나도 빠짐없이, 예외는 없다. 생략한 이름은 프로그램을 읽기 더 어렵게 하고, 디버그하기 더 어렵게 하고, 유지 보수하기 더 어렵게 할 것이다.
 
 ### Arrow Functions
 

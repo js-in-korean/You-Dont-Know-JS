@@ -134,9 +134,9 @@ whatsTheDealHere(3);
 
 적어도 지금은 파라메터 목록이 파라메터가 어떤 것이라도 단순하지 않다면 자체 스코프라는 사실에 대해 깨닫고 조심할 수 있다.
 
-### Function Name Scope
+### 함수 이름 스코프
 
-In the "Function Name Scope" section in Chapter 3, I asserted that the name of a function expression is added to the function's own scope. Recall:
+3장의 "함수 이름 스코프" 섹션에서는 함수 표현식의 이름은 함수 자체 스코프에 추가된다고 주장했다. 상기해보자.
 
 ```js
 var askQuestion = function ofTheTeacher(){
@@ -144,22 +144,22 @@ var askQuestion = function ofTheTeacher(){
 };
 ```
 
-It's true that `ofTheTeacher` is not added to the enclosing scope (where `askQuestion` is declared), but it's also not *just* added to the scope of the function, the way you're likely assuming. It's another strange corner case of implied scope.
+`ofTheTeacher`는 둘러싸인 스코프(`askQuestion`이 선언된 곳)에 추가되지 않는다는 사실이다. 하지만 짐작할 수 있는 방식으로 함수의 스코프에 *그냥* 추가되는 것도 아니다. 암묵적 스코프의 또다른 이상한 코너 케이스이다.
 
-The name identifier of a function expression is in its own implied scope, nested between the outer enclosing scope and the main inner function scope.
+함수 표현식의 이름 식별자는 둘러싸인 스코프와 안쪽의 함수 스코프 사이에 중첩된 자신의 암묵적 스코프 안에 있다.
 
-If `ofTheTeacher` was in the function's scope, we'd expect an error here:
+만약 `ofTheTeacher`가 함수의 스코프안에 있었다면 아래와 같은 에러가 예상된다.
 
 ```js
 var askQuestion = function ofTheTeacher(){
-    // why is this not a duplicate declaration error?
+    // 왜 중복 선언 에러가 아니지?
     let ofTheTeacher = "Confused, yet?";
 };
 ```
 
-The `let` declaration form does not allow re-declaration (see Chapter 5). But this is perfectly legal shadowing, not re-declaration, because the two `ofTheTeacher` identifiers are in separate scopes.
+`let` 선언 형식은 재선언을 허락하지 않는다(5장 참고). 하지만 이건 완전히 유효한 가리기이고, 재선언이 아니다. 2개의 `ofTheTeacher` 식별자는 분리된 스코프에 있기 때문이다.
 
-You'll rarely run into any case where the scope of a function's name identifier matters. But again, it's good to know how these mechanisms actually work. To avoid being bitten, never shadow function name identifiers.
+함수의 이름 식별자 스코프가 문제되는 경우는 거의 없을 것이다. 하지만 다시, 이런 메커니즘이 어떻게 동작하는지 아는 것은 좋다. 물리는 것을 피하기 위해서는 함수 이름 식별자를 가리지 말아라.
 
 ## Anonymous vs. Named Functions
 

@@ -580,44 +580,47 @@ var cache /* = {}*/;
 
 *변수 호이스팅*을 활용하여 변수의 선언보다 초기에 변수를 할당한 사례는 이 정도밖에 없다. 하지만 이런 예외에 호이스팅을 신중하게 사용하는 것은 합리적이라고 생각한다. 
 
-## The Case for `var`
+## `var` 케이스
 
-Speaking of *variable hoisting*, let's have some real talk for a bit about `var`, a favorite villain devs love to blame for many of the woes of JS development. In Chapter 5, we explored `let`/`const` and promised we'd revisit where `var` falls in the whole mix.
+*변수 호이스팅*을 다루기 위해, `var`에 대해서 샅샅히 까발려보자, 악당 개발자는 JS 개발이 가진 많은 고민들을 탓하는 것을 좋아한다. 5장에서, 우리는 `let`/`const`를 다뤘고 그리고 `var`가 잘 작동하는 곳에서 다시 이 챕터에 대해 이야기해보기로 했다.
 
-As I lay out the case, don't miss:
+케이스를 정리했으니, 놓치지 말자:
 
-* `var` was never broken
-* `let` is your friend
-* `const` has limited utility
-* The best of both worlds: `var` *and* `let`
 
-### Don't Throw Out `var`
+* `var` 는 절대 고장난 적이 없었다.
+* `let` 은 당신의 친구
+* `const` 는 제한된 사용상을 가진다.
+*  두개의 세계에서의 최고: `var` *그리고* `let`
 
-`var` is fine, and works just fine. It's been around for 25 years, and it'll be around and useful and functional for another 25 years or more. Claims that `var` is broken, deprecated, outdated, dangerous, or ill-designed are bogus bandwagoning.
+### `var`를 버리지 마라
 
-Does that mean `var` is the right declarator for every single declaration in your program? Certainly not. But it still has its place in your programs. Refusing to use it because someone on the team chose an aggressive linter opinion that chokes on `var` is cutting off your nose to spite your face.
+`var` 는 괜찮다, 그리고 괜찮게 작동한다. 이것은 25년 동안 존재해왔다, 그리고 다음 25년 동안도 존재할 것이며 유용하고 기능적일 것이다. `var`는 고장나고, 권장되지 않고, 오래되었고, 위험하고 또는 잘못 디자인 되었다는 주장은 모호한 편승이론일뿐이다.
 
-OK, now that I've got you really riled up, let me try to explain my position.
+이게 'var'가 프로그램의 모든 선언에 적합한 선언자임을 의미할까? 확실히 아니다. 하지만 당신의 프로그램에는 여전히 자리하고 있다. 팀의 누군가가 'var'의 목을 조르는 공격적인 의견을 선택했다는 이유로 당신이 사용을 거부하는 것은 당신의 체면을 상하게 하기 위해 당신의 코를 자르는 것이다.
 
-For the record, I'm a fan of `let`, for block-scoped declarations. I really dislike TDZ and I think that was a mistake. But `let` itself is great. I use it often. In fact, I probably use it as much or more than I use `var`.
 
-### `const`-antly Confused
+좋다, 이제 당신을 화나게 했으니, 이에 대한 입장을 설명하겠다.
 
-`const` on the other hand, I don't use as often. I'm not going to dig into all the reasons why, but it comes down to `const` not *carrying its own weight*. That is, while there's a tiny bit of benefit of `const` in some cases, that benefit is outweighed by the long history of troubles around `const` confusion in a variety of languages, long before it ever showed up in JS.
+참고로 나는 블록스코프 선언의 팬이다. 나는 TDZ가 정말 싫고 그것은 실수였다고 생각한다. 하지만 `let` 자체는 대단하다. 자주 쓴다. 사실 나는 아마 `var`를 사용하는 것보다 많이 혹은 더 많이 사용하고 있을 것이다.
 
-`const` pretends to create values that can't be mutated—a misconception that's extremely common in developer communities across many languages—whereas what it really does is prevent re-assignment.
+
+### `const`-완전히 혼란스러운
+
+반면에 `const`는 자주 사용하지 않는다. 그 이유를 다 파헤치지는 않겠지만, 결론은 '자신의 무게를 짊어지지 않기' 때문으로 귀결된다. 즉, 경우에 따라서는 const의 약간의 이점도 있지만, JS에 나타나기 훨씬 전에 다양한 언어의  `const `를 둘러싼 오랜 혼란의 역사가 그 이점을 능가한다.
+
+`const`는 돌연변이가 불가능한 값을 만들수 있는 척한다 - 여러 언어의 개발자 커뮤니티에서 매우 흔한 오해이지만 실제로는 단지 재할당을 막기만할 뿐이다. 
 
 ```js
 const studentIDs = [ 14, 73, 112 ];
 
-// later
+// 후에
 
-studentIDs.push(6);   // whoa, wait... what!?
+studentIDs.push(6);   // 후아, 잠깐... 뭐라고!?
 ```
 
-Using a `const` with a mutable value (like an array or object) is asking for a future developer (or reader of your code) to fall into the trap you set, which was that they either didn't know, or sorta forgot, that *value immutability* isn't at all the same thing as *assignment immutability*.
+변이 가능한 값(예: 배열 또는 객체)이 있는 `const`를 사용하는 것은 미래의 개발자(또는 코드를 읽는 사람)가 설정한 함정에 빠질 것을 요청하는 것이다. 즉, *값 불변성*은 *할당 불변성*과 전혀 같지 않다는 것을 몰랐거나 잊어버린 것이다.
 
-I just don't think we should set those traps. The only time I ever use `const` is when I'm assigning an already-immutable value (like `42` or `"Hello, friends!"`), and when it's clearly a "constant" in the sense of being a named placeholder for a literal value, for semantic purposes. That's what `const` is best used for. That's pretty rare in my code, though.
+함정을 만드는 것은 안 될 것 같아 내가 유일하게 `const`를 사용하는 때는 '42'나 '안녕, 친구들!'처럼 이미 불변의 값을 할당하고 있을 때, 그리고 그것이 문자 그대로의 가치, 의미적 목적으로 이름 붙여진 자리 표시자라는 의미에서 분명히 'constant'일 때이다. const가 가장 잘 쓰이는 이유다. 제 코드에서 그런 경우는 드물다.
 
 If variable re-assignment were a big deal, then `const` would be more useful. But variable re-assignment just isn't that big of a deal in terms of causing bugs. There's a long list of things that lead to bugs in programs, but "accidental re-assignment" is way, way down that list.
 

@@ -370,21 +370,21 @@ lookupTheRecords(someData)
 
 모든 함수에는 이름이 필요하다. 하나도 빠짐없이, 예외는 없다. 생략한 이름은 프로그램을 읽기 더 어렵게 하고, 디버그하기 더 어렵게 하고, 유지 보수하기 더 어렵게 할 것이다.
 
-### Arrow Functions
+### 화살표 함수
 
-Arrow functions are **always** anonymous, even if (rarely) they're used in a way that gives them an inferred name. I just spent several pages explaining why anonymous functions are a bad idea, so you can probably guess what I think about arrow functions.
+화살표 함수는 **항상** 익명이다. (드물게) 추론된 이름을 전달하여 사용하게 된다고 하더라도 그렇다. 몇 페이지에 걸쳐 익명 함수가 왜 나쁜 방법인지 설명을 했기 때문에 화살표 함수에 대해 어떻게 설명할지 짐작할 수 있을 것이다.
 
-Don't use them as a general replacement for regular functions. They're more concise, yes, but that brevity comes at the cost of omitting key visual delimiters that help our brains quickly parse out what we're reading. And, to the point of this discussion, they're anonymous, which makes them worse for readability from that angle as well.
+일반적인 함수를 대체하여 사용하지 말아라. 화살표 함수는 더 간결하다. 그렇지만 그 간결함은 우리의 뇌가 읽고 있는 내용을 빠르게 분석하도록 도와주는 시각적 구분 기호를 생략하는 대가를 치르게 한다. 그리고, 이 논의의 요점은 화살표 함수가 익명이라는 것이고 익명이기 때문에 가독성이 떨어진다는 것이다.
 
-Arrow functions have a purpose, but that purpose is not to save keystrokes. Arrow functions have *lexical this* behavior, which is somewhat beyond the bounds of our discussion in this book.
+화살표 함수는 목적이 있지만 키 입력을 저장하기 위한 것은 아니다. 화살표 함수는 이 책에서 다루는 내용의 범위를 벗어난 *lexical this* 동작을 갖고 있다.
 
-Briefly: arrow functions don't define a `this` identifier keyword at all. If you use a `this` inside an arrow function, it behaves exactly as any other variable reference, which is that the scope chain is consulted to find a function scope (non-arrow function) where it *is* defined, and to use that one.
+요약: 화살표 함수는 `this` 식별자를 전혀 정의하지 않는다. 화살표 함수 내부에서 `this`를 사용하면 변수 참조와 동일하게 동작한다. 스코프 체인을 참조하여 `this`를 정의하고 *있는* (화살표 함수가 아닌)함수 스코프를 찾은 다음 그 스코프에 해당하는 값을 사용한다.
 
-In other words, arrow functions treat `this` like any other lexical variable.
+즉, 화살표 함수는 `this`를 어휘적 변수처럼 취급한다.
 
-If you're used to hacks like `var self = this`, or if you prefer to call `.bind(this)` on inner `function` expressions, just to force them to inherit a `this` from an outer function like it was a lexical variable, then `=>` arrow functions are absolutely the better option. They're designed specifically to fix that problem.
+`var self = this`와 같은 방법에 익숙하거나 `function` 표현식 내부에서 `.bind(this)`를 사용하는 것을 더 선호한다면 어휘적 변수처럼 외부 함수로부터 `this`를 상속하도록 강제하기 위해 `=>` 화살표 함수를 사용하는 것이 더 낫다. 화살표 함수는 이런 문제를 해결하기 위해 특별히 고안되었다.
 
-So, in the rare cases you need *lexical this*, use an arrow function. It's the best tool for that job. But just be aware that in doing so, you're accepting the downsides of an anonymous function. You should expend additional effort to mitigate the readability *cost*, such as more descriptive variable names and code comments.
+따라서, 드물게 *lexical this*가 필요한 경우에는 화살표 함수를 사용하면 된다. 화살표 함수는 이런 상황에 가장 적절한 도구다. 하지만 이렇게 하는 경우, 익명 함수의 단점을 받아들이게 된다는 것을 알아 두어라. 설명적인 변수명을 붙이거나 코드 주석을 작성하는 등, 추가적인 노력을 해야한다.
 
 ### IIFE Variations
 

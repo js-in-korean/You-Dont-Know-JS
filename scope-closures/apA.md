@@ -623,24 +623,34 @@ studentIDs.push(6);   // 후아, 잠깐... 뭐라고!?
 함정을 만드는 것은 안 될 것 같아 내가 유일하게 `const`를 사용하는 때는 '42'나 '안녕, 친구들!'처럼 이미 불변의 값을 할당하고 있을 때, 그리고 그것이 문자 그대로의 가치, 의미적 목적으로 이름 붙여진 자리 표시자라는 의미에서 분명히 'constant'일 때이다. const가 가장 잘 쓰이는 이유다. 제 코드에서 그런 경우는 드물다.
 
 If variable re-assignment were a big deal, then `const` would be more useful. But variable re-assignment just isn't that big of a deal in terms of causing bugs. There's a long list of things that lead to bugs in programs, but "accidental re-assignment" is way, way down that list.
+변수 재할당이 큰 문제라면, `const`가 더 유용하다. 하지만 변수 재할당은 버그를 일으키는 측면에서 그리 큰 문제가 아니다. 프로그램에 버그를 일으키는 많은 것들이 있지만, "우발적인 재할당"은 그 목록에서 훨씬 아래쪽에 있다.
 
 Combine that with the fact that `const` (and `let`) are supposed to be used in blocks, and blocks are supposed to be short, and you have a really small area of your code where a `const` declaration is even applicable. A `const` on line 1 of your ten-line block only tells you something about the next nine lines. And the thing it tells you is already obvious by glancing down at those nine lines: the variable is never on the left-hand side of an `=`; it's not re-assigned.
+`const`(그리고 `let`)는 블록에 사용되어야 하고 블록은 짧아야 한다는 사실과 결합하면 const 선언을 적용할 수 있는 매우 작은 영역의 코드를 가질 수 있다. 10줄 블록 중 1줄에 있는 `const`는 다음 9줄에 대한 내용만 알려준다. 그리고 이 9개의 선을 내려다보면 이미 알 수 있다: 변수는 절대 '='의 왼쪽에 있지 않으며, 재할당되지 않는다.
+
 
 That's it, that's all `const` really does. Other than that, it's not very useful. Stacked up against the significant confusion of value vs. assignment immutability, `const` loses a lot of its luster.
+그게 `const`가 진짜 하는 전부다. 그 외에는 별로 쓸모가 없다. 값 vs 할당 불변성의 중대한 혼돈에 맞서서 `const`는 많은 빛을 잃는다.
 
 A `let` (or `var`!) that's never re-assigned is already behaviorally a "constant", even though it doesn't have the compiler guarantee. That's good enough in most cases.
+재할당되지 않는 'let' (또는 'var'!)은 비록 컴파일러가 보장하지 않더라도 이미 상수이다. 대부분의 경우 그것으로 충분하다.
 
-### `var` *and* `let`
+### `var` *그리고* `let`
 
 In my mind, `const` is pretty rarely useful, so this is only two-horse race between `let` and `var`. But it's not really a race either, because there doesn't have to be just one winner. They can both win... different races.
+내 생각에 `const`는 쓸모가 거의 없어, let과 var의 두 마리 토끼 싸움에 불과하다. 하지만 꼭 한 명의 우승자가 있어야 하는 것은 아니기 때문에, 그것은 또한 진정한 경주가 아니다. 둘 다 이길 수 있다... 다른 경주에서.
 
 The fact is, you should be using both `var` and `let` in your programs. They are not interchangeable: you shouldn't use `var` where a `let` is called for, but you also shouldn't use `let` where a `var` is most appropriate.
+사실 프로그램에서는 `var`와 `let`을 모두 사용해야 한다. `let`이 호출되는 곳에 `var`를 사용해서는 안 되지만 `var`가 가장 적절한 곳에 `let`을 사용해서는 안 된다.
 
 So where should we still use `var`? Under what circumstances is it a better choice than `let`?
+그렇다면 `var`를 어디에 사용해야 할까? 어떤 상황에서 그것이 `let`보다 나은 선택일까?
 
 For one, I always use `var` in the top-level scope of any function, regardless of whether that's at the beginning, middle, or end of the function. I also use `var` in the global scope, though I try to minimize usage of the global scope.
+한 가지 예로, 나는 함수의 시작, 중간, 끝에 상관없이 모든 함수의 최상위 스코프에서 항상 'var'를 사용한다. 글로벌 스코프의 사용을 최소화하려고 노력하지만 글로벌 스코프에서도 var를 사용한다.
 
 Why use `var` for function scoping? Because that's exactly what `var` does. There literally is no better tool for the job of function scoping a declaration than a declarator that has, for 25 years, done exactly that.
+함수 스코프에 `var`를 사용하는 이유는 무엇일까? 그것이 바로 `var`가 하는 일이기 때문이다. 말 그대로 선언을 스코핑하는 함수에서 25년 동안 정확히 해온 선언자보다 더 좋은 도구는 없다.
 
 You *could* use `let` in this top-level scope, but it's not the best tool for that job. I also find that if you use `let` everywhere, then it's less obvious which declarations are designed to be localized and which ones are intended to be used throughout the function.
 

@@ -653,8 +653,11 @@ Why use `var` for function scoping? Because that's exactly what `var` does. Ther
 함수 스코프에 `var`를 사용하는 이유는 무엇일까? 그것이 바로 `var`가 하는 일이기 때문이다. 말 그대로 선언을 스코핑하는 함수에서 25년 동안 정확히 해온 선언자보다 더 좋은 도구는 없다.
 
 You *could* use `let` in this top-level scope, but it's not the best tool for that job. I also find that if you use `let` everywhere, then it's less obvious which declarations are designed to be localized and which ones are intended to be used throughout the function.
+이 최상위 스코프에서, `let`을 *사용할 수 있지만*, 해당 작업에 가장 적합한 툴은 아니다. 또 어디서나 `let`을 사용하면 어떤 선언이 지역화 되도록 되어 있는지, 어떤 선언이 기능 전반에 사용되도록 되어 있는지 잘 알 수 없다.
+
 
 By contrast, I rarely use a `var` inside a block. That's what `let` is for. Use the best tool for the job. If you see a `let`, it tells you that you're dealing with a localized declaration. If you see `var`, it tells you that you're dealing with a function-wide declaration. Simple as that.
+반대로 블록 안에서 `var`를 사용하는 경우는 거의 없다. 그래서 `let`이 있는 것이다. 작업에 가장 적합한 도구를 사용해라. `let`이 보이면 지역 선언을 다루고 있음을 알려준다. `var`가 표시되면 함수 차원의 선언을 다루고 있음을 나타. 그렇게 간단하다.
 
 ```js
 function getStudents(data) {
@@ -673,10 +676,13 @@ function getStudents(data) {
 ```
 
 The `studentRecords` variable is intended for use across the whole function. `var` is the best declarator to tell the reader that. By contrast, `record` and `id` are intended for use only in the narrower scope of the loop iteration, so `let` is the best tool for that job.
+`studentRecords` 변수는 전체 기능에서 사용하기 위한 것이다. `va`'는 독자들에게 그것을 말해주는 최고의 선언자이다. 반대로 `record`와 `id`는 루프 반복의 좁은 범위에서만 사용하기 때문에 `let` 해당 작업에 가장 적합한 도구이다.
 
 In addition to this *best tool* semantic argument, `var` has a few other characteristics that, in certain limited circumstances, make it more powerful.
+이 *최상의 도구* 주장에 더하여, `var`는 특정 제한된 상황에서 더 강력하게 만드는 몇 가지 다른 특성을 가지고 있다.
 
 One example is when a loop is exclusively using a variable, but its conditional clause cannot see block-scoped declarations inside the iteration:
+예를 들어, 루프가 변수를 배타적으로 사용하고 있지만 조건 절은 이터레이션 내에서 블록 스코프 선언을 볼 수 없는 경우를 들 수 있다.
 
 ```js
 function commitAction() {
@@ -688,8 +694,10 @@ function commitAction() {
 ```
 
 Here, `result` is clearly only used inside the block, so we use `let`. But `done` is a bit different. It's only useful for the loop, but the `while` clause cannot see `let` declarations that appear inside the loop. So we compromise and use `var`, so that `done` is hoisted to the outer scope where it can be seen.
+여기서, `result`는 블록 안에서만 사용되므로 `let`을 사용한다. 그러나 `done`은 조금 다르다. 이것은 루프에만 유용하지만 `while` 절에서는 루프 내부에 나타나는 `let` 선언을 볼 수 없다. 그래서 우리는 타협하고 `var`를 사용하여 `done`이 보이는 외부 범위로 올라가도록 한다.
 
 The alternative—declaring `done` outside the loop—separates it from where it's first used, and either necessitates picking a default value to assign, or worse, leaving it unassigned and thus looking ambiguous to the reader. I think `var` inside the loop is preferable here.
+루프 밖에서 `done`을 선언하는 대안은 처음 사용된 곳에서 분리하여 할당하기 위해 기본값을 선택해야 하거나, 더 나쁘게는 할당되지 않은 상태로 있어 독자에게 모호하게 보일 수 있다. 나는 루프 내부의 `var`가 더 좋다고 생각한다.
 
 Another helpful characteristic of `var` is seen with declarations inside unintended blocks. Unintended blocks are blocks that are created because the syntax requires a block, but where the intent of the developer is not really to create a localized scope. The best illustration of unintended scope is the `try..catch` statement:
 

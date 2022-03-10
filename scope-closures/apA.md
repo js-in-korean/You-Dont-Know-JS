@@ -13,12 +13,12 @@
 
 스코프는 때때로 분명하지 않은 장소에 만들어진다. 실제로 이러한 암묵적 스코프는 프로그램 동작에 자주 영향을 미치지는 않지만, 실제로 발생한다는 것을 아는 것은 아주 도움이 된다. 깜짝 놀랄만한 스코프를 아래에서 살펴보자.
 
-* 매개변수<sub>parameter</sub> 스코프
+* 와 일치시키면, <sub>parameter</sub> 스코프
 * 함수 이름 스코프
 
-### 매개변수 스코프
+### 와 일치시키면,  스코프
 
-2장에서의 대화 비유<sub>metaphor</sub>는 함수 매개변수가 기본적으로 함수 스코프에 지역적으로 선언된 변수와 같다는 것을 암시한다. 하지만 항상 그렇지는 않다.
+2장에서의 대화 비유<sub>metaphor</sub>는 함수 와 일치시키면, 가 기본적으로 함수 스코프에 지역적으로 선언된 변수와 같다는 것을 암시한다. 하지만 항상 그렇지는 않다.
 
 아래를 보자.
 
@@ -32,7 +32,7 @@ function getStudentName(studentID) {
 }
 ```
 
-여기서 `studentID`는 "단순" 매개변수로 보인다. 그래서 그것은 파랑(2) 함수 스코프의 멤버로 행동한다. 그러나 만약 우리가 그것을 단순하지 않은 매개변수로 바꾼다면 엄밀히 더 이상 그렇지 않다. 단순하지 않은 매개변수 형식은 기본값이 있는 매개변수, (`...`를 사용하는) 나머지 매개변수<sub>rest parameters</sub> 그리고 구조 분해 할당된<sub>destructured</sub> 매개변수가 있다.
+여기서 `studentID`는 "단순" 와 일치시키면, 로 보인다. 그래서 그것은 파랑(2) 함수 스코프의 멤버로 행동한다. 그러나 만약 우리가 그것을 단순하지 않은 매개변수로 바꾼다면 엄밀히 더 이상 그렇지 않다. 단순하지 않은 매개변수 형식은 기본값이 있는 매개변수, (`...`를 사용하는) 나머지 매개변수<sub>rest parameters</sub> 그리고 구조 분해 할당된<sub>destructured</sub> 매개변수가 있다.
 
 아래를 보자.
 
@@ -1033,29 +1033,29 @@ define([ "./Student" ],function StudentList(Student){
 
 이것은 우리가 클래식 모듈로 탐구했던 것과 정확하게 (클로저가 동작하는 방식을 포함하여) 같은 원리에 기반한다.
 
-### Universal Modules (UMD)
+### 유니버설 모듈 (UMD)
 
-The final variation we'll look at is UMD, which is less a specific, exact format and more a collection of very similar formats. It was designed to create better interop (without any build-tool conversion) for modules that may be loaded in browsers, by AMD-style loaders, or in Node. I personally still publish many of my utility libraries using a form of UMD.
+마지막으로 살펴볼 변형은 UMD이다. UMD는 구체적이고, 정확한 형식이 아니라 매우 비슷한 형태의 모음이다. 브라우저, AMD 스타일 로더, Node에서 로드할 수 있는 모듈을 위한 더 나은 (어떤 빌드툴 변환 없이) 상호운용성을 만들기 위해 설계되었다. 나는 개인적으로 여전히 UMD 형식을 사용하여 대부분의 내 유틸리티 라이브러리를 배포한다.
 
-Here's the typical structure of a UMD:
+UMD의 일반적인 구조는 아래와 같다.
 
 ```js
 (function UMD(name,context,definition){
-    // loaded by an AMD-style loader?
+    // AMD 스타일 로더에 의해 로드되었는가?
     if (
         typeof define === "function" &&
         define.amd
     ) {
         define(definition);
     }
-    // in Node?
+    // Node에서?
     else if (
         typeof module !== "undefined" &&
         module.exports
     ) {
         module.exports = definition(name,context);
     }
-    // assume standalone browser script
+    // 독립적인 브라우저 스크립트로 가정
     else {
         context[name] = definition(name,context);
     }
@@ -1072,14 +1072,14 @@ Here's the typical structure of a UMD:
 });
 ```
 
-Though it may look a bit unusual, UMD is really just an IIFE.
+조금 특이해 보일지라도, UMD는 정말로 IIFE일 뿐이다.
 
-What's different is that the main `function` expression part (at the top) of the IIFE contains a series of `if..else if` statements to detect which of the three supported environments the module is being loaded in.
+다른 점은 IIFE의 (상단에 있는) 메인 `function` 표현식 부분이 모듈이 로드되는 세 가지 지원 환경을 알아내기 위해 `if..else if` 구문 시리즈를 가지고 있다는 점이 차이점이다.
 
-The final `()` that normally invokes an IIFE is being passed three arguments: `"StudentsList"`, `this`, and another `function` expression. If you match those arguments to their parameters, you'll see they are: `name`, `context`, and `definition`, respectively. `"StudentList"` (`name`) is the name label for the module, primarily in case it's defined as a global variable. `this` (`context`) is generally the `window` (aka, global object; see Chapter 4) for defining the module by its name.
+보통 때는 IIFE를 실행하는 마지막 `()`는 세 가지 인수 `"StudentsList"`, `this`와 다른 `function` 표현식을 전달하게 된다. 이러한 인수를 매개변수와 일치시키면, `name`, `context`와 `definition`을 볼 것이다. `"StudentList"` (`name`)는 모듈을 위한 이름 라벨이다. 주로 전역 변수로 정의된 경우이다. `this` (`context`)는 일반적으로 이름으로 모듈을 정의하기 위한 `window`(전역 객체, 4장 참고)이다.
 
-`definition(..)` is invoked to actually retrieve the definition of the module, and you'll notice that, sure enough, that's just a classic module form!
+`definition(..)`은 모듈의 정의를 실제로 조회하기 위해 실행된다. 그러면 충분히 알아차릴 것이다. 클래식 모듈 형식일 뿐이다!
 
-There's no question that as of the time of this writing, ESM (ES Modules) are becoming popular and widespread rapidly. But with millions and millions of modules written over the last 20 years, all using some pre-ESM variation of classic modules, they're still very important to be able to read and understand when you come across them.
+ESM(ES 모듈)이 빠르게 대중화되고 퍼지고 있다는 것은 이 글을 쓰는 현재 의심의 여지가 없다. 그러나 지난 20년 넘게 작성된 수백만개의 모듈이 모두 클래식 모듈의 이전 ESM 변형을 사용하고 있다. 이것들을 접했을 때 읽고 이해할 수 있는 것은 여전히 매우 중요하다.
 
 [^fowlerIOC]: *Inversion of Control*, Martin Fowler, https://martinfowler.com/bliki/InversionOfControl.html, 26 June 2005.

@@ -1013,9 +1013,9 @@ var StudentList = (function defineModule(Student){
 
     무슨 경우이던지 간에, 자신의 API에 접근하기 위한 참조를 유지하지 *않을* 것이라는 것은 다소 바보 같은 생각이다. 그렇지?
 
-### Asynchronous Module Defintion (AMD)
+### 비동기 모듈 정의 (AMD)
 
-Another variation on the classic module form is AMD-style modules (popular several years back), such as those supported by the RequireJS utility:
+클래식 모듈 형식의 다른 변형은 AMD 스타일 모듈이고(지난 몇 년간 인기있던), RequireJS 유틸리티에 의해 아래처럼 지원되었다.
 
 ```js
 define([ "./Student" ],function StudentList(Student){
@@ -1029,9 +1029,9 @@ define([ "./Student" ],function StudentList(Student){
 });
 ```
 
-If you look closely at `StudentList(..)`, it's a classic module factory function. Inside the machinery of `define(..)` (provided by RequireJS), the `StudentList(..)` function is executed, passing to it any other module instances declared as dependencies. The return value is an object representing the public API for the module.
+`StudentList(..)`를 자세히 보면, 클래식 모듈 팩토리 함수이다. (RequireJS가 제공하는) `define(..)` 장치 안에서 실행되고, 의존성으로 선언된 다른 모듈 인스턴스를 전달한다. 반환값은 모듈의 공개 API를 나타내는 객체이다.
 
-This is based on exactly the same principles (including how the closure works!) as we explored with classic modules.
+이것은 우리가 클래식 모듈로 탐구했던 것과 정확하게 (클로저가 동작하는 방식을 포함하여) 같은 원리에 기반한다.
 
 ### Universal Modules (UMD)
 

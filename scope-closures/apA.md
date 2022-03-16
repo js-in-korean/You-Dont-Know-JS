@@ -1082,4 +1082,4 @@ UMD의 일반적인 구조는 아래와 같다.
 
 ESM(ES 모듈)이 빠르게 대중화되고 퍼지고 있다는 것은 이 글을 쓰는 현재 의심의 여지가 없다. 그러나 지난 20년 넘게 작성된 수백만개의 모듈이 모두 클래식 모듈의 이전 ESM 변형을 사용하고 있다. 이것들을 접했을 때 읽고 이해할 수 있는 것은 여전히 매우 중요하다.
 
-[^fowlerIOC]: *Inversion of Control*, Martin Fowler, https://martinfowler.com/bliki/InversionOfControl.html, 26 June 2005.
+[^fowlerIOC]: *Inversion of Control*, Martin Fowler, https://martinfowler.com/bliki/InversionOfControl.html, 2005년 6월 26일.

@@ -700,15 +700,19 @@ The alternative—declaring `done` outside the loop—separates it from where it
 루프 밖에서 `done`을 선언하는 대안은 처음 사용된 곳에서 분리하여 할당하기 위해 기본값을 선택해야 하거나, 더 나쁘게는 할당되지 않은 상태로 있어 독자에게 모호하게 보일 수 있다. 나는 루프 내부의 `var`가 더 좋다고 생각한다.
 
 Another helpful characteristic of `var` is seen with declarations inside unintended blocks. Unintended blocks are blocks that are created because the syntax requires a block, but where the intent of the developer is not really to create a localized scope. The best illustration of unintended scope is the `try..catch` statement:
+`var`의 또 다른 유용한 특징은 의도하지 않은 블록 내부에 선언이 있다는 것이다. 의도하지 않은 블록은 구문에 블록이 필요하기 때문에 생성되는 블록이지만 개발자의 의도는 현지화된 범위를 만드는 것이 아니다. 의도하지 않은 범위의 가장 좋은 예는 `try..catch` 이다:
+
 
 ```js
 function getStudents() {
     try {
         // not really a block scope
+        // 실제로는 블록 스코프가 아니다.
         var records = fromCache("students");
     }
     catch (err) {
-        // oops, fall back to a default
+        //
+        // 웁스 디폴트가 되었다.
         var records = [];
     }
     // ..
@@ -716,14 +720,19 @@ function getStudents() {
 ```
 
 There are other ways to structure this code, yes. But I think this is the *best* way, given various trade-offs.
+이 코드를 구성하는 다른 방법이 있다. 하지만 여러 가지 단점을 고려할 때 이것이 *가장 좋은* 방법이라고 생각한다.
 
 I don't want to declare `records` (with `var` or `let`) outside of the `try` block, and then assign to it in one or both blocks. I prefer initial declarations to always be as close as possible (ideally, same line) to the first usage of the variable. In this simple example, that would only be a couple of lines distance, but in real code it can grow to many more lines. The bigger the gap, the harder it is to figure out what variable from what scope you're assigning to. `var` used at the actual assignment makes it less ambiguous.
+`records`(`var` 또는 `let`이 있는)를 `try` 블록 밖으로 선언하고 나서, 어느 한 블록 또는 양쪽 블록으로 할당하고 싶지 않다. 초기 선언은 가능한 한 변수의 첫 번째 사용에 가까운(이상적으로 같은 행) 것이 좋다. 이 간단한 예에서는 몇 개의 회선 거리에 불과하지만 실제 코드에서는 더 많은 회선까지 늘어날 수 있다. 갭이 클수록 할당하는 스코프에서 변수를 파악하는 것이 어려워진다. 실제 할당에서 사용되는 `var`를 사용하면 덜 모호해진다.
 
 Also notice I used `var` in both the `try` and `catch` blocks. That's because I want to signal to the reader that no matter which path is taken, `records` always gets declared. Technically, that works because `var` is hoisted once to the function scope. But it's still a nice semantic signal to remind the reader what either `var` ensures. If `var` were only used in one of the blocks, and you were only reading the other block, you wouldn't as easily discover where `records` was coming from.
+또, `try`블록과 `catch`블록 양쪽에서 `var`를 사용하고 있는 것에 주의해라. 어떤 길을 가더라도 `records`는 반드시 선언된다는 것을 독자에게 알리고 싶기 때문이다. 엄밀히 말하면 `var`는 함수 스코프로 한 번 호이스트된다. 그러나 그것은 여전히 독자들에게 `var`가 보장하는 것을 상기시키는 좋은 의미 신호이다. 한 블록에서만 `var`를 사용하고 다른 블록만 읽고 있다면 레코드가 어디서 왔는지 쉽게 알 수 없을 것이다.
 
 This is, in my opinion, a little superpower of `var`. Not only can it escape the unintentional `try..catch` blocks, but it's allowed to appear multiple times in a function's scope. You can't do that with `let`. It's not bad, it's actually a little helpful feature. Think of `var` more like a declarative annotation that's reminding you, each usage, where the variable comes from. "Ah ha, right, it belongs to the whole function."
+이것은 내가 보기에 `var`의 작은 초능력이다. 의도하지 않은 `try..catch`블록에서 벗어날 수 있을 뿐만 아니라, 함수의 스코프에는 여러 번 표시될 수 있다. `let`으로는 그럴 수 없다. 나쁘지 않다. 사실 조금 도움이 되는 기능이다. `var`는 변수 출처를 알려주는 선언적 주석과 비슷하다. "아하, 맞아, 함수 전체에 속하지."
 
 This repeated-annotation superpower is useful in other cases:
+이 반복 주석 슈퍼파워는 다른 경우에 유용하다.
 
 ```js
 function getStudents() {
@@ -731,22 +740,29 @@ function getStudents() {
 
     // do something with data
     // .. 50 more lines of code ..
+    // data 를 다룬다.
+    // .. 50줄 이상의 코드 ..
 
     // purely an annotation to remind us
     var data;
+    // var data를 상기시키는 순수한 주석
 
     // use data again
-    // ..
+    // data를 다시 사용한다.
 }
 ```
 
 The second `var data` is not re-declaring `data`, it's just annotating for the readers' benefit that `data` is a function-wide declaration. That way, the reader doesn't need to scroll up 50+ lines of code to find the initial declaration.
+두 번째 `var data`는 `data`를 다시 선언하는 것이 아니라 `data`가 함수 전체의 선언이라는 독자들의 이익을 위해 주석을 다는 것이다. 이렇게 하면 리더는 초기 선언을 찾기 위해 50줄 이상의 코드를 스크롤할 필요가 없다.
 
 I'm perfectly fine with re-using variables for multiple purposes throughout a function scope. I'm also perfectly fine with having two usages of a variable be separated by quite a few lines of code. In both cases, the ability to safely "re-declare" (annotate) with `var` helps make sure I can tell where my `data` is coming from, no matter where I am in the function.
+함수 범위 전체에서 변수를 여러 목적으로 재사용하는 것은 문제 없다. 두 개의 변수를 여러 줄의 코드로 구분하는 것도 문제 없다. 어느 경우든, var를 사용하여 안전하게 재선언(주석)할 수 있으면 함수의 어디에 있든 데이터 출처를 알 수 있다.
 
 Again, sadly, `let` cannot do this.
+다시 말하지만 슬프게도 `let`은 이것을 할 수 없다.
 
 There are other nuances and scenarios when `var` turns out to offer some assistance, but I'm not going to belabor the point any further. The takeaway is that `var` can be useful in our programs alongside `let` (and the occasional `const`). Are you willing to creatively use the tools the JS language provides to tell a richer story to your readers?
+var가 어느 정도 도움을 주는 것으로 판명될 때 다른 뉘앙스와 시나리오가 있지만 더 이상 강조하지는 않을 것이다. 중요한 점은 var가 let(가끔 const)와 함께 프로그램에서 유용하게 쓰일 수 있다는 점이다. 독자들에게 더 풍부한 이야기를 들려주기 위해 JS 언어가 제공하는 도구를 창의적으로 사용할 의향이 있습니까?
 
 Don't just throw away a useful tool like `var` because someone shamed you into thinking it wasn't cool anymore. Don't avoid `var` because you got confused once years ago. Learn these tools and use them each for what they're best at.
 

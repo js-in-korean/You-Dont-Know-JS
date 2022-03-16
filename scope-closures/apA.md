@@ -765,33 +765,46 @@ There are other nuances and scenarios when `var` turns out to offer some assista
 var가 어느 정도 도움을 주는 것으로 판명될 때 다른 뉘앙스와 시나리오가 있지만 더 이상 강조하지는 않을 것이다. 중요한 점은 var가 let(가끔 const)와 함께 프로그램에서 유용하게 쓰일 수 있다는 점이다. 독자들에게 더 풍부한 이야기를 들려주기 위해 JS 언어가 제공하는 도구를 창의적으로 사용할 의향이 있습니까?
 
 Don't just throw away a useful tool like `var` because someone shamed you into thinking it wasn't cool anymore. Don't avoid `var` because you got confused once years ago. Learn these tools and use them each for what they're best at.
+더 이상 멋지지 않다고 치욕감을 줬다고 해서 `var` 같은 유용한 도구를 그냥 버리지 마라. 몇 년 전에 한 번 헷갈렸다고 해서 `var`를 피하지 마라. 이러한 툴을 학습하고, 각각의 툴을 자신의 가장 뛰어난 기능에 사용할 수 있다.
 
 ## What's the Deal with TDZ?
+## TDZ는 무엇을 다루는가?
 
 The TDZ (temporal dead zone) was explained in Chapter 5. We illustrated how it occurs, but we skimmed over any explanation of *why* it was necessary to introduce in the first place. Let's look briefly at the motivations of TDZ.
+TDZ(일시 데드존)는 5장에서 설명되었다. 우리는 그것이 어떻게 일어나는지 설명했지만, 애초에 소개가 필요한 *이유*에 대한 설명은 대충 훑어보았다. TDZ의 동기에 대해 간단히 살펴보겠다.
 
 Some breadcrumbs in the TDZ origin story:
+TDZ의 유래 스토리에 기재되어 있는 부차적 네비게이션:
 
 * `const`s should never change
 * It's all about time
 * Should `let` behave more like `const` or `var`?
+* `const`은 절대 변경되면 안된다.
+*  이것은 모두 시간에 관한 것이다.
+*  `let`은 `const` 와 `var`처럼 작동해야 하나?
 
 ### Where It All Started
+### 어디에서 이것은 시작되었는가
 
 TDZ comes from `const`, actually.
+TDZ는 실제로 `const`로 부터 왔다.
 
 During early ES6 development work, TC39 had to decide whether `const` (and `let`) were going to hoist to the top of their blocks. They decided these declarations would hoist, similar to how `var` does. Had that not been the case, I think some of the fear was confusion with mid-scope shadowing, such as:
+TC39는 초기 ES6 개발 과정에서 `const`(및 `let`)를 블록의 맨 위로 끌어올릴지 여부를 결정해야 했다. 그들은 이 선언들이 `var`와 같이 들어올릴 것이라고 결정했다. 그렇지 않다면, 다음과 같은 중간 스코프 섀도잉과의 혼동도 우려의 일부라고 생각한다.
 
 ```js
 let greeting = "Hi!";
 
 {
     // what should print here?
+    // 무엇을 여기에 출력해야 하나
     console.log(greeting);
 
     // .. a bunch of lines of code ..
+    // .. 엄청 긴 코드 ..
 
     // now shadowing the `greeting` variable
+    // now shadowing the `greeting` 변수를 섀도잉한다.
     let greeting = "Hello, friends!";
 
     // ..
@@ -799,15 +812,17 @@ let greeting = "Hi!";
 ```
 
 What should we do with that `console.log(..)` statement? Would it make any sense to JS devs for it to print "Hi!"? Seems like that could be a gotcha, to have shadowing kick in only for the second half of the block, but not the first half. That's not very intuitive, JS-like behavior. So `let` and `const` have to hoist to the top of the block, visible throughout.
+`console.log(..)` 구문을 어떻게 해야 할까?? JS 개발자들은 이것이 "Hi!"를 출력 하는 것을 이해할까? 블록의 전반부이 아닌 후반부에만 섀도우킥을 넣는 것은 감쪽같다. 이것은 매우 직관적이지 않고 JS와 같은 동작이다. 따라서 `let`와 `const`는 최상단으로 호이스트되서 전체에서 접근가능하여야 한다.
 
 But if `let` and `const` hoist to the top of the block (like `var` hoists to the top of a function), why don't `let` and `const` auto-initialize (to `undefined`) the way `var` does? Here was the main concern:
+그러나 `let`과 `const` 블록의 맨 위로 호이스팅 된다면(`var`가 함수의 맨 위로 호이스팅된 것 처럼) `var`처럼 `let`과 `const`가 자동 초기화(`undefined`로)하는 것은 어떨까. 주요 우려 사항은 다음과 같다.
 
 ```js
 {
-    // what should print here?
+    // 무엇을 여기에 출력해야 하나
     console.log(studentName);
 
-    // later
+    // 후에
 
     const studentName = "Frank";
 
@@ -816,6 +831,7 @@ But if `let` and `const` hoist to the top of the block (like `var` hoists to the
 ```
 
 Let's imagine that `studentName` not only hoisted to the top of this block, but was also auto-initialized to `undefined`. For the first half of the block, `studentName` could be observed to have the `undefined` value, such as with our `console.log(..)` statement. Once the `const studentName = ..` statement is reached, now `studentName` is assigned `"Frank"`. From that point forward, `studentName` can't ever be re-assigned.
+`studentName`이 이 블록의 맨 위로 호이스팅 되었을 뿐만 아니라 `undefined`으로 자동 초기화되었다고 가정하자. 블록의 전반부에서, `studentName`은 `console.log(..)`와 같이 `undefined` 가지고 있는 것을 확인할 수 있다. 일단 `const studentName = ..` 구문에 도달하면 `studentName`에 `"Frank"가 할당된다. 그 이후로는 `studentName`은 재할당할 될 수 없다.
 
 But, is it strange or surprising that a constant observably has two different values, first `undefined`, then `"Frank"`? That does seem to go against what we think a `const`ant means; it should only ever be observable with one value.
 

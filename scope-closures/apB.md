@@ -37,11 +37,11 @@ This exercise asks you to write a program—any program!—that contains nested 
 
 Try the exercise for yourself, then check out the suggested solution at the end of this appendix.
 
-## Closure (PART 1)
+## 클로저 (PART 1)
 
-Let's first practice closure with some common computer-math operations: determining if a value is prime (has no divisors other than 1 and itself), and generating a list of prime factors (divisors) for a given number.
+몇 가지 일반적인 수학 연산을 이용해서 클로저 연습을 시작해보자. 값이 소수(1과 그 자신 이외에 약수가 없는 수)인지 아닌지를 판별하고, 주어진 숫자에 대한 소수 인자(약수) 목록을 만들어보자.
 
-For example:
+예제:
 
 ```js
 isPrime(11);        // true
@@ -51,7 +51,7 @@ factorize(11);      // [ 11 ]
 factorize(12);      // [ 3, 2, 2 ] --> 3*2*2=12
 ```
 
-Here's an implementation of `isPrime(..)`, adapted from the Math.js library: [^MathJSisPrime]
+아래는 Math.js 패키지에서 구현한 `isPrime(..)` 코드이다: [^MathJSisPrime]
 
 ```js
 function isPrime(v) {
@@ -71,7 +71,7 @@ function isPrime(v) {
 }
 ```
 
-And here's a somewhat basic implementation of `factorize(..)` (not to be confused with `factorial(..)` from Chapter 6):
+그리고 `factorize(..)`의 기본적인 구현은 다음과 같다. (6장의 `factorial(..)`과 혼동하지 말 것):
 
 ```js
 function factorize(v) {
@@ -89,19 +89,19 @@ function factorize(v) {
 }
 ```
 
-| NOTE: |
+| 비고: |
 | :--- |
-| I call this basic because it's not optimized for performance. It's binary-recursive (which isn't tail-call optimizable), and it creates a lot of intermediate array copies. It also doesn't order the discovered factors in any way. There are many, many other algorithms for this task, but I wanted to use something short and roughly understandable for our exercise. |
+| 성능을 최적화하지 않았기 때문에 이것을 기본형이라고 부르겠다. 이진 재귀(꼬리 물기 최적화를 하지 못함)이고 중간 단계에서 많은 배열 복사본을 생성한다. 또한 발견한 인자의 순서를 정하지도 못한다. 이 작업을 위한 다른 알고리즘도 많지만, 연습을 위해 짧고 쉽게 이해할 수 있는 알고리즘을 사용했다. |
 
-If you were to call `isPrime(4327)` multiple times in a program, you can see that it would go through all its dozens of comparison/computation steps every time. If you consider `factorize(..)`, it's calling `isPrime(..)` many times as it computes the list of factors. And there's a good chance most of those calls are repeats. That's a lot of wasted work!
+위 프로그램에서 `isPrime(4327)`를 몇 번 호출하면, 매 단계 마다 수십 번 씩 비교/연산하는 것을 확인할 수 있다. `factorize(..)`를 자세히 보면, `isPrime(..)`을 여러번 호출해서 소수 목록을 만들고 있다. 그리고 대부분의 호출이 반복된 것일 가능성이 높다. 이건 낭비하는 일이다!
 
-The first part of this exercise is to use closure to implement a cache to remember the results of `isPrime(..)`, so that the primality (`true` or `false`) of a given number is only ever computed once. Hint: we already showed this sort of caching in Chapter 6 with `factorial(..)`.
+이 연습의 첫 번째 부분은 클로저를 사용해서 `isPrime(..)`의 결과를 저장하는 캐시를 구현하여, 주어진 수의 소수 여부(`true` 또는 `false`)를 한 번만 계산하도록 하는 것이었다. 힌트: 우리는 이미 6장에서 `factorial(..)`로 이러한 종류의 캐싱을 보여주었다.
 
-If you look at `factorize(..)`, it's implemented with recursion, meaning it calls itself repeatedly. That again means we may likely see a lot of wasted calls to compute prime factors for the same number. So the second part of the exercise is to use the same closure cache technique for `factorize(..)`.
+`factorize(..)`는 재귀적으로 구현되어 있는데, 이는 자기 자신을 반복해서 호출한다는 걸 의미한다. 즉, 같은 숫자의 소수 여부를 계산하기 위해 낭비하게 되는 호출이 많을 수 있다. 따라서, 연습의 두 번째 단계로 `factorize(..)`에도 동일한 클로저 캐시 기법을 사용하는 것이다.
 
-Use separate closures for caching of `isPrime(..)` and `factorize(..)`, rather than putting them inside a single scope.
+`isPrime(..)`와 `factorize(..)`의 캐싱에는 하나의 스코프에 넣지 말고 분리된 클로저를 사용하라.
 
-Try the exercise for yourself, then check out the suggested solution at the end of this appendix.
+직접 연습하고 나서 이 부록의 끝에 있는 권장 답안을 확인하라.
 
 ### A Word About Memory
 

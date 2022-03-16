@@ -386,13 +386,13 @@ lookupTheRecords(someData)
 
 따라서, 드물게 *lexical this*가 필요한 경우에는 화살표 함수를 사용하면 된다. 화살표 함수는 이런 상황에 가장 적절한 도구다. 하지만 이렇게 하는 경우, 익명 함수의 단점을 받아들이게 된다는 것을 알아 두어라. 설명적인 변수명을 붙이거나 코드 주석을 작성하는 등, 추가적인 노력을 해야한다.
 
-### IIFE Variations
+### IIFE의 변형
 
-All functions should have names. I said that a few times, right!? That includes IIFEs.
+모든 함수는 이름이 있어야 한다. 이것을 몇 번이나 강조했는데, 사실 IIFE에도 해당되는 말이다.
 
 ```js
 (function(){
-    // don't do this!
+    // 이렇게 하지 말아야 한다.
 })();
 
 (function doThisInstead(){
@@ -400,7 +400,7 @@ All functions should have names. I said that a few times, right!? That includes 
 })();
 ```
 
-How do we come up with a name for an IIFE? Identify what the IIFE is there for. Why do you need a scope in that spot? Are you hiding a cache variable for student records?
+IIFE의 이름을 어떻게 붙이면 좋을까? IIFE가 왜 그 자리에 있어야 하는지 생각하라. 왜 그 자리에 스코프가 필요한가? 학생부 데이터의 캐시를 숨기고자 하는가?
 
 ```js
 var getStudents = (function StoreStudentRecords(){
@@ -412,9 +412,9 @@ var getStudents = (function StoreStudentRecords(){
 })();
 ```
 
-I named the IIFE `StoreStudentRecords` because that's what it's doing: storing student records. Every IIFE should have a name. No exceptions.
+위 IIFE의 이름을 `StoreStudentRecords`로 붙인 이유는 학생부 데이터를 저장하기 때문이다. 이렇게 모든 IIFE는 이름이 있어야 한다. 예외는 없다.
 
-IIFEs are typically defined by placing `( .. )` around the `function` expression, as shown in those previous snippets. But that's not the only way to define an IIFE. Technically, the only reason we're using that first surrounding set of `( .. )` is just so the `function` keyword isn't in a position to qualify as a `function` declaration to the JS parser. But there are other syntactic ways to avoid being parsed as a declaration:
+일반적으로 IIFE는 위와 같이 `function` 표현식을 `( .. )`로 감싸는 형태로 정의한다. 하지만 이것이 IIFE를 정의하는 유일한 방법은 아니다. 엄밀히 말하면, `( .. )`로 함수를 감싸야 하는 이유는 `function` 키워드가 JS 파서에게 `function` 선언임을 나타내는 위치에 있지 않기 때문이다. 하지만 `function`이 선언으로 파싱되는 것을 피하는 문법적인 다른 방법이 있다.
 
 ```js
 !function thisIsAnIIFE(){
@@ -430,9 +430,9 @@ IIFEs are typically defined by placing `( .. )` around the `function` expression
 }();
 ```
 
-The `!`, `+`, `~`, and several other unary operators (operators with one operand) can all be placed in front of `function` to turn it into an expression. Then the final `()` call is valid, which makes it an IIFE.
+`!`, `+`, `~`, 그리고 몇 개의 단항 연산자(피연산자가 하나인 연산자)를 `function` 앞에 배치하여 하나의 표현식으로 만들 수 있다. 그러면 마지막 `()` 호출이 유효하게 동작하여 IIFE가 된다.
 
-I actually kind of like using the `void` unary operator when defining a standalone IIFE:
+실제로, IIFE를 정의할 때 `void` 연산자를 자주 사용하기도 한다:
 
 ```js
 void function yepItsAnIIFE() {
@@ -440,9 +440,9 @@ void function yepItsAnIIFE() {
 }();
 ```
 
-The benefit of `void` is, it clearly communicates at the beginning of the function that this IIFE won't be returning any value.
+`void`의 장점은 함수의 시작 부분에서 이 IIFE가 어떤 값도 반환하지 않는다는 것을 명확하게 전달한다는 것이다.
 
-However you define your IIFEs, show them some love by giving them names.
+IIFE를 어떻게 정의하든지, 이름을 붙여서 사랑을 표현하라.
 
 ## Hoisting: Functions and Variables
 

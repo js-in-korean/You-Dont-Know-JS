@@ -103,25 +103,25 @@ function factorize(v) {
 
 직접 연습하고 나서 이 부록의 끝에 있는 권장 답안을 확인하라.
 
-### A Word About Memory
+### 메모리에 대하여
 
-I want to share a little quick note about this closure cache technique and the impacts it has on your application's performance.
+클로저 캐시 기법과 이것이 애플리케이션의 성능에 미치는 영향에 대해 간단히 설명하겠다.
 
-We can see that in saving the repeated calls, we improve computation speed (in some cases, by a dramatic amount). But this usage of closure is making an explicit trade-off that you should be very aware of.
+반복되는 호출 결과를 저장하면 계산 속도가 (경우에 따라 극적으로) 향상된다는 것을 알 수 있다. 그러나 이렇게 클로저를 사용하는 것에는 매우 주의해야 할 트레이드오프가 있다.
 
-The trade-off is memory. We're essentially growing our cache (in memory) unboundedly. If the functions in question were called many millions of times with mostly unique inputs, we'd be chewing up a lot of memory. This can definitely be worth the expense, but only if we think it's likely we see repetition of common inputs so that we're taking advantage of the cache.
+그것은 바로 메모리이다. 클로저 캐시 기법은 필수적으로 (메모리의) 캐시를 무한히 늘리게 된다. 만약 문제의 함수를 수백만 번 호출하는데 대부분 고유한 입력값을 사용한다면, 매우 많은 메모리를 낭비하게 될 것이다. 이 기법은 분명히 비용을 들일 가치가 있긴 하지만, 일반적인 입력으로 반복될 가능성이 높은지 확인하고 나서 활용해야만 효율적이다.
 
-If most every call will have a unique input, and the cache is essentially never *used* to any benefit, this is an inappropriate technique to employ.
+대부분의 고유한 입력값으로 호출하게 되어 캐시가 본질적으로 전혀 유용하게 *사용되지* 않는 경우, 이 기법은 사용하기 부적절하다.
 
-It also might be a good idea to have a more sophisticated caching approach, such as an LRU (least recently used) cache, that limits its size; as it runs up to the limit, an LRU evicts the values that are... well, least recently used!
+용량을 제한하는 LRU(least recently used) 캐시처럼 정교한 캐싱 방식을 사용하는 것도 좋은 방법이다. LRU는 최대 용량에 가까워지면 최근에 가장 적게 사용한 값을 메모리에서 제거한다.
 
-The downside here is that LRU is quite non-trivial in its own right. You'll want to use a highly optimized implementation of LRU, and be keenly aware of all the trade-offs at play.
+이 때, 단점은 LRU가 그 자체의 구현이 쉽지 않다는 것이다. 제대로 최적화된 LRU를 사용하고 싶다면, 문제 상황에서 발생할 수 있는 모든 단점을 빠짐없이 알고 있어야 한다.
 
-## Closure (PART 2)
+## 클로저 (PART 2)
 
-In this exercise, we're going to again practive closure by defining a `toggle(..)` utility that gives us a value toggler.
+이번 연습에서는 클로저로 값 토글러를 전달해주는 `toggle(..)` 유틸리티를 다시 정의한다.
 
-You will pass one or more values (as arguments) into `toggle(..)`, and get back a function. That returned function will alternate/rotate between all the passed-in values in order, one at a time, as it's called repeatedly.
+하나 이상의 값(인자)을 `toggle(..)`에 전달하면 함수를 반환하게 된다. 반환된 함수는 전달 받은 모든 값을 한 번씩 순서대로 돌아가며 교체할 것이다.
 
 ```js
 function toggle(/* .. */) {
@@ -145,13 +145,13 @@ speed();      // "fast"
 speed();      // "slow"
 ```
 
-The corner case of passing in no values to `toggle(..)` is not very important; such a toggler instance could just always return `undefined`.
+`toggle(..)`에 값을 전달하지 않는 특이한 경우는 그다지 중요하지 않습니다. 이런 경우, 토글러 인스턴스를 항상 `undefined`로 반환하면 되기 때문이다.
 
-Try the exercise for yourself, then check out the suggested solution at the end of this appendix.
+직접 연습한 다음, 이 부록의 끝에 있는 권장 해결책을 확인하라.
 
-## Closure (PART 3)
+## 클로저 (PART 3)
 
-In this third and final exercise on closure, we're going to implement a basic calculator. The `calculator()` function will produce an instance of a calculator that maintains its own state, in the form of a function (`calc(..)`, below):
+마지막 세 번째 연습에서는 기본적인 계산기를 구현해보자. `calculator()` 함수는 다음과 같은 함수 형태로 자체의 상태를 유지하는 계산기 인스턴스를 생성한다(`calc(..)`, below).
 
 ```js
 function calculator() {
@@ -161,13 +161,13 @@ function calculator() {
 var calc = calculator();
 ```
 
-Each time `calc(..)` is called, you'll pass in a single character that represents a keypress of a calculator button. To keep things more straightforward, we'll restrict our calculator to supporting entering only digits (0-9), arithmetic operations (+, -, \*, /), and "=" to compute the operation. Operations are processed strictly in the order entered; there's no "( )" grouping or operator precedence.
+매번 `calc(..)`를 호출할때, 누른 계산기의 버튼을 표현하는 문자를 하나씩 전달한다. 좀 더 알기 쉽게 하기 위해, 계산기는 숫자(0~9), 산술 연산자(+, -, \*, /)와 "="의 입력만을 지원하도록 기능을 제한할 것이다. 연산자는 엽력한 순서대로만 처리하며, "( )"로 묶거나 연산자 우선순위를 고려하지 않는다.
 
-We don't support entering decimals, but the divide operation can result in them. We don't support entering negative numbers, but the "-" operation can result in them. So, you should be able to produce any negative or decimal number by first entering an operation to compute it. You can then keep computing with that value.
+소수점 입력은 지원하지 않지만, 나눗셈 연산의 결과는 소수점을 포함할 수 있다. 음수 입력을 지원하진 않지만, "-" 연산의 결과로 음수가 나올 수 있다. 따라서, 처음으로 산술 연산자를 입력할 때부터 연산 결과로 음수나 소수가 나오는 것이 가능하게 하고 그 값으로 계속 연산을 할 수 있게 해야한다.
 
-The return of `calc(..)` calls should mimic what would be shown on a real calculator, like reflecting what was just pressed, or computing the total when pressing "=".
+`calc(..)` 호출의 반환 값은 실제 계산기에 표시되는 내용을 모방하라. 누른 값를 반영해서 보여주다가 "="를 누를 때에는 계산 결과를 보여줘야 한다. 
 
-For example:
+다음 예제를 보자:
 
 ```js
 calc("4");     // 4
@@ -186,7 +186,7 @@ calc("5");     // 5
 calc("=");     // 0
 ```
 
-Since this usage is a bit clumsy, here's a `useCalc(..)` helper, that runs the calculator with characters one at a time from a string, and computes the display each time:
+이 사용 예제는 아직 다듬어지지 않아서 `useCalc(..)`을 사용하고 있다. 문자열에서 하나씩 문자를 가져와 계산기를 실행하고 매번 표시할 내용을 계산한다.
 
 ```js
 function useCalc(calc,keys) {

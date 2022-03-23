@@ -279,7 +279,7 @@ Try the exercise for yourself, then check out the suggested solution at the end 
 
 공개 API는 아래 메서드를 포함해야 한다.
 
-* `number(..)` (입력: 임의의 문자/숫자를 "눌렀을 때(pressed)")
+* `number(..)` (입력: 임의의 문자/숫자를 "눌렀을 때")
 * `plus()`
 * `minus()`
 * `mult()`

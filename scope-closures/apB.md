@@ -216,35 +216,35 @@ useCalc(calc,"+3=");            // +3=ERR
 useCalc(calc,"51=");            // 51
 ```
 
-The most sensible usage of this `useCalc(..)` helper is to always have "=" be the last character entered.
+이 `useCalc(..)`의 실질적인 사용법을 보면 항상 마지막에 문자 "="를 입력 받고 있다.
 
-Some of the formatting of the totals displayed by the calculator require special handling. I'm providing this `formatTotal(..)` function, which your calculator should use whenever it's going to return a current computed total (after an `"="` is entered):
+계산기에 합계를 표시할 때, 어떤 경우에는 특별한 처리가 필요하다. 아래와 같이 `formatTotal(..)` 함수를 제공하여, (`"="`을 입력받은 이후) 계산한 값을 반환될 때마다 사용하고 있다:
 
 ```js
 function formatTotal(display) {
     if (Number.isFinite(display)) {
-        // constrain display to max 11 chars
+        // 최대 11자까지 표시하도록 제한한다.
         let maxDigits = 11;
-        // reserve space for "e+" notation?
+        // "e+" 표기를 위한 자리를 남길 것인가?
         if (Math.abs(display) > 99999999999) {
             maxDigits -= 6;
         }
-        // reserve space for "-"?
+        // "-" 표기를 위한 자리를 남길 것인가?
         if (display < 0) {
             maxDigits--;
         }
 
-        // whole number?
+        // 정수인가?
         if (Number.isInteger(display)) {
             display = display
                 .toPrecision(maxDigits)
                 .replace(/\.0+$/,"");
         }
-        // decimal
+        // 소수
         else {
-            // reserve space for "."
+            // "."를 위한 자리를 예약
             maxDigits--;
-            // reserve space for leading "0"?
+            // "0"로 시작하여, 자리를 예약해야 하는가?
             if (
                 Math.abs(display) >= 0 &&
                 Math.abs(display) < 1
@@ -263,11 +263,11 @@ function formatTotal(display) {
 }
 ```
 
-Don't worry too much about how `formatTotal(..)` works. Most of its logic is a bunch of handling to limit the calculator display to 11 characters max, even if negatives, repeating decimals, or even "e+" exponential notation is required.
+`formatTotal(..)`가 어떻게 작동하는지에 대해서 너무 많이 걱정하지는 말아라. 대부분은 음수, 소수점 반복, "e+" 지수 표기법이 필요한 경우에도 최대 11자까지 표시하도록 길이를 제한하기 위한 여러가지 처리이다.
 
-Again, don't get too mired in the mud around calculator-specific behavior. Focus on the *memory* of closure.
+다시 말하지만, 계산기 고유의 동작을 구현하는 데에 깊게 빠지지는 말아라. 클로저를 통한 *메모리* 기능에 초점을 맞춰라.
 
-Try the exercise for yourself, then check out the suggested solution at the end of this appendix.
+직접 연습한 다음, 이 부록의 끝에 있는 권장 해결책을 확인하라.
 
 ## Modules
 

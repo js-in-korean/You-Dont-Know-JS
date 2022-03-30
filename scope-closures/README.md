@@ -14,7 +14,7 @@
 * [서문](../preface.md)
 * [1장: 스코프란 무엇인가?](ch1.md)
 * [2장: 렉시컬 스코프<sub>Lexical Scope</sub> 설명하기](ch2.md)
-* [Chapter 3: The Scope Chain](ch3.md)
+* [3장: 스코프 체인<sub>Scope Chain</sub>](ch3.md)
 * [4장: 전역 스코프<sub>Global Scope</sub> 살펴보기](ch4.md)
 * [5장: 변수의 비밀 라이프사이클](ch5.md)
 * [6장: 스코프 노출을 제한하기](ch6.md)

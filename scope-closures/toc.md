@@ -16,12 +16,12 @@
     * 친구 사이의 대화
     * 중첩 스코프
     * 대화 계속하기
-* Chapter 3: The Scope Chain
-    * "Lookup" Is (Mostly) Conceptual
-    * Shadowing
-    * Function Name Scope
-    * Arrow Functions
-    * Backing Out
+* 3장: 스코프 체인<sub>Scope Chain</sub>
+    * "룩업"은 (거의) 개념적이다.
+    * 섀도잉<sub>Shadowing</sub>
+    * 함수 이름 스코프
+    * 화살표 함수
+    * 마무리
 * 4장: 전역 스코프<sub>Global Scope</sub> 살펴보기
     * 왜 전역 스코프가 중요할까?
     * 전역 스코프는 정확히 어디에 존재하는가?

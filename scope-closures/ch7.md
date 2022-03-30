@@ -1,4 +1,4 @@
-# You Don't Know JS Yet: Scope & Closures - 2nd Edition
+# You Don't Know JS Yet: 스코프와 클로저 - 2판
 # 7장: 클로저 사용하기
 
 지금까지, 렉시컬 스코프의 내부와 외부가 프로그램의 변수 구성과 사용에 어떤 영향을 미치는지에 초점을 맞추었다.

@@ -1,4 +1,4 @@
-# You Don't Know JS Yet: Scope & Closures - 2nd Edition
+# You Don't Know JS Yet: 스코프와 클로저 - 2판
 
 ## 목차
 

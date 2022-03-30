@@ -1,4 +1,4 @@
-# You Don't Know JS Yet: Scope & Closures - 2nd Edition
+# You Don't Know JS Yet: 스코프와 클로저 - 2판
 # 부록 A: 더 살펴보기
 
 우리는 이제 이 책의 본문에서 다룬 많은 주제를 중심으로 여러 뉘앙스와 가장자리를 탐구할 것이다. 이 부록은 선택사항이고 참고자료이다.

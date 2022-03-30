@@ -242,9 +242,9 @@ function formatTotal(display) {
         }
         // 소수
         else {
-            // "."를 위한 자리를 예약
+            // "."를 위한 자리를 남기기
             maxDigits--;
-            // "0"로 시작하여, 자리를 예약해야 하는가?
+            // "0"이 들어갈 자리를 남겨둬야 하는가?
             if (
                 Math.abs(display) >= 0 &&
                 Math.abs(display) < 1

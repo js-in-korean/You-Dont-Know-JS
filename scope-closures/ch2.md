@@ -1,4 +1,4 @@
-# You Don't Know JS Yet: Scope & Closures - 2nd Edition
+# You Don't Know JS Yet: 스코프와 클로저 - 2판
 # 2장: 렉시컬 스코프<sub>Lexical Scope</sub> 설명하기
 
 1장에서 스코프<sub>scope</sub>가 "렉시컬 스코프"라 부르는 모델로 어떻게 코드 컴파일 중에 결정되는지 살펴봤다. "렉시컬<sub>lexical</sub>" 용어는 컴파일(렉싱<sub>lexing</sub>/파싱<sub>parsing</sub>)의 첫번째 단계에 관련이 있다.

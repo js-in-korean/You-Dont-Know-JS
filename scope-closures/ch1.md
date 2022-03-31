@@ -1,5 +1,4 @@
-# You Don't Know JS Yet: Scope & Closures - 2nd Edition
-
+# You Don't Know JS Yet: 스코프와 클로저 - 2판
 # 1장: 스코프란 무엇인가?
 
 처음 몇 가지 프로그램을 작성하다보면 변수를 생성하고 값을 저장하는 데 다소 익숙해진다. 변수를 사용하는 것은 우리가 프로그래밍을 하는데 가장 기본적인 것 중의 하나이다.

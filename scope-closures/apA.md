@@ -444,18 +444,18 @@ The benefit of `void` is, it clearly communicates at the beginning of the functi
 
 However you define your IIFEs, show them some love by giving them names.
 
-## Hoisting: Functions and Variables
+## 호이스팅: 함수와 변수
 
-Chapter 5 articulated both *function hoisting* and *variable hoisting*. Since hoisting is often cited as mistake in the design of JS, I wanted to briefly explore why both these forms of hoisting *can* be beneficial and should still be considered.
+5장에서는 *함수 호이스팅*과 *변수 호이스팅*에 대해서 다루었다. 호이스팅은 종종 JS 설계상의 실수로 언급되기 때문에, 왜 이 두 형태의 호이스팅이 유용하며 그리고 고려되어야 하는지를 간략하게 설명하고자 한다. 
 
-Give hoisting a deeper level of consideration by considering the merits of:
+다음의 장점들을 생각하며 호이스팅을 더 깊게 이해해보자
 
-* Executable code first, function declarations last
-* Semantic placement of variable declarations
+* 실행 가능한 코드를 먼저, 함수 선언을 나중에
+* 변수 선언의 의미적 배치
 
-### Function Hoisting
+### 함수 호이스팅
 
-To review, this program works because of *function hoisting*:
+이 프로그램은 *함수 호이스팅* 으로 작동한다.
 
 ```js
 getStudents();
@@ -467,11 +467,11 @@ function getStudents() {
 }
 ```
 
-The `function` declaration is hoisted during compilation, which means that `getStudents` is an identifier declared for the entire scope. Additionally, the `getStudents` identifier is auto-initialized with the function reference, again at the beginning of the scope.
+`function` 선언은 컴파일 동안 호이스팅된다. 다시 말하면 `getStudents`은 전체 스코프에 선언된 식별자라는 것이다. 게다가 `getStudents` 식별자는 스코프 시작 부분에서 함수 참조와 함께 다시 자동 초기화된다.
 
-Why is this useful? The reason I prefer to take advantage of *function hoisting* is that it puts the *executable* code in any scope at the top, and any further declarations (functions) below. This means it's easier to find the code that will run in any given area, rather than having to scroll and scroll, hoping to find a trailing `}` marking the end of a scope/function somewhere.
+왜 이것이 유용할까? *function hoisting*은 *실행가능한* 코드를 상위의 어떤 스코프에나 둘 수 있고 선언들 (함수)을 더 아래에 둘 수 있다. 이것은 동작하는 코드를 찾기 쉽게 도와주는데, 스코프/함수의 끝을 알기 위해 `}`를 찾아 계속 스크롤할 필요가 없기 때문이다.
 
-I take advantage of this inverse positioning in all levels of scope:
+이러한 위치의 역전은 모든 스코프 레벨에서 찾을 수 있다.
 
 ```js
 getStudents();
@@ -481,7 +481,7 @@ getStudents();
 function getStudents() {
     var whatever = doSomething();
 
-    // other stuff
+    // 다른 내용
 
     return whatever;
 
@@ -493,28 +493,28 @@ function getStudents() {
 }
 ```
 
-When I first open a file like that, the very first line is executable code that kicks off its behavior. That's very easy to spot! Then, if I ever need to go find and inspect `getStudents()`, I like that its first line is also executable code. Only if I need to see the details of `doSomething()` do I go and find its definition down below.
+위 파일을 처음 열었을 때 맨 첫 번째 줄은 실행 가능한 코드이다. 그것은 매우 발견하기 쉽다! 그런 다음 `getStudents()`를 찾아 확인해야 한다면 첫 번째 줄도 실행 가능한 코드인 것이 좋다. `doSomething()`의 세부 사항을 봐야 할 경우에만 아래에 있는 정의를 찾아간다.
 
-In other words, I think *function hoisting* makes code more readable through a flowing, progressive reading order, from top to bottom.
+즉, *함수 호이스팅*은 위에서 아래로 흘러가는 점진적인 읽기 순서를 통해 코드를 보다 쉽게 읽을 수 있게 한다.
 
-### Variable Hoisting
+### 변수 호이스팅
 
-What about *variable hoisting*?
+*변수 호이스팅*이란 무엇일까?
 
-Even though `let` and `const` hoist, you cannot use those variables in their TDZ (see Chapter 5). So, the following discussion only applies to `var` declarations. Before I continue, I'll admit: in almost all cases, I completely agree that *variable hoisting* is a bad idea:
+`let`과 `const`은 호이스팅 되더라도, TDZ에서 그 변수들을 사용할 수 없다(5장을 참고해라). 그래서 다음 논의는 오직 `var`에만 적용된다. 진행에 앞서, 대부분의 경우에 *변수 호이스팅*은 나쁜 아이디어라는 것에 완전히 찬성한다는 사실을 밝힌다.
 
 ```js
 pleaseDontDoThis = "bad idea";
 
-// much later
+// 훨씬 후에
 var pleaseDontDoThis;
 ```
 
-While that kind of inverted ordering was helpful for *function hoisting*, here I think it usually makes code harder to reason about.
+역순으로 두는 것이 *함수 호이스팅*에서는 유용한 반면, 변수의 경우 그것은 코드를 추론하는 것을 더 어렵게 한다.
 
-But there's one exception that I've found, somewhat rarely, in my own coding. It has to do with where I place my `var` declarations inside a CommonJS module definition.
+그러나 직접 작성한 코딩중에 드물긴 하지만 한가지 예외가 있다.  
 
-Here's how I typically structure my module definitions in Node:
+다음은 Node에서 module 정의할 때 전형적으로 사용하는 구조이다.
 
 ```js
 // dependencies
@@ -543,9 +543,9 @@ function addStudents() {
 }
 ```
 
-Notice how the `cache` and `otherData` variables are in the "private" section of the module layout? That's because I don't plan to expose them publicly. So I organize the module so they're located alongside the other hidden implementation details of the module.
+왜 `cache`와 `otherData`는 모듈 레이아웃의 "private" 섹션에 존재하게 되었는가? 왜냐하면 공개적으로 노출하지 않기 원했기 때문이다. 그래서 모듈을 이와같이 작성하게 되었고 그래서 모듈의 다른 숨겨진 구현들과 함께 배치되게 되었다.
 
-But I've had a few rare cases where I needed the assignments of those values to happen *above*, before I declare the exported public API of the module. For instance:
+그러나 이 값들을 위에 배치해야 하는 소수의 드문 경우가 있긴하다. 모듈의 퍼블릭 API를 내보내기전에 말이다. 예를 들어:
 
 ```js
 // public API
@@ -556,12 +556,12 @@ var publicAPI = Object.assign(module.exports,{
 });
 ```
 
-I need the `cache` variable to have already been assigned a value, because that value is used in the initialization of the public API (the `.bind(..)` partial-application).
+`cache` 값이 퍼블릭 API(`.bind(...)` 부분 응용 프로그램)의 초기화에 사용되므로 변수에 이미 값이 할당되어 있어야 한다.
 
-Should I just move the `var cache = { .. }` up to the top, above this public API initialization? Well, perhaps. But now it's less obvious that `var cache` is a *private* implementation detail. Here's the compromise I've (somewhat rarely) used:
+`var cache = {..}`만 이동하면 될까? 이 퍼블릭 API 초기화 위에? 글쎄, 아마도. 그러나 이제는 `var cache`가 *private* 구현 세부 정보라는 것이 명확하지 않다. 이것에 대한 절충안은 다음과 같다.
 
 ```js
-cache = {};   // used here, but declared below
+cache = {};   // 여기에서 사용되지만, 아래에 할당되어 있다.
 
 // public API
 var publicAPI = Object.assign(module.exports,{
@@ -576,72 +576,72 @@ var publicAPI = Object.assign(module.exports,{
 var cache /* = {}*/;
 ```
 
-See the *variable hoisting*? I've declared the `cache` down where it belongs, logically, but in this rare case I've used it earlier up above, in the area where its initialization is needed. I even left a hint at the value that's assigned to `cache` in a code comment.
+*변수 호이스팅*이 보이나? `cache`를 그것이 속하는 아래쪽에 선언하였다. 하지만 아주 드물게 코드 위쪽에 초기화가 필요한 영역에 사용하고 있다. 코드 코멘트에 `cache`에 할당된 값에 대한 힌트를 남겼다.
 
-That's literally the only case I've ever found for leveraging *variable hoisting* to assign a variable earlier in a scope than its declaration. But I think it's a reasonable exception to employ with caution.
+*변수 호이스팅*을 활용하여 변수의 선언보다 초기에 변수를 할당한 사례는 이 정도밖에 없다. 하지만 이런 예외에 호이스팅을 신중하게 사용하는 것은 합리적이라고 생각한다. 
 
-## The Case for `var`
+## `var` 케이스
 
-Speaking of *variable hoisting*, let's have some real talk for a bit about `var`, a favorite villain devs love to blame for many of the woes of JS development. In Chapter 5, we explored `let`/`const` and promised we'd revisit where `var` falls in the whole mix.
+*변수 호이스팅*을 다루기 위해, `var`에 대해서 샅샅히 까발려보자, 악당 개발자는 JS 개발이 가진 많은 고민들을 탓하는 것을 좋아한다. 5장에서, 우리는 `let`/`const`를 다뤘고 그리고 `var`가 잘 작동하는 곳에서 다시 이 챕터에 대해 이야기해보기로 했다.
 
-As I lay out the case, don't miss:
+케이스를 정리했으니, 놓치지 말자:
 
-* `var` was never broken
-* `let` is your friend
-* `const` has limited utility
-* The best of both worlds: `var` *and* `let`
+* `var` 는 절대 고장난 적이 없었다.
+* `let` 은 당신의 친구
+* `const` 는 제한된 사용상을 가진다.
+*  양쪽 세계에서의 최고의 경우: `var` *그리고* `let`
 
-### Don't Throw Out `var`
+### `var`를 버리지 마라
 
-`var` is fine, and works just fine. It's been around for 25 years, and it'll be around and useful and functional for another 25 years or more. Claims that `var` is broken, deprecated, outdated, dangerous, or ill-designed are bogus bandwagoning.
+`var` 는 괜찮다, 그리고 괜찮게 작동한다. 이것은 25년 동안 존재해왔다, 그리고 다음 25년 동안도 존재할 것이며 유용하고 기능적일 것이다. `var`는 고장나고, 권장되지 않고, 오래되었고, 위험하고 또는 잘못 디자인 되었다는 주장은 모호한 편승이론일뿐이다.
 
-Does that mean `var` is the right declarator for every single declaration in your program? Certainly not. But it still has its place in your programs. Refusing to use it because someone on the team chose an aggressive linter opinion that chokes on `var` is cutting off your nose to spite your face.
+이게 'var'가 프로그램의 모든 선언에 적합한 선언자임을 의미할까? 확실히 아니다. 하지만 당신의 프로그램에는 여전히 자리하고 있다. 팀의 누군가가 'var'의 목을 조르는 공격적인 의견을 선택했다는 이유로 당신이 사용을 거부하는 것은 당신의 체면을 상하게 하기 위해 당신의 코를 자르는 것이다.
 
-OK, now that I've got you really riled up, let me try to explain my position.
+좋다, 이제 당신을 화나게 했으니, 이에 대한 입장을 설명하겠다.
 
-For the record, I'm a fan of `let`, for block-scoped declarations. I really dislike TDZ and I think that was a mistake. But `let` itself is great. I use it often. In fact, I probably use it as much or more than I use `var`.
+참고로 나는 블록스코프 선언의 팬이다. 나는 TDZ가 정말 싫고 그것은 실수였다고 생각한다. 하지만 `let` 자체는 대단하다. 자주 쓴다. 사실 나는 아마 `var`를 사용하는 것보다 많이 혹은 더 많이 사용하고 있을 것이다.
 
-### `const`-antly Confused
+### `const`-완전히 혼란스러운
 
-`const` on the other hand, I don't use as often. I'm not going to dig into all the reasons why, but it comes down to `const` not *carrying its own weight*. That is, while there's a tiny bit of benefit of `const` in some cases, that benefit is outweighed by the long history of troubles around `const` confusion in a variety of languages, long before it ever showed up in JS.
+반면에 `const`는 자주 사용하지 않는다. 그 이유를 다 파헤치지는 않겠지만, 결론은 '자신의 무게를 짊어지지 않기' 때문으로 귀결된다. 즉, 경우에 따라서는 const의 약간의 이점도 있지만, JS에 나타나기 훨씬 전에 다양한 언어의  `const `를 둘러싼 오랜 혼란의 역사가 그 이점을 능가한다.
 
-`const` pretends to create values that can't be mutated—a misconception that's extremely common in developer communities across many languages—whereas what it really does is prevent re-assignment.
+`const`는 돌연변이가 불가능한 값을 만들수 있는 척한다 - 여러 언어의 개발자 커뮤니티에서 매우 흔한 오해이지만 실제로는 단지 재할당을 막기만할 뿐이다. 
 
 ```js
 const studentIDs = [ 14, 73, 112 ];
 
-// later
+// 후에
 
-studentIDs.push(6);   // whoa, wait... what!?
+studentIDs.push(6);   // 후아, 잠깐... 뭐라고!?
 ```
 
-Using a `const` with a mutable value (like an array or object) is asking for a future developer (or reader of your code) to fall into the trap you set, which was that they either didn't know, or sorta forgot, that *value immutability* isn't at all the same thing as *assignment immutability*.
+변이 가능한 값(예: 배열 또는 객체)이 있는 `const`를 사용하는 것은 미래의 개발자(또는 코드를 읽는 사람)가 설정한 함정에 빠질 것을 요청하는 것이다. 즉, *값 불변성*은 *할당 불변성*과 전혀 같지 않다는 것을 몰랐거나 잊어버린 것이다.
 
-I just don't think we should set those traps. The only time I ever use `const` is when I'm assigning an already-immutable value (like `42` or `"Hello, friends!"`), and when it's clearly a "constant" in the sense of being a named placeholder for a literal value, for semantic purposes. That's what `const` is best used for. That's pretty rare in my code, though.
+함정을 만드는 것은 안 될 것 같아 내가 유일하게 `const`를 사용하는 때는 '42'나 '안녕, 친구들!'처럼 이미 불변의 값을 할당하고 있을 때, 그리고 그것이 문자 그대로의 가치, 의미적 목적으로 이름 붙여진 플레이스홀더<sub>placeholder</sub>라는 의미에서 분명히 '상수'일 때이다. const가 가장 잘 쓰이는 이유다. 내 코드에서 그런 경우는 드물다.
 
-If variable re-assignment were a big deal, then `const` would be more useful. But variable re-assignment just isn't that big of a deal in terms of causing bugs. There's a long list of things that lead to bugs in programs, but "accidental re-assignment" is way, way down that list.
+변수 재할당이 큰 문제라면, `const`가 더 유용하다. 하지만 변수 재할당은 버그를 일으키는 측면에서 그리 큰 문제가 아니다. 프로그램에 버그를 일으키는 많은 것들이 있지만, "우발적인 재할당"은 그 목록에서 훨씬 아래쪽에 있다.
 
-Combine that with the fact that `const` (and `let`) are supposed to be used in blocks, and blocks are supposed to be short, and you have a really small area of your code where a `const` declaration is even applicable. A `const` on line 1 of your ten-line block only tells you something about the next nine lines. And the thing it tells you is already obvious by glancing down at those nine lines: the variable is never on the left-hand side of an `=`; it's not re-assigned.
+`const`(그리고 `let`)는 블록에 사용되어야 하고 블록은 짧아야 한다는 사실과 결합하면 const 선언을 적용할 수 있는 매우 작은 영역의 코드를 가질 수 있다. 10번째 줄 블록 중 1줄에 있는 `const`는 다음 9줄에 대한 내용만 알려준다. 그리고 이 9줄의 코드를 내려다보면 이미 알 수 있다: 변수는 절대 '='의 왼쪽에 있지 않으며, 재할당되지 않는다.
 
-That's it, that's all `const` really does. Other than that, it's not very useful. Stacked up against the significant confusion of value vs. assignment immutability, `const` loses a lot of its luster.
+그게 `const`가 진짜 하는 전부다. 그 외에는 별로 쓸모가 없다. 값 vs 할당 불변성의 중대한 혼돈에 맞서서 `const`는 많은 빛을 잃는다.
 
-A `let` (or `var`!) that's never re-assigned is already behaviorally a "constant", even though it doesn't have the compiler guarantee. That's good enough in most cases.
+재할당되지 않는 `let` (또는 `var`!)은 비록 컴파일러가 보장하지 않더라도 이미 상수이다. 대부분의 경우 그것으로 충분하다.
 
-### `var` *and* `let`
+### `var` *그리고* `let`
 
-In my mind, `const` is pretty rarely useful, so this is only two-horse race between `let` and `var`. But it's not really a race either, because there doesn't have to be just one winner. They can both win... different races.
+내 생각에 `const`는 쓸모가 거의 없는데, let과 var의 두 마리 토끼 싸움에 불과하다. 하지만 꼭 한 명의 우승자가 있어야 하는 것은 아니기 때문에, 그것은 또한 진정한 경주가 아니다. 둘 다 이길 수 있다... 다른 경주에서.
 
-The fact is, you should be using both `var` and `let` in your programs. They are not interchangeable: you shouldn't use `var` where a `let` is called for, but you also shouldn't use `let` where a `var` is most appropriate.
+사실 프로그램에서는 `var`와 `let`을 모두 사용해야 한다. `let`이 호출되는 곳에 `var`를 사용해서는 안 되지만 `var`가 가장 적절한 곳에 `let`을 사용해서는 안 된다.
 
-So where should we still use `var`? Under what circumstances is it a better choice than `let`?
+그렇다면 `var`를 어디에 사용해야 할까? 어떤 상황에서 그것이 `let`보다 나은 선택일까?
 
-For one, I always use `var` in the top-level scope of any function, regardless of whether that's at the beginning, middle, or end of the function. I also use `var` in the global scope, though I try to minimize usage of the global scope.
+한 가지 예로, 나는 함수의 시작, 중간, 끝에 상관없이 모든 함수의 최상위 스코프에서 항상 'var'를 사용한다. 글로벌 스코프의 사용을 최소화하려고 노력하지만 글로벌 스코프에서도 var를 사용한다.
 
-Why use `var` for function scoping? Because that's exactly what `var` does. There literally is no better tool for the job of function scoping a declaration than a declarator that has, for 25 years, done exactly that.
+함수 스코프에 `var`를 사용하는 이유는 무엇일까? 그것이 바로 `var`가 하는 일이기 때문이다. 말 그대로 선언을 스코핑하는 함수에서 25년 동안 정확히 해온 선언자보다 더 좋은 도구는 없다.
 
-You *could* use `let` in this top-level scope, but it's not the best tool for that job. I also find that if you use `let` everywhere, then it's less obvious which declarations are designed to be localized and which ones are intended to be used throughout the function.
+이 최상위 스코프에서, `let`을 *사용할 수 있지만*, 해당 작업에 가장 적합한 툴은 아니다. 또 어디서나 `let`을 사용하면 어떤 선언이 지역화 되도록 되어 있는지, 어떤 선언이 기능 전반에 사용되도록 되어 있는지 잘 알 수 없다.
 
-By contrast, I rarely use a `var` inside a block. That's what `let` is for. Use the best tool for the job. If you see a `let`, it tells you that you're dealing with a localized declaration. If you see `var`, it tells you that you're dealing with a function-wide declaration. Simple as that.
+반대로 블록 안에서 `var`를 사용하는 경우는 거의 없다. 그래서 `let`이 있는 것이다. 작업에 가장 적합한 도구를 사용해라. `let`이 보이면 지역 선언을 다루고 있음을 알려준다. `var`가 표시되면 함수 차원의 선언을 다루고 있음을 나타낸다. 그렇게 간단하다.
 
 ```js
 function getStudents(data) {
@@ -659,11 +659,11 @@ function getStudents(data) {
 }
 ```
 
-The `studentRecords` variable is intended for use across the whole function. `var` is the best declarator to tell the reader that. By contrast, `record` and `id` are intended for use only in the narrower scope of the loop iteration, so `let` is the best tool for that job.
+`studentRecords` 변수는 전체 함수에서 사용하기 위한 것이다. `var`'는 독자들에게 그것을 말해주는 최고의 선언자이다. 반대로 `record`와 `id`는 루프 반복의 좁은 범위에서만 사용하기 때문에 `let`이 해당 작업에 가장 적합한 도구이다.
 
-In addition to this *best tool* semantic argument, `var` has a few other characteristics that, in certain limited circumstances, make it more powerful.
+이 *최상의 도구* 주장에 더하여, `var`는 특정 제한된 상황에서 더 강력하게 만드는 몇 가지 다른 특성을 가지고 있다.
 
-One example is when a loop is exclusively using a variable, but its conditional clause cannot see block-scoped declarations inside the iteration:
+예를 들어, 루프가 변수를 배타적으로 사용하고 있지만 조건 절은 이터레이션 내에서 블록 스코프 선언을 볼 수 없는 경우를 들 수 있다.
 
 ```js
 function commitAction() {
@@ -674,103 +674,103 @@ function commitAction() {
 }
 ```
 
-Here, `result` is clearly only used inside the block, so we use `let`. But `done` is a bit different. It's only useful for the loop, but the `while` clause cannot see `let` declarations that appear inside the loop. So we compromise and use `var`, so that `done` is hoisted to the outer scope where it can be seen.
+여기서, `result`는 블록 안에서만 사용되므로 `let`을 사용한다. 그러나 `done`은 조금 다르다. 이것은 루프에만 유용하지만 `while` 절에서는 루프 내부에 나타나는 `let` 선언을 볼 수 없다. 그래서 우리는 타협하고 `var`를 사용하여 `done`이 보이는 외부 범위로 올라가도록 한다.
 
-The alternative—declaring `done` outside the loop—separates it from where it's first used, and either necessitates picking a default value to assign, or worse, leaving it unassigned and thus looking ambiguous to the reader. I think `var` inside the loop is preferable here.
+루프 밖에서 `done`을 선언하는 대안은 처음 사용된 곳에서 분리하여 할당하기 위해 기본값을 선택해야 하거나, 더 나쁘게는 할당되지 않은 상태로 있어 독자에게 모호하게 보일 수 있다. 나는 루프 내부의 `var`가 더 좋다고 생각한다.
 
-Another helpful characteristic of `var` is seen with declarations inside unintended blocks. Unintended blocks are blocks that are created because the syntax requires a block, but where the intent of the developer is not really to create a localized scope. The best illustration of unintended scope is the `try..catch` statement:
+`var`의 또 다른 유용한 특징은 의도하지 않은 블록 내부에 선언이 있다는 것이다. 의도하지 않은 블록은 구문에 블록이 필요하기 때문에 생성되는 블록이지만 개발자의 의도는 현지화된 범위를 만드는 것이 아니다. 의도하지 않은 범위의 가장 좋은 예는 `try..catch` 이다:
 
 ```js
 function getStudents() {
     try {
-        // not really a block scope
+        // 실제로는 블록 스코프가 아니다.
         var records = fromCache("students");
     }
     catch (err) {
-        // oops, fall back to a default
+        // 웁스 디폴트가 되었다.
         var records = [];
     }
     // ..
 }
 ```
 
-There are other ways to structure this code, yes. But I think this is the *best* way, given various trade-offs.
+이 코드를 구성하는 다른 방법이 있다. 하지만 여러 가지 단점을 고려할 때 이것이 *가장 좋은* 방법이라고 생각한다.
 
-I don't want to declare `records` (with `var` or `let`) outside of the `try` block, and then assign to it in one or both blocks. I prefer initial declarations to always be as close as possible (ideally, same line) to the first usage of the variable. In this simple example, that would only be a couple of lines distance, but in real code it can grow to many more lines. The bigger the gap, the harder it is to figure out what variable from what scope you're assigning to. `var` used at the actual assignment makes it less ambiguous.
+`records`(`var` 또는 `let`이 있는)를 `try` 블록 밖으로 선언하고 나서, 어느 한 블록 또는 양쪽 블록으로 할당하고 싶지 않다. 초기 선언은 가능한 한 변수의 첫 번째 사용에 가까운(이상적으로 같은 행) 것이 좋다. 이 간단한 예에서는 몇 개의 회선 거리에 불과하지만 실제 코드에서는 더 많은 회선까지 늘어날 수 있다. 갭이 클수록 할당하는 스코프에서 변수를 파악하는 것이 어려워진다. 실제 할당에서 사용되는 `var`를 사용하면 덜 모호해진다.
 
-Also notice I used `var` in both the `try` and `catch` blocks. That's because I want to signal to the reader that no matter which path is taken, `records` always gets declared. Technically, that works because `var` is hoisted once to the function scope. But it's still a nice semantic signal to remind the reader what either `var` ensures. If `var` were only used in one of the blocks, and you were only reading the other block, you wouldn't as easily discover where `records` was coming from.
+또, `try`블록과 `catch`블록 양쪽에서 `var`를 사용하고 있는 것에 주의해라. 어떤 길을 가더라도 `records`는 반드시 선언된다는 것을 독자에게 알리고 싶기 때문이다. 엄밀히 말하면 `var`는 함수 스코프로 한 번 호이스트된다. 그러나 그것은 여전히 독자들에게 `var`가 보장하는 것을 상기시키는 좋은 의미 신호이다. 한 블록에서만 `var`를 사용하고 다른 블록만 읽고 있다면 레코드가 어디서 왔는지 쉽게 알 수 없을 것이다.
 
-This is, in my opinion, a little superpower of `var`. Not only can it escape the unintentional `try..catch` blocks, but it's allowed to appear multiple times in a function's scope. You can't do that with `let`. It's not bad, it's actually a little helpful feature. Think of `var` more like a declarative annotation that's reminding you, each usage, where the variable comes from. "Ah ha, right, it belongs to the whole function."
+이것은 내가 보기에 `var`의 작은 초능력이다. 의도하지 않은 `try..catch`블록에서 벗어날 수 있을 뿐만 아니라, 함수의 스코프에는 여러 번 표시될 수 있다. `let`으로는 그럴 수 없다. 나쁘지 않다. 사실 조금 도움이 되는 기능이다. `var`는 변수 출처를 알려주는 선언적 주석과 비슷하다. "아하, 맞아, 함수 전체에 속하지."
 
-This repeated-annotation superpower is useful in other cases:
+이 반복 주석 슈퍼파워는 다른 경우에 유용하다.
 
 ```js
 function getStudents() {
     var data = [];
 
-    // do something with data
-    // .. 50 more lines of code ..
+    // data 를 다룬다.
+    // .. 50줄 이상의 코드 ..
 
-    // purely an annotation to remind us
-    var data;
+    // var data를 상기시키는 순수한 주석
 
-    // use data again
+
+    // data를 다시 사용한다.
     // ..
 }
 ```
 
-The second `var data` is not re-declaring `data`, it's just annotating for the readers' benefit that `data` is a function-wide declaration. That way, the reader doesn't need to scroll up 50+ lines of code to find the initial declaration.
+두 번째 `var data`는 `data`를 다시 선언하는 것이 아니라 `data`가 함수 전체의 선언이라는 독자들의 이익을 위해 주석을 다는 것이다. 이렇게 하면 리더는 초기 선언을 찾기 위해 50줄 이상의 코드를 스크롤할 필요가 없다.
 
-I'm perfectly fine with re-using variables for multiple purposes throughout a function scope. I'm also perfectly fine with having two usages of a variable be separated by quite a few lines of code. In both cases, the ability to safely "re-declare" (annotate) with `var` helps make sure I can tell where my `data` is coming from, no matter where I am in the function.
+함수 범위 전체에서 변수를 여러 목적으로 재사용하는 것은 문제 없다. 두 개의 변수를 여러 줄의 코드로 구분하는 것도 문제 없다. 어느 경우든, var를 사용하여 안전하게 재선언(주석)할 수 있으면 함수의 어디에 있든 데이터 출처를 알 수 있다.
 
-Again, sadly, `let` cannot do this.
+다시 말하지만 슬프게도 `let`은 이것을 할 수 없다.
 
-There are other nuances and scenarios when `var` turns out to offer some assistance, but I'm not going to belabor the point any further. The takeaway is that `var` can be useful in our programs alongside `let` (and the occasional `const`). Are you willing to creatively use the tools the JS language provides to tell a richer story to your readers?
+var가 어느 정도 도움을 주는 것으로 판명될 때 다른 뉘앙스와 시나리오가 있지만 더 이상 강조하지는 않을 것이다. 중요한 점은 var가 let(가끔 const)와 함께 프로그램에서 유용하게 쓰일 수 있다는 점이다. 독자들에게 더 풍부한 이야기를 들려주기 위해 JS 언어가 제공하는 도구를 창의적으로 사용할 의향이 있습니까?
 
-Don't just throw away a useful tool like `var` because someone shamed you into thinking it wasn't cool anymore. Don't avoid `var` because you got confused once years ago. Learn these tools and use them each for what they're best at.
+더 이상 멋지지 않다고 치욕감을 줬다고 해서 `var` 같은 유용한 도구를 그냥 버리지 마라. 몇 년 전에 한 번 헷갈렸다고 해서 `var`를 피하지 마라. 이러한 툴을 학습하고, 각각의 툴을 자신의 가장 뛰어난 기능에 사용할 수 있다.
 
-## What's the Deal with TDZ?
+## TDZ는 무엇을 다루는가?
 
-The TDZ (temporal dead zone) was explained in Chapter 5. We illustrated how it occurs, but we skimmed over any explanation of *why* it was necessary to introduce in the first place. Let's look briefly at the motivations of TDZ.
+TDZ(일시 데드존)는 5장에서 설명되었다. 우리는 그것이 어떻게 일어나는지 설명했지만, 애초에 소개가 필요한 *이유*에 대한 설명은 대충 훑어보았다. TDZ의 동기에 대해 간단히 살펴보겠다.
 
-Some breadcrumbs in the TDZ origin story:
+TDZ의 유래 스토리에 기재되어 있는 부차적 네비게이션:
 
-* `const`s should never change
-* It's all about time
-* Should `let` behave more like `const` or `var`?
+* `const`은 절대 변경되면 안된다.
+*  이것은 모두 시간에 관한 것이다.
+*  `let`은 `const` 와 `var`처럼 작동해야 하나?
 
-### Where It All Started
+### 어디에서 이것은 시작되었는가
 
-TDZ comes from `const`, actually.
+TDZ는 실제로 `const`로 부터 왔다.
 
-During early ES6 development work, TC39 had to decide whether `const` (and `let`) were going to hoist to the top of their blocks. They decided these declarations would hoist, similar to how `var` does. Had that not been the case, I think some of the fear was confusion with mid-scope shadowing, such as:
+TC39는 초기 ES6 개발 과정에서 `const`(및 `let`)를 블록의 맨 위로 끌어올릴지 여부를 결정해야 했다. 그들은 이 선언들이 `var`와 같이 호이스팅하는 것을 결정했다. 그렇지 않다면, 다음과 같은 중간 스코프 섀도잉과의 혼동에 대한 때문이였다고 생각한다.
 
 ```js
 let greeting = "Hi!";
 
 {
-    // what should print here?
+    // 무엇을 여기에 출력해야 하나
     console.log(greeting);
 
-    // .. a bunch of lines of code ..
+    // .. 엄청 긴 코드 ..
 
-    // now shadowing the `greeting` variable
+    // `greeting` 변수를 섀도잉한다.
     let greeting = "Hello, friends!";
 
     // ..
 }
 ```
 
-What should we do with that `console.log(..)` statement? Would it make any sense to JS devs for it to print "Hi!"? Seems like that could be a gotcha, to have shadowing kick in only for the second half of the block, but not the first half. That's not very intuitive, JS-like behavior. So `let` and `const` have to hoist to the top of the block, visible throughout.
+`console.log(..)` 구문을 어떻게 해야 할까?? JS 개발자들은 이것이 "Hi!"를 출력 하는 것을 이해할까? 블록의 전반부이 아닌 후반부에만 섀도우킥을 넣는 것은 감쪽같다. 이것은 매우 직관적이지 않고 JS와 같은 동작이다. 따라서 `let`와 `const`는 최상단으로 호이스트되서 전체에서 접근가능하여야 한다.
 
-But if `let` and `const` hoist to the top of the block (like `var` hoists to the top of a function), why don't `let` and `const` auto-initialize (to `undefined`) the way `var` does? Here was the main concern:
+그러나 `let`과 `const` 블록의 맨 위로 호이스팅 된다면(`var`가 함수의 맨 위로 호이스팅된 것 처럼) `var`처럼 `let`과 `const`가 자동 초기화(`undefined`로)하는 것은 어떨까. 주요 우려 사항은 다음과 같다.
 
 ```js
 {
-    // what should print here?
+    // 무엇을 여기에 출력해야 하나
     console.log(studentName);
 
-    // later
+    // 후에
 
     const studentName = "Frank";
 
@@ -778,25 +778,25 @@ But if `let` and `const` hoist to the top of the block (like `var` hoists to the
 }
 ```
 
-Let's imagine that `studentName` not only hoisted to the top of this block, but was also auto-initialized to `undefined`. For the first half of the block, `studentName` could be observed to have the `undefined` value, such as with our `console.log(..)` statement. Once the `const studentName = ..` statement is reached, now `studentName` is assigned `"Frank"`. From that point forward, `studentName` can't ever be re-assigned.
+`studentName`이 이 블록의 맨 위로 호이스팅 되었을 뿐만 아니라 `undefined`으로 자동 초기화되었다고 가정하자. 블록의 전반부에서, `studentName`은 `console.log(..)`와 같이 `undefined` 가지고 있는 것을 확인할 수 있다. 일단 `const studentName = ..` 구문에 도달하면 `studentName`에 `"Frank"가 할당된다. 그 이후로는 `studentName`은 재할당할 될 수 없다.
 
-But, is it strange or surprising that a constant observably has two different values, first `undefined`, then `"Frank"`? That does seem to go against what we think a `const`ant means; it should only ever be observable with one value.
+그러나 상수가 관측 가능한 두 개의 다른 값, 즉 처음에는 `undefined`, 그 다음에는 `"Frank"`를 갖는다는 것이 이상하거나 놀랍지 않은가? 그것은 우리가 생각하는 '상수'의 의미와 배치되는 것으로 보인다. 즉, 하나의 값만 가질 수 있어야 한다.
 
-So... now we have a problem. We can't auto-initialize `studentName` to `undefined` (or any other value for that matter). But the variable has to exist throughout the whole scope. What do we do with the period of time from when it first exists (beginning of scope) and when it's assigned its value?
+그래서... 이제 문제가 생겼다. `studentName`을 `undefined`(또는 그 외의 값)로 자동 초기화할 수 없다. 그러나 변수는 전체 스코프에 걸쳐 존재해야 한다. 처음 존재한 시점(스코프의 시작)부터 값이 할당된 시점까지 우리는 무엇을 해야할까?
 
-We call this period of time the "dead zone," as in the "temporal dead zone" (TDZ). To prevent confusion, it was determined that any sort of access of a variable while in its TDZ is illegal and must result in the TDZ error.
+이 기간을 '일시적 사각지대'(TDZ)과 같이 '사각지대'이라고 부른다. 혼란을 방지하기 위해 TDZ에 있는 변수의 모든 종류의 접근은 허용되지않으며 이는 TDZ 오류를 야기하도록 결정되었었다.
 
-OK, that line of reasoning does make some sense, I must admit.
+오케이, 그 논리도 일리가 있다, 인정한다.
 
-### Who `let` the TDZ Out?
+### 누가 TDZ에 `let`을 허용할까 
 
-But that's just `const`. What about `let`?
+하지만 그건 `const`일 뿐이다. `let`은 어떠한가?
 
-Well, TC39 made the decision: since we need a TDZ for `const`, we might as well have a TDZ for `let` as well. *In fact, if we make let have a TDZ, then we discourage all that ugly variable hoisting people do.* So there was a consistency perspective and, perhaps, a bit of social engineering to shift developers' behavior.
+TC39는 `const`는 TDZ가 필요하니 `let`도 TDZ가 있어야 한다는 결정을 내렸다. 사실 TDZ를 만들면 못생긴 변수 호이스팅을 시도하는 사람들을 단념시킬 수 있다. 그래서 개발자들의 행동을 변화시키기 위한 일관성 있는 관점과 약간의 사회 공학이 있었다.
 
-My counter-argument would be: if you're favoring consistency, be consistent with `var` instead of `const`; `let` is definitely more like `var` than `const`. That's especially true since they had already chosen consistency with `var` for the whole hoisting-to-the-top-of-the-scope thing. Let `const` be its own unique deal with a TDZ, and let the answer to TDZ purely be: just avoid the TDZ by always declaring your constants at the top of the scope. I think this would have been more reasonable.
+내 반론은 일관성을 선호한다면 `const`가 아닌 `var`로 일관하라는 것이다. `let`은 `const`보다 `var`에 더 가깝다는 것이다. 특히 모든 것을 최상의 스코프로 호이스팅하는 일에서 `var`로 일관성을 택한 터라 더욱 그렇다. `const`를 TDZ의 고유의 대상으로 하여, TDZ를 순수하게 하고: 항상 스코프 상위에 상수를 선언함으로써 TDZ를 피하는 것이다. 이게 더 합리적이었을 것 같다.
 
-But alas, that's not how it landed. `let` has a TDZ because `const` needs a TDZ, because `let` and `const` mimic `var` in their hoisting to the top of the (block) scope. There ya go. Too circular? Read it again a few times.
+하지만 안타깝게도, 그것은 해결방법이 아니다. `const`는 TDZ가 필요하기 때문에 `let`은 TDZ를 가진다, `let`과 `const`는 (블록)스코프의 최상단으로 호이스팅한다는 점에서 `var`를 흉내내기 때문이다. 자, 다 끝났다. 너무 빙빙 돌렸나? 몇 번 더 읽어봐라.
 
 ## 동기식 콜백은 여전히 클로저일까?
 

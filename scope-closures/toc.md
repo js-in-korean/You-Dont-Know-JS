@@ -53,16 +53,16 @@
     * 스코프 나가기
 * 부록 A: 더 살펴보기
     * 암묵적 스코프<sub>scopes</sub>
-    * Anonymous vs. Named Functions
-    * Hoisting: Functions and Variables
-    * The Case for `var`
-    * What's the Deal with TDZ?
+    * 익명 함수 vs. 기명 함수
+    * 호이스팅: 함수와 변수
+    * `var` 케이스
+    * TDZ는 무엇을 다루는가?
     * 동기식 콜백은 여전히 클로저일까?
     * 클래식 모듈 변형
 * 부록 B: 연습
     * 구슬 양동이
-    * Closure (PART 1)
-    * Closure (PART 2)
-    * Closure (PART 3)
+    * 클로저 (파트 1)
+    * 클로저 (파트 2)
+    * 클로저 (파트 3)
     * 모듈
     * 해결 방안 예시

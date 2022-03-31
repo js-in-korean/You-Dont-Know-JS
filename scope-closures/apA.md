@@ -161,25 +161,25 @@ var askQuestion = function ofTheTeacher(){
 
 함수의 이름 식별자 스코프가 문제되는 경우는 거의 없을 것이다. 하지만 다시, 이런 메커니즘이 어떻게 동작하는지 아는 것은 좋다. 물리는 것을 피하기 위해서는 함수 이름 식별자를 가리지 말아라.
 
-## Anonymous vs. Named Functions
+## 익명 함수 vs. 기명 함수
 
-As discussed in Chapter 3, functions can be expressed either in named or anonymous form. It's vastly more common to use the anonymous form, but is that a good idea?
+3장에서 이야기한 것처럼, 함수는 익명이나 기명 형태로 나타낼 수 있다. 익명 형태를 사용하는 것이 더 일반적이지만, 정말로 좋은 생각일까?
 
-As you contemplate naming your functions, consider:
+함수에 이름을 지정하고자 할 때는 다음을 고려하라:
 
-* Name inference is incomplete
-* Lexical names allow self-reference
-* Names are useful descriptions
-* Arrow functions have no lexical names
-* IIFEs also need names
+* 이름 추론을 완전하게 할 수 없다.
+* 이름은 어휘적으로 자신을 참조할 수 있도록 한다.
+* 이름은 유용한 설명이다.
+* 화살표 함수는 어휘적인 이름을 갖지 않는다.
+* IIFE도 이름이 필요하다.
 
-### Explicit or Inferred Names?
+### 명시적 이름 또는 추론된 이름
 
-Every function in your program has a purpose. If it doesn't have a purpose, take it out, because you're just wasting space. If it *does* have a purpose, there *is* a name for that purpose.
+프로그램의 모든 함수는 목적이 있다. 만약 목적이 없는 함수라면 제거하라. 자리만 낭비할 뿐이다. 그리고 함수에 목적이 *있다면*, 목적에 맞는 이름도 *있을 것이다*.
 
-So far many readers likely agree with me. But does that mean we should always put that name into the code? Here's where I'll raise more than a few eyebrows. I say, unequivocally, yes!
+지금까지 많은 독자가 이 의견에 동의했을 것이다. 그렇다면 위와 같은 의견은 코드에 항상 이름을 넣어 주어야 한다는 의미일까? 필자는 눈을 치켜뜨며 강조할 것이다. 명백히 그렇다고!
 
-First of all, "anonymous" showing up in stack traces is just not all that helpful to debugging:
+우선, 스택 추적기에 "anonymous"가 보이는 것은 디버깅에 도움이 되지 않는다.
 
 ```js
 btn.addEventListener("click",function(){
@@ -195,7 +195,7 @@ btn.addEventListener("click",function(){
 //     at myProgram.js:3
 ```
 
-Ugh. Compare to what is reported if I give the functions names:
+윽. 함수에 이름을 지정했을 때와 비교해보자:
 
 ```js
 btn.addEventListener("click",function onClick(){
@@ -211,13 +211,13 @@ btn.addEventListener("click",function onClick(){
 //     at waitAMoment (myProgram.js:3)
 ```
 
-See how `waitAMoment` and `allUpper` names appear and give the stack trace more useful information/context for debugging? The program is more debuggable if we use reasonable names for all our functions.
+`waitAMoment` 와 `allUpper`란 이름이 나타나서 디버깅을 위한 더욱 유용한 정보/문맥을 스택 추적기에 어떻게 전달하는지 확인하라. 모든 함수에 합당한 이름을 붙인다면 프로그램을 디버그하기 더 쉬울 것이다.
 
-| NOTE: |
+| 비고: |
 | :--- |
-| The unfortunate "&lt;anonymous>" that still shows up refers to the fact that the implementation of `Array.map(..)` isn't present in our program, but is built into the JS engine. It's not from any confusion our program introduces with readability shortcuts. |
+| 위 당혹스러운 "<anonymous>"은 `Array.map(..)`의 구현이 작성한 프로그램에는 존재하지 않지만 JS 엔진에 내장되어 있다는 사실을 의미한다. 이 프로그램이 가독성을 위한 방법을 도입해서 발생한 혼란 때문에 그런 것은 아니다. |
 
-By the way, let's make sure we're on the same page about what a named function is:
+아무튼, 위와 동일한 페이지에서 이름을 지정한 함수가 무엇인지 확인해보자.
 
 ```js
 function thisIsNamed() {
@@ -234,7 +234,7 @@ var notNamed = function(){
 
 makeRequest({
     data: 42,
-    cb /* also not a name */: function(){
+    cb /* 이름이 아니다. */: function(){
         // ..
     }
 });
@@ -244,7 +244,7 @@ var stillNotNamed = function butThisIs(){
 };
 ```
 
-"But wait!", you say. Some of those *are* named, right!?
+"하지만 잠깐!", 이름을 지정 *되었다*고 했다. 그렇지 않은가!?
 
 ```js
 var notNamed = function(){
@@ -264,11 +264,11 @@ config.cb.name;
 // cb
 ```
 
-These are referred to as *inferred* names. Inferred names are fine, but they don't really address the full concern I'm discussing.
+위 이름을 *추론된* 이름이라고 한다. 추론된 이름이라고 부르는 건 괜찮다. 하지만 지금 이야기하는 내용을 온전히 다루지는 못한다.
 
-### Missing Names?
+### 이름이 없다면?
 
-Yes, these inferred names might show up in stack traces, which is definitely better than "anonymous" showing up. But...
+그렇다, 이렇게 추론한 이름이 스택 추적기에 나타날 수 있다. "anonymous"라고 나오는 것보단 낫다. 하지만...
 
 ```js
 function ajax(url,cb) {
@@ -281,9 +281,9 @@ ajax("some.url",function(){
 // ""
 ```
 
-Oops. Anonymous `function` expressions passed as callbacks are incapable of receiving an inferred name, so `cb.name` holds just the empty string `""`. The vast majority of all `function` expressions, especially anonymous ones, are used as callback arguments; none of these get a name. So relying on name inference is incomplete, at best.
+이런. 콜백으로 전달된 익명 `function` 표현식은 추론된 이름을 전달 받을 수 없으므로 `cb.name` 은 빈 문자열인 `""`로 남게 된다. 대부분의 `function` 표현식, 특히 익명이면, 대부분은 콜백의 인수로 사용된다. 그래서 이름 추론에 의존하는 것은 아무리 해도 불완전하다.
 
-And it's not just callbacks that fall short with inference:
+그리고 추론이 완전하지 않은 것은 콜백뿐만이 아니다. 
 
 ```js
 var config = {};
@@ -300,37 +300,37 @@ noName.name
 // ""
 ```
 
-Any assignment of a `function` expression that's not a *simple assignment* will also fail name inferencing. So, in other words, unless you're careful and intentional about it, essentially almost all anonymous `function` expressions in your program will in fact have no name at all.
+*단순 할당*이 아닌 `function` 표현식으로 할당하면 이름 추론도 실패한다. 다시 말해서, 이 부분을 신중하고 의도적으로 다루지 않는다면, 프로그램에 있는 거의 모든 익명의 `function` 표현식으로 선언한 함수는 사실 전혀 이름이 없을 것이다.
 
-Name inference is just... not enough.
+이름 추론은 그냥... 충분하지 않은 것이다.
 
-And even if a `function` expression *does* get an inferred name, that still doesn't count as being a full named function.
+그리고 `function` 표현식으로 선언한 함수가 추론된 이름을 갖게 *되더라도*, 이런 함수는 여전히 이름 있는 함수로 취급받지 않는다.
 
-### Who am I?
+### 나는 누구인가?
 
-Without a lexical name identifier, the function has no internal way to refer to itself. Self-reference is important for things like recursion and event handling:
+어휘적 이름 식별자가 없다면, 함수 내부에서 자신을 지칭할 수 없을 것이다. 자기 참조는 재귀나 이벤트 핸들링같은 작업에 매우 필요하다.
 
 ```js
-// broken
+// 작동하지 않는다.
 runOperation(function(num){
     if (num <= 1) return 1;
     return num * oopsNoNameToCall(num - 1);
 });
 
-// also broken
+// 또 작동하지 않는다.
 btn.addEventListener("click",function(){
    console.log("should only respond to one click!");
    btn.removeEventListener("click",oopsNoNameHere);
 });
 ```
 
-Leaving off the lexical name from your callback makes it harder to reliably self-reference the function. You *could* declare a variable in an enclosing scope that references the function, but this variable is *controlled* by that enclosing scope—it could be re-assigned, etc.—so it's not as reliable as the function having its own internal self-reference.
+콜백 함수에 이름이 없다면 함수를 안정적으로 자체 참조하기가 어려워진다. 같은 스코프에 변수를 선언해서 함수를 참조하게 *할 수도* 있겠지만, 이 변수는 감싸고 있는 스코프에 의해 *제어되기* 때문에, 재할당 될 수도 있다. 그래서 내부에서 자체 참조를 할 수 있을만큼 안정적인 방법은 아니다.
 
-### Names are Descriptors
+### 이름은 설명이다.
 
-Lastly, and I think most importantly of all, leaving off a name from a function makes it harder for the reader to tell what the function's purpose is, at a quick glance. They have to read more of the code, including the code inside the function, and the surrounding code outside the function, to figure it out.
+마지막으로, 무엇보다 중요한 점인데, 함수의 이름을 명시하지 않는 행위는 읽는이가 그 함수의 목적이 무엇인지를 한눈에 알 수 없게 만든다. 코드를 읽는 사람들은 함수의 목적을 파악하기 위해, 함수의 내부와 주변 코드를 더 많이 읽어야 한다.
 
-Consider:
+다음 코드를 살펴보자:
 
 ```js
 [ 1, 2, 3, 4, 5 ].filter(function(v){
@@ -344,15 +344,15 @@ Consider:
 // [ 1, 3, 5 ]
 ```
 
-There's just no reasonable argument to be made that **omitting** the name `keepOnlyOdds` from the first callback more effectively communicates to the reader the purpose of this callback. You saved 13 characters, but lost important readability information. The name `keepOnlyOdds` very clearly tells the reader, at a quick first glance, what's happening.
+첫 번째 콜백 함수에서 `keepOnlyOdds`란 이름을 **생략**해야 읽는 이들에게 이 함수의 목적을 더 확실하게 전달할 수 있다는 것은 타당한 주장이 될 수 없다. 13개의 문자를 아낄 수 있었지만, 중요하고 가독성 높은 정보를 잃어버렸기 때문이다. `keepOnlyOdds`라는 이름은 읽는 사람들이 한눈에 알아볼 수 있도록 무슨 일이 벌어질지를 매우 명확하게 전달한다.
 
-The JS engine doesn't care about the name. But human readers of your code absolutely do.
+JS 엔진은 이름을 신경쓰지 않는다. 하지만 읽는 사람들은 이름을 정말로 많이 신경쓴다.
 
-Can the reader look at `v % 2 == 1` and figure out what it's doing? Sure. But they have to infer the purpose (and name) by mentally executing the code. Even a brief pause to do so slows down reading of the code. A good descriptive name makes this process almost effortless and instant.
+읽는 이가 `v % 2 == 1`를 보고 어떤 작업을 하는지 알 수 있을까? 물론 알 수 있다. 하지만 속으로 코드를 실행해 보면서 목적 (그리고 이름)을 추론해야 한다. 이렇게 추론을 하기 위해 잠시 멈추는 것만으로도 코드를 읽는 속도가 느려진다. 목적을 잘 설명하는 이름은 위 추론 과정을 매우 쉽고 즉각적으로 할 수 있도록 만들어준다.
 
-Think of it this way: how many times does the author of this code need to figure out the purpose of a function before adding the name to the code? About once. Maybe two or three times if they need to adjust the name. But how many times will readers of this code have to figure out the name/purpose? Every single time this line is ever read. Hundreds of times? Thousands? More?
+이렇게 생각해보자: 작성자가 함수에 이름을 붙이기 전에 이 함수의 목적을 파악하려면 얼마나 많이 생각해야 할까? 한 번. 이름을 붙여야 한다면 두세 번 정도일 것이다. 하지만 읽는 사람들 모두가 함수의 이름/목적을 파악하기 위해 몇 번이나 생각을 해봐야 할까? 각각의 줄을 매번 읽어야 할 것이다. 그래서 수백 번? 수천 번? 그 이상 걸릴지도 모른다.
 
-No matter the length or complexity of the function, my assertion is, the author should figure out a good descriptive name and add it to the code. Even the one-liner functions in `map(..)` and `then(..)` statements should be named:
+함수의 길이나 복잡도와 상관없이 코드의 작성자는 목적을 잘 설명하는 이름을 생각해내어 반드시 붙여 주어야 한다. 심지어 `map(..)`과 `then(..)` 구문에 들어가는 한 줄짜리 함수라도 다음과 같이 이름을 붙여주자:
 
 ```js
 lookupTheRecords(someData)
@@ -362,37 +362,37 @@ lookupTheRecords(someData)
 .then(storeRecords);
 ```
 
-The name `extractSalesRecords` tells the reader the purpose of this `then(..)` handler *better* than just inferring that purpose from mentally executing `return resp.allSales`.
+`extractSalesRecords`란 이름은 읽는 이에게 `then(..)` 핸들러의 목적을 `return resp.allSales`을 머릿속으로 실행시켜서 추론해낼 수 있는 것보다는 *더 제대로* 알려준다.
 
-The only excuse for not including a name on a function is either laziness (don't want to type a few extra characters) or uncreativity (can't come up with a good name). If you can't figure out a good name, you likely don't understand the function and its purpose yet. The function is perhaps poorly designed, or it does too many things, and should be re-worked. Once you have a well-designed, single-purpose function, its proper name should become evident.
+함수에 이름을 포함하지 않는 유일한 구실은 게으르거나(문자 몇 개를 더 입력하기 싫음) 창의적이지 않기(좋은 이름을 생각해낼 수 없음) 때문이다. 좋은 이름을 생각해내지 못한다면, 아직 그 함수와 그 목적을 이해하지 못한 것이다. 그 함수는 아마도 잘 설계되지 않았거나 너무 많은 작업을 수행하므로 다시 설계해야 할 것이다. 잘 설계한 단일 목적의 함수가 있다면 적절하고 명확한 이름이 있어야 한다.
 
-Here's a trick I use: while first writing a function, if I don't fully understand its purpose and can't think of a good name to use, I just use `TODO` as the name. That way, later when reviewing my code, I'm likely to find those name placeholders, and I'm more inclined (and more prepared!) to go back and figure out a better name, rather than just leave it as `TODO`.
+다음과 같은 방법을 사용하면 좋다: 함수를 처음 작성할 때, 이 목적을 이해하기 어려워서 적절한 이름이 떠오르지 않는다면 `TODO`라는 이름을 사용해보자. 이렇게 하면 나중에 코드를 다시 읽어볼 때 찾기도 쉽고, `TODO`로 계속 남겨두는 것 보다는 다시 돌아가서 더 좋은 이름을 붙이고 싶게 만들 것이다.
 
-All functions need names. Every single one. No exceptions. Any name you omit is making the program harder to read, harder to debug, harder to extend and maintain later.
+모든 함수에는 이름이 필요하다. 하나도 빠짐없이, 예외는 없다. 생략한 이름은 프로그램을 읽기 더 어렵게 하고, 디버그하기 더 어렵게 하고, 유지 보수하기 더 어렵게 할 것이다.
 
-### Arrow Functions
+### 화살표 함수
 
-Arrow functions are **always** anonymous, even if (rarely) they're used in a way that gives them an inferred name. I just spent several pages explaining why anonymous functions are a bad idea, so you can probably guess what I think about arrow functions.
+화살표 함수는 **항상** 익명이다. (드물게) 추론된 이름을 전달하여 사용하게 된다고 하더라도 그렇다. 몇 페이지에 걸쳐 익명 함수가 왜 나쁜 방법인지 설명을 했기 때문에 화살표 함수에 대해 어떻게 설명할지 짐작할 수 있을 것이다.
 
-Don't use them as a general replacement for regular functions. They're more concise, yes, but that brevity comes at the cost of omitting key visual delimiters that help our brains quickly parse out what we're reading. And, to the point of this discussion, they're anonymous, which makes them worse for readability from that angle as well.
+일반적인 함수를 대체하여 사용하지 말아라. 화살표 함수는 더 간결하다. 그렇지만 그 간결함은 우리의 뇌가 읽고 있는 내용을 빠르게 분석하도록 도와주는 시각적 구분 기호를 생략하는 대가를 치르게 한다. 그리고, 이 논의의 요점은 화살표 함수가 익명이라는 것이고 익명이기 때문에 가독성이 떨어진다는 것이다.
 
-Arrow functions have a purpose, but that purpose is not to save keystrokes. Arrow functions have *lexical this* behavior, which is somewhat beyond the bounds of our discussion in this book.
+화살표 함수는 목적이 있지만 키 입력을 아끼기 위한 것은 아니다. 화살표 함수는 이 책에서 다루는 내용의 범위를 벗어난 *lexical this* 동작을 갖고 있다.
 
-Briefly: arrow functions don't define a `this` identifier keyword at all. If you use a `this` inside an arrow function, it behaves exactly as any other variable reference, which is that the scope chain is consulted to find a function scope (non-arrow function) where it *is* defined, and to use that one.
+요약: 화살표 함수는 `this` 식별자를 전혀 정의하지 않는다. 화살표 함수 내부에서 `this`를 사용하면 변수 참조와 동일하게 동작한다. 스코프 체인을 참조하여 `this`를 정의하고 *있는* (화살표 함수가 아닌)함수 스코프를 찾은 다음 그 스코프에 해당하는 값을 사용한다.
 
-In other words, arrow functions treat `this` like any other lexical variable.
+즉, 화살표 함수는 `this`를 어휘적 변수처럼 취급한다.
 
-If you're used to hacks like `var self = this`, or if you prefer to call `.bind(this)` on inner `function` expressions, just to force them to inherit a `this` from an outer function like it was a lexical variable, then `=>` arrow functions are absolutely the better option. They're designed specifically to fix that problem.
+`var self = this`와 같은 방법에 익숙하거나 `function` 표현식 내부에서 `.bind(this)`를 사용하는 것을 더 선호한다면 어휘적 변수처럼 외부 함수로부터 `this`를 상속하도록 강제하기 위해 `=>` 화살표 함수를 사용하는 것이 더 낫다. 화살표 함수는 이런 문제를 해결하기 위해 특별히 고안되었다.
 
-So, in the rare cases you need *lexical this*, use an arrow function. It's the best tool for that job. But just be aware that in doing so, you're accepting the downsides of an anonymous function. You should expend additional effort to mitigate the readability *cost*, such as more descriptive variable names and code comments.
+따라서, 드물게 *lexical this*가 필요한 경우에는 화살표 함수를 사용하면 된다. 화살표 함수는 이런 상황에 가장 적절한 도구다. 하지만 이렇게 하는 경우, 익명 함수의 단점을 받아들이게 된다는 것을 알아 두어라. 설명적인 변수명을 붙이거나 코드 주석을 작성하는 등, 추가적인 노력을 해야한다.
 
-### IIFE Variations
+### IIFE의 변형
 
-All functions should have names. I said that a few times, right!? That includes IIFEs.
+모든 함수는 이름이 있어야 한다. 이것을 몇 번이나 강조했는데, 사실 IIFE에도 해당되는 말이다.
 
 ```js
 (function(){
-    // don't do this!
+    // 이렇게 하지 말아야 한다.
 })();
 
 (function doThisInstead(){
@@ -400,7 +400,7 @@ All functions should have names. I said that a few times, right!? That includes 
 })();
 ```
 
-How do we come up with a name for an IIFE? Identify what the IIFE is there for. Why do you need a scope in that spot? Are you hiding a cache variable for student records?
+IIFE의 이름을 어떻게 붙이면 좋을까? IIFE가 왜 그 자리에 있어야 하는지 생각하라. 왜 그 자리에 스코프가 필요한가? 학생부 데이터의 캐시를 숨기고자 하는가?
 
 ```js
 var getStudents = (function StoreStudentRecords(){
@@ -412,9 +412,9 @@ var getStudents = (function StoreStudentRecords(){
 })();
 ```
 
-I named the IIFE `StoreStudentRecords` because that's what it's doing: storing student records. Every IIFE should have a name. No exceptions.
+위 IIFE의 이름을 `StoreStudentRecords`로 붙인 이유는 학생부 데이터를 저장하기 때문이다. 이렇게 모든 IIFE는 이름이 있어야 한다. 예외는 없다.
 
-IIFEs are typically defined by placing `( .. )` around the `function` expression, as shown in those previous snippets. But that's not the only way to define an IIFE. Technically, the only reason we're using that first surrounding set of `( .. )` is just so the `function` keyword isn't in a position to qualify as a `function` declaration to the JS parser. But there are other syntactic ways to avoid being parsed as a declaration:
+일반적으로 IIFE는 위와 같이 `function` 표현식을 `( .. )`로 감싸는 형태로 정의한다. 하지만 이것이 IIFE를 정의하는 유일한 방법은 아니다. 엄밀히 말하면, `( .. )`로 함수를 감싸야 하는 이유는 `function` 키워드가 JS 파서에게 `function` 선언임을 나타내는 위치에 있지 않기 때문이다. 하지만 `function`이 선언으로 파싱되는 것을 피하는 문법적인 다른 방법이 있다.
 
 ```js
 !function thisIsAnIIFE(){
@@ -430,9 +430,9 @@ IIFEs are typically defined by placing `( .. )` around the `function` expression
 }();
 ```
 
-The `!`, `+`, `~`, and several other unary operators (operators with one operand) can all be placed in front of `function` to turn it into an expression. Then the final `()` call is valid, which makes it an IIFE.
+`!`, `+`, `~`, 그리고 몇 개의 단항 연산자(피연산자가 하나인 연산자)를 `function` 앞에 배치하여 하나의 표현식으로 만들 수 있다. 그러면 마지막 `()` 호출이 유효하게 동작하여 IIFE가 된다.
 
-I actually kind of like using the `void` unary operator when defining a standalone IIFE:
+실제로, IIFE를 정의할 때 `void` 연산자를 자주 사용하기도 한다:
 
 ```js
 void function yepItsAnIIFE() {
@@ -440,9 +440,9 @@ void function yepItsAnIIFE() {
 }();
 ```
 
-The benefit of `void` is, it clearly communicates at the beginning of the function that this IIFE won't be returning any value.
+`void`의 장점은 함수의 시작 부분에서 이 IIFE가 어떤 값도 반환하지 않는다는 것을 명확하게 전달한다는 것이다.
 
-However you define your IIFEs, show them some love by giving them names.
+IIFE를 어떻게 정의하든지, 이름을 붙여서 사랑을 표현하라.
 
 ## 호이스팅: 함수와 변수
 
